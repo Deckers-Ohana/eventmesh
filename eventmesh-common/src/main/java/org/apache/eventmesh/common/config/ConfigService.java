@@ -30,9 +30,13 @@ import java.util.Objects;
 import java.util.Properties;
 
 import org.assertj.core.util.Strings;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ConfigService {
 
     private static final ConfigService INSTANCE = new ConfigService();
@@ -44,7 +48,7 @@ public class ConfigService {
      * Unified configuration Properties corresponding to eventmesh.properties
      */
     private Properties properties = new Properties();
-
+    private ApplicationContext applicationContext;
     @Getter
     private String rootPath;
 
@@ -71,6 +75,10 @@ public class ConfigService {
         properties = this.getConfig(configInfo);
     }
 
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     public Properties getRootConfig() {
         return this.properties;
     }
@@ -94,7 +102,8 @@ public class ConfigService {
         }
     }
 
-    public void populateConfigForObject(Object object) throws IllegalAccessException, NoSuchFieldException, IOException {
+    public void populateConfigForObject(Object object) throws IllegalAccessException, NoSuchFieldException,
+        IOException {
         Class<?> clazz = object.getClass();
         Config[] configArray = clazz.getAnnotationsByType(Config.class);
         if (configArray.length == 0) {
@@ -109,6 +118,16 @@ public class ConfigService {
     @SuppressWarnings("unchecked")
     public <T> T getConfig(ConfigInfo configInfo) throws IOException {
         Object object;
+
+        try {
+            if (applicationContext != null && configInfo.getClazz() != null) {
+                return applicationContext.getBeanNamesForType(
+                    configInfo.getClazz()).length > 1 ? (T) applicationContext.getBean(
+                    configInfo.getClazz().getName()) : (T) applicationContext.getBean(configInfo.getClazz());
+            }
+        } catch (BeansException exception) {
+            log.warn("No bean in spring context! class: {} ", configInfo.getClazz().getName());
+        }
 
         String path = configInfo.getPath();
         if (StringUtils.isBlank(path)) {
@@ -126,7 +145,8 @@ public class ConfigService {
             }
             filePath = fileURL.getPath();
         } else {
-            filePath = path.startsWith(FILE_PATH_PREFIX) ? path.substring(FILE_PATH_PREFIX.length()) : this.configPath + path;
+            filePath = path.startsWith(FILE_PATH_PREFIX) ? path.substring(
+                FILE_PATH_PREFIX.length()) : this.configPath + path;
         }
 
         if (filePath.contains(".jar")) {

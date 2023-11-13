@@ -55,6 +55,9 @@ public class ConfigurationHolder {
     @ConfigFiled(field = "queueName")
     private String queueName;
 
+    @ConfigFiled(field = "ssl")
+    private boolean ssl;
+
     @ConfigFiled(field = "autoAck")
     private boolean autoAck;
 

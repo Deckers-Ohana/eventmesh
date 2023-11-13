@@ -48,12 +48,15 @@ public class RabbitmqClient {
      */
     public Connection getConnection(String host, String username,
         String passwd, int port,
-        String virtualHost) throws Exception {
+        String virtualHost, boolean ssl) throws Exception {
         ConnectionFactory factory = rabbitmqConnectionFactory.createConnectionFactory();
         factory.setHost(host.trim());
         factory.setPort(port);
         if (StringUtils.isNotEmpty(virtualHost)) {
             factory.setVirtualHost(virtualHost.trim());
+        }
+        if (ssl) {
+            factory.useSslProtocol();
         }
         factory.setUsername(username);
         factory.setPassword(passwd.trim());

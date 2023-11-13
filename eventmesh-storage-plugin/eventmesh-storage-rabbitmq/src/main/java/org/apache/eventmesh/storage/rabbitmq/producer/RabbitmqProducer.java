@@ -93,7 +93,7 @@ public class RabbitmqProducer implements Producer {
     public void init(Properties properties) throws Exception {
         this.rabbitmqClient = new RabbitmqClient(rabbitmqConnectionFactory);
         this.connection = rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
-            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost());
+            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
         this.channel = rabbitmqConnectionFactory.createChannel(connection);
     }
 

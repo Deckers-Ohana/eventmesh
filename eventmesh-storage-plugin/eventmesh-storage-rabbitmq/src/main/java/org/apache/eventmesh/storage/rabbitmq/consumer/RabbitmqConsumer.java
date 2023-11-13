@@ -98,7 +98,7 @@ public class RabbitmqConsumer implements Consumer {
     public void init(Properties keyValue) throws Exception {
         this.rabbitmqClient = new RabbitmqClient(rabbitmqConnectionFactory);
         this.connection = rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
-            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost());
+            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
         this.channel = rabbitmqConnectionFactory.createChannel(connection);
         this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder);
     }

@@ -24,7 +24,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven {
-            url "https://maven.aliyun.com/repository/public"
+            url "https://nexus3.turtle.deckers.com/repository/maven-public/"
         }
 
         maven {
@@ -100,7 +100,7 @@ allprojects {
             mavenLocal()
             mavenCentral()
             maven {
-                url "https://maven.aliyun.com/repository/public"
+                url "https://nexus3.turtle.deckers.com/repository/maven-public/"
             }
         }
         testImplementation "org.junit.jupiter:junit-jupiter:5.6.0"
@@ -407,7 +407,7 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://nexus3.turtle.deckers.com/repository/maven-public/" }
     }
 
     configurations.all {
@@ -456,8 +456,8 @@ subprojects {
         }
         repositories {
             maven {
-                def releasesRepoUrl = 'https://repository.apache.org/service/local/staging/deploy/maven2'
-                def snapshotsRepoUrl = 'https://repository.apache.org/content/repositories/snapshots/'
+                def releasesRepoUrl = 'https://nexus3.turtle.deckers.com/repository/maven-releases/'
+                def snapshotsRepoUrl = 'https://nexus3.turtle.deckers.com/repository/maven-snapshots/'
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
                 credentials {
                     username apacheUserName
@@ -476,6 +476,7 @@ subprojects {
 
     dependencyManagement {
         dependencies {
+            dependency 'org.springframework:spring-context:5.3.29'
             dependency "org.apache.commons:commons-lang3:3.6"
             dependency "org.apache.commons:commons-collections4:4.1"
             dependency "org.apache.commons:commons-text:1.9"

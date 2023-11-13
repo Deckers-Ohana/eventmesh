@@ -57,9 +57,9 @@ public final class RedissonClient {
 
     public static Redisson create() {
         ConfigService configService = ConfigService.getInstance();
-        RedisProperties properties = configService.buildConfigInstance(RedisProperties.class);
+        // RedisProperties properties = configService.buildConfigInstance(RedisProperties.class);
 
-        return create(properties);
+        return configService.buildConfigInstance(Redisson.class);
     }
 
     private static Redisson create(RedisProperties properties) {

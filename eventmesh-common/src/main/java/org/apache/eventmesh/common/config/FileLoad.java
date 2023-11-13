@@ -17,14 +17,14 @@
 
 package org.apache.eventmesh.common.config;
 
+
 import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.config.convert.Convert;
+import org.apache.eventmesh.common.utils.YamlParser;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
-import org.yaml.snakeyaml.Yaml;
+import org.springframework.util.FileCopyUtils;
 
 /**
  * load config from file
@@ -44,9 +44,9 @@ public interface FileLoad {
     YamlFileLoad YAML_FILE_LOAD = new YamlFileLoad();
 
     static FileLoad getFileLoad(String fileType) {
-        if (StringUtils.equals("properties", fileType)) {
+        if (Objects.equals("properties", fileType)) {
             return PROPERTIES_FILE_LOAD;
-        } else if (StringUtils.equals("yaml", fileType)) {
+        } else if (Objects.equals("yaml", fileType)) {
             return YAML_FILE_LOAD;
         }
         return PROPERTIES_FILE_LOAD;
@@ -71,12 +71,14 @@ public interface FileLoad {
             final Properties properties = new Properties();
             if (StringUtils.isNotBlank(configInfo.getResourceUrl())) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    Objects.requireNonNull(getClass().getResourceAsStream(configInfo.getResourceUrl())), Constants.DEFAULT_CHARSET))) {
+                    Objects.requireNonNull(getClass().getResourceAsStream(configInfo.getResourceUrl())),
+                    Constants.DEFAULT_CHARSET))) {
                     properties.load(reader);
                 }
             } else {
                 try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(Files.newInputStream(Paths.get(configInfo.getFilePath())), Constants.DEFAULT_CHARSET))) {
+                    new InputStreamReader(Files.newInputStream(Paths.get(configInfo.getFilePath())),
+                        Constants.DEFAULT_CHARSET))) {
                     properties.load(reader);
                 }
             }
@@ -96,11 +98,34 @@ public interface FileLoad {
 
     class YamlFileLoad implements FileLoad {
 
+        private final Convert convert = new Convert();
+
         @SuppressWarnings("unchecked")
         @Override
         public <T> T getConfig(ConfigInfo configInfo) throws IOException {
-            Yaml yaml = new Yaml();
-            return (T) yaml.loadAs(new BufferedInputStream(new FileInputStream(configInfo.getFilePath())), configInfo.getClazz());
+            final Properties properties = new Properties();
+            if (StringUtils.isNotBlank(configInfo.getResourceUrl())) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    Objects.requireNonNull(getClass().getResourceAsStream(configInfo.getResourceUrl())),
+                    Constants.DEFAULT_CHARSET))) {
+                    properties.putAll(new YamlParser().yamlToProperties(FileCopyUtils.copyToString(reader)));
+                }
+            } else {
+                try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(Files.newInputStream(Paths.get(configInfo.getFilePath())),
+                        Constants.DEFAULT_CHARSET))) {
+                    properties.putAll(new YamlParser().yamlToProperties(FileCopyUtils.copyToString(reader)));
+                }
+            }
+            if (Objects.isNull(configInfo.getClazz())) {
+                return (T) properties;
+            }
+            return (T) convert.doConvert(configInfo, properties);
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> T getConfig(Properties properties, ConfigInfo configInfo) {
+            return (T) convert.doConvert(configInfo, properties);
         }
     }
 }

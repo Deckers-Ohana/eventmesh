@@ -45,6 +45,7 @@ import io.netty.handler.codec.http.HttpVersion;
 public class HttpEventWrapper implements ProtocolTransportObject {
 
     public static final long serialVersionUID = -8547334421415366981L;
+    public static final String AUTHORIZATION = "Authorization";
 
     private transient Map<String, Object> headerMap = new HashMap<>();
 
@@ -77,14 +78,16 @@ public class HttpEventWrapper implements ProtocolTransportObject {
         this.requestURI = requestURI;
     }
 
-    public HttpEventWrapper createHttpResponse(Map<String, Object> responseHeaderMap, Map<String, Object> responseBodyMap) {
+    public HttpEventWrapper createHttpResponse(Map<String, Object> responseHeaderMap,
+                                               Map<String, Object> responseBodyMap) {
         if (StringUtils.isBlank(requestURI)) {
             return null;
         }
         HttpEventWrapper response = new HttpEventWrapper(this.httpMethod, this.httpVersion, this.requestURI);
         response.setReqTime(this.reqTime);
         response.setHeaderMap(responseHeaderMap);
-        response.setBody(Objects.requireNonNull(JsonUtils.toJSONString(responseBodyMap)).getBytes(Constants.DEFAULT_CHARSET));
+        response.setBody(
+                Objects.requireNonNull(JsonUtils.toJSONString(responseBodyMap)).getBytes(Constants.DEFAULT_CHARSET));
         response.setResTime(System.currentTimeMillis());
         return response;
     }
@@ -101,7 +104,8 @@ public class HttpEventWrapper implements ProtocolTransportObject {
         Map<String, Object> responseBodyMap = new HashMap<>();
         responseBodyMap.put("retCode", eventMeshRetCode.getRetCode());
         responseBodyMap.put("retMessage", eventMeshRetCode.getErrMsg());
-        response.setBody(Objects.requireNonNull(JsonUtils.toJSONString(responseBodyMap)).getBytes(Constants.DEFAULT_CHARSET));
+        response.setBody(
+                Objects.requireNonNull(JsonUtils.toJSONString(responseBodyMap)).getBytes(Constants.DEFAULT_CHARSET));
         response.setResTime(System.currentTimeMillis());
         return response;
     }
@@ -181,7 +185,7 @@ public class HttpEventWrapper implements ProtocolTransportObject {
 
     public DefaultFullHttpResponse httpResponse() throws Exception {
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus,
-            Unpooled.wrappedBuffer(this.body));
+                Unpooled.wrappedBuffer(this.body));
         HttpHeaders headers = response.headers();
         headers.add(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=" + Constants.DEFAULT_CHARSET);
         headers.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
@@ -202,7 +206,7 @@ public class HttpEventWrapper implements ProtocolTransportObject {
                     break;
                 default:
                     sysHeaderMap.put(clientInstanceKey.getKey(),
-                        headerMap.getOrDefault(clientInstanceKey.getKey(), clientInstanceKey.getValue()));
+                            headerMap.getOrDefault(clientInstanceKey.getKey(), clientInstanceKey.getValue()));
             }
         }
     }
@@ -212,6 +216,7 @@ public class HttpEventWrapper implements ProtocolTransportObject {
         sysHeaderMap.put(ProtocolKey.CloudEventsKey.ID, UUID.randomUUID().toString());
         sysHeaderMap.put(ProtocolKey.CloudEventsKey.SOURCE, headerMap.getOrDefault("source", URI.create("/")));
         sysHeaderMap.put(ProtocolKey.CloudEventsKey.TYPE, headerMap.getOrDefault("type", "http_request"));
+        sysHeaderMap.put(ProtocolKey.ClientInstanceKey.TOKEN.getKey(), headerMap.getOrDefault(AUTHORIZATION, ""));
 
         String topic = headerMap.getOrDefault("subject", "").toString();
 
