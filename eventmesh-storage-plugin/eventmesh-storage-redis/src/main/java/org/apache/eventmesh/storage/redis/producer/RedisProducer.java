@@ -55,6 +55,9 @@ public class RedisProducer implements Producer {
         if (!started) {
             started = true;
         }
+        if(redisson==null){
+            redisson = RedissonClient.getInstance();
+        }
     }
 
     @Override
@@ -71,7 +74,7 @@ public class RedisProducer implements Producer {
     @Override
     public void init(Properties properties) {
         // Currently, 'properties' does not pass useful configuration information.
-        redisson = RedissonClient.INSTANCE;
+        redisson = RedissonClient.getInstance();
     }
 
     @Override

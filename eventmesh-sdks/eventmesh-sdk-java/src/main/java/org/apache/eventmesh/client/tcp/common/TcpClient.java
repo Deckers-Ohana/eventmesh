@@ -125,15 +125,14 @@ public abstract class TcpClient implements Closeable {
     @Override
     public void close() {
         try {
+            goodbye();
             channel.disconnect().sync();
             workers.shutdownGracefully();
             if (heartTask != null) {
                 heartTask.cancel(false);
             }
-            goodbye();
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-
             LogUtils.warn(log, "close tcp client failed.|remote address={}", channel.remoteAddress(), e);
         }
     }

@@ -60,6 +60,9 @@ public class RedisConsumer implements Consumer {
         if (!started) {
             started = true;
         }
+        if(redisson==null){
+            redisson= RedissonClient.getInstance();
+        }
     }
 
     @Override
@@ -74,7 +77,7 @@ public class RedisConsumer implements Consumer {
     @Override
     public void init(Properties keyValue) {
         // Currently, 'keyValue' does not pass useful configuration information.
-        redisson = RedissonClient.INSTANCE;
+        redisson = RedissonClient.getInstance();
     }
 
     @Override

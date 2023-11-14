@@ -92,10 +92,10 @@ public class ClientGroupWrapper {
     private final ReadWriteLock groupLock = new ReentrantReadWriteLock();
 
     @Getter
-    private final Set<Session> groupConsumerSessions = new HashSet<Session>();
+    private final Set<Session> groupConsumerSessions = new HashSet<>();
 
     @Getter
-    private final Set<Session> groupProducerSessions = new HashSet<Session>();
+    private final Set<Session> groupProducerSessions = new HashSet<>();
 
     @Getter
     private final AtomicBoolean started4Persistent = new AtomicBoolean(Boolean.FALSE);
@@ -117,7 +117,7 @@ public class ClientGroupWrapper {
     private MQConsumerWrapper broadCastMsgConsumer;
 
     private final ConcurrentHashMap<String, Map<String, Session>> topic2sessionInGroupMapping =
-        new ConcurrentHashMap<String, Map<String, Session>>();
+        new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<String, SubscriptionItem> subscriptions = new ConcurrentHashMap<>();
 
@@ -364,7 +364,6 @@ public class ClientGroupWrapper {
             this.groupLock.writeLock().lockInterruptibly();
             r = groupProducerSessions.add(session);
             if (r) {
-
                 log.info("addGroupProducerSession success, group:{} client:{}", group,
                     session.getClient());
             }
@@ -389,13 +388,14 @@ public class ClientGroupWrapper {
         boolean r = false;
         try {
             this.groupLock.writeLock().lockInterruptibly();
-            r = groupConsumerSessions.remove(session);
+            log.info("removeGroupConsumerSession contains sessions: " + groupConsumerSessions.contains(session));
+            if (groupConsumerSessions.size() == 1) {
+                this.groupConsumerSessions.clear();
+            }
+            r = groupProducerSessions.remove(session);
             if (r) {
-
-                if (log.isInfoEnabled()) {
-                    log.info("removeGroupConsumerSession success, group:{} client:{}", group,
-                        session.getClient());
-                }
+                log.info("removeGroupConsumerSession success, group:{} client:{}", group,
+                    session.getClient());
             }
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
@@ -420,7 +420,6 @@ public class ClientGroupWrapper {
             this.groupLock.writeLock().lockInterruptibly();
             r = groupProducerSessions.remove(session);
             if (r) {
-
                 log.info("removeGroupProducerSession success, group:{} client:{}", group,
                     session.getClient());
             }

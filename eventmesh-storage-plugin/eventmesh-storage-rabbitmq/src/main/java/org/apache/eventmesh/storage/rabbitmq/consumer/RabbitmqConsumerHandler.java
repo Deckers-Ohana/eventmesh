@@ -80,4 +80,8 @@ public class RabbitmqConsumerHandler implements Runnable {
     public void stop() {
         stop.set(true);
     }
+
+    public void start(){
+        stop.set(false);
+    }
 }

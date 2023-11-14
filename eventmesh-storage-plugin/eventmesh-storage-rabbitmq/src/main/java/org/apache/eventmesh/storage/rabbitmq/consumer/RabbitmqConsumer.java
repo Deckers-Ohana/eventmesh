@@ -17,11 +17,13 @@
 
 package org.apache.eventmesh.storage.rabbitmq.consumer;
 
+import java.io.IOException;
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.consumer.Consumer;
 import org.apache.eventmesh.common.ThreadPoolFactory;
 import org.apache.eventmesh.common.config.Config;
+import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
@@ -36,8 +38,6 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 import lombok.extern.slf4j.Slf4j;
-
-@Config(field = "configurationHolder")
 
 @Slf4j
 public class RabbitmqConsumer implements Consumer {
@@ -79,14 +79,21 @@ public class RabbitmqConsumer implements Consumer {
         if (!started) {
             started = true;
         }
+        try {
+            this.connection = getConnection();
+            this.channel = getChannel();
+            rabbitmqConsumerHandler.start();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void shutdown() {
         if (started) {
             try {
-                rabbitmqClient.closeConnection(connection);
                 rabbitmqClient.closeChannel(channel);
+                rabbitmqClient.closeConnection(connection);
                 rabbitmqConsumerHandler.stop();
             } finally {
                 started = false;
@@ -96,11 +103,19 @@ public class RabbitmqConsumer implements Consumer {
 
     @Override
     public void init(Properties keyValue) throws Exception {
+        this.configurationHolder= ConfigService.getInstance().buildConfigInstance(ConfigurationHolder.class);
         this.rabbitmqClient = new RabbitmqClient(rabbitmqConnectionFactory);
-        this.connection = rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
-            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
-        this.channel = rabbitmqConnectionFactory.createChannel(connection);
+        this.connection = getConnection();
+        this.channel = getChannel();
         this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder);
+    }
+
+    private Channel getChannel() throws IOException {
+        return rabbitmqConnectionFactory.createChannel(connection);
+    }
+    private Connection getConnection() throws Exception {
+        return rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
+            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
     }
 
     @Override

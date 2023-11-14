@@ -39,27 +39,27 @@ public final class RedissonClient {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static final Redisson INSTANCE;
+//    public static final Redisson INSTANCE;
+//
+//    static {
+//        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//
+//        INSTANCE = create();
+//
+//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//            try {
+//                INSTANCE.shutdown();
+//            } catch (Exception ignore) {
+//                //
+//            }
+//        }));
+//    }
 
-    static {
-        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
-        INSTANCE = create();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                INSTANCE.shutdown();
-            } catch (Exception ignore) {
-                //
-            }
-        }));
-    }
-
-    public static Redisson create() {
+    public static Redisson getInstance() {
         ConfigService configService = ConfigService.getInstance();
         // RedisProperties properties = configService.buildConfigInstance(RedisProperties.class);
 
-        return configService.buildConfigInstance(Redisson.class);
+        return configService.buildConfigInstance(org.redisson.api.RedissonClient.class);
     }
 
     private static Redisson create(RedisProperties properties) {

@@ -17,6 +17,7 @@
 
 package org.apache.eventmesh.runtime.core.protocol.tcp.client.group;
 
+import java.lang.management.ManagementFactory;
 import org.apache.eventmesh.api.meta.config.EventMeshMetaConfig;
 import org.apache.eventmesh.common.protocol.SubscriptionItem;
 import org.apache.eventmesh.common.protocol.SubscriptionMode;
@@ -69,13 +70,12 @@ public class ClientSessionGroupMapping {
      * key: subsystem eg . 5109 or 5109-1A0
      */
     private final ConcurrentHashMap<String, ClientGroupWrapper> clientGroupMap =
-        new ConcurrentHashMap<String, ClientGroupWrapper>();
+        new ConcurrentHashMap<>();
 
     /**
      * key: subsystem eg . 5109 or 5109-1A0
      */
-    private final ConcurrentHashMap<String, Object> lockMap =
-        new ConcurrentHashMap<String, Object>();
+    private final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
 
     private EventMeshTCPServer eventMeshTCPServer;
 
@@ -107,6 +107,8 @@ public class ClientSessionGroupMapping {
         InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
         user.setHost(addr.getHostString());
         user.setPort(addr.getPort());
+        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+        user.setPid(Integer.parseInt(jvmName.split("@")[0]));
         Session session;
         if (!sessionTable.containsKey(addr)) {
             log.info("createSession client[{}]", RemotingHelper.parseChannelRemoteAddr(ctx.channel()));
@@ -308,7 +310,7 @@ public class ClientSessionGroupMapping {
         // key: seq
         ConcurrentHashMap<String, DownStreamMsgContext> unAckMsg = session.getPusher().getUnAckMsg();
         ClientGroupWrapper clientGroupWrapper = Objects.requireNonNull(session.getClientGroupWrapper().get());
-        if (unAckMsg.size() > 0 && !clientGroupWrapper.getGroupConsumerSessions().isEmpty()) {
+        if (!unAckMsg.isEmpty() && !clientGroupWrapper.getGroupConsumerSessions().isEmpty()) {
             for (Map.Entry<String, DownStreamMsgContext> entry : unAckMsg.entrySet()) {
                 DownStreamMsgContext downStreamMsgContext = entry.getValue();
                 if (SubscriptionMode.BROADCASTING == downStreamMsgContext.getSubscriptionItem().getMode()) {
@@ -343,6 +345,8 @@ public class ClientSessionGroupMapping {
 
         log.info("GroupProducerSessions size:{}",
             clientGroupWrapper.getGroupProducerSessions().size());
+        log.info("GroupConsumerSessions size:{}",
+            clientGroupWrapper.getGroupConsumerSessions().size());
         if ((CollectionUtils.isEmpty(clientGroupWrapper.getGroupConsumerSessions()))
             && (CollectionUtils.isEmpty(clientGroupWrapper.getGroupProducerSessions()))) {
             shutdownClientGroupProducer(clientGroupWrapper);

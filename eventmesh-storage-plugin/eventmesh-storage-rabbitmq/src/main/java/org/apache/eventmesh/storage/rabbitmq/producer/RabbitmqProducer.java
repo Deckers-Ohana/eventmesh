@@ -17,6 +17,8 @@
 
 package org.apache.eventmesh.storage.rabbitmq.producer;
 
+import com.rabbitmq.client.AlreadyClosedException;
+import java.io.IOException;
 import org.apache.eventmesh.api.RequestReplyCallback;
 import org.apache.eventmesh.api.SendCallback;
 import org.apache.eventmesh.api.SendResult;
@@ -24,6 +26,7 @@ import org.apache.eventmesh.api.exception.OnExceptionContext;
 import org.apache.eventmesh.api.exception.StorageRuntimeException;
 import org.apache.eventmesh.api.producer.Producer;
 import org.apache.eventmesh.common.config.Config;
+import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
 import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEvent;
@@ -41,7 +44,6 @@ import com.rabbitmq.client.Connection;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Config(field = "configurationHolder")
 @Slf4j
 public class RabbitmqProducer implements Producer {
 
@@ -75,14 +77,26 @@ public class RabbitmqProducer implements Producer {
         if (!started) {
             started = true;
         }
+        try {
+            connection.isOpen();
+        }catch (AlreadyClosedException e){
+            try {
+                this.connection = getConnection();
+                this.channel = getChannel();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
+
+
 
     @Override
     public void shutdown() {
         if (started) {
             try {
-                rabbitmqClient.closeConnection(connection);
                 rabbitmqClient.closeChannel(channel);
+                rabbitmqClient.closeConnection(connection);
             } finally {
                 started = false;
             }
@@ -91,10 +105,18 @@ public class RabbitmqProducer implements Producer {
 
     @Override
     public void init(Properties properties) throws Exception {
+        this.configurationHolder= ConfigService.getInstance().buildConfigInstance(ConfigurationHolder.class);
         this.rabbitmqClient = new RabbitmqClient(rabbitmqConnectionFactory);
-        this.connection = rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
+        this.connection = getConnection();
+        this.channel = getChannel();
+    }
+
+    private Channel getChannel() throws IOException {
+        return rabbitmqConnectionFactory.createChannel(connection);
+    }
+    private Connection getConnection() throws Exception {
+        return rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
             configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
-        this.channel = rabbitmqConnectionFactory.createChannel(connection);
     }
 
     @Override

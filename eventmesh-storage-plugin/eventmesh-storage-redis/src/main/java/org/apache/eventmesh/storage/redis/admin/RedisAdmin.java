@@ -37,7 +37,7 @@ public class RedisAdmin extends AbstractAdmin {
 
     public RedisAdmin() {
         super(new AtomicBoolean(false));
-        redisson = RedissonClient.INSTANCE;
+        redisson = RedissonClient.getInstance();
     }
 
     @Override
