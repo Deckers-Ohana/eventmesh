@@ -17,6 +17,12 @@
 
 package org.apache.eventmesh.runtime.core.protocol.tcp.client.group;
 
+import static org.apache.eventmesh.common.Constants.CLOUD_EVENTS_PROTOCOL_NAME;
+import static org.apache.eventmesh.common.Constants.CONTENT_TYPE_CLOUDEVENTS_JSON;
+import static org.apache.eventmesh.common.Constants.PROTOCOL_DESC;
+import static org.apache.eventmesh.common.Constants.PROTOCOL_DESC_TCP;
+import static org.apache.eventmesh.common.Constants.PROTOCOL_TYPE;
+
 import org.apache.eventmesh.api.AsyncConsumeContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.EventMeshAction;
@@ -467,6 +473,8 @@ public class ClientGroupWrapper {
                         String.valueOf(System.currentTimeMillis()))
                     .withExtension(EventMeshConstants.REQ_RECEIVE_EVENTMESH_IP,
                         eventMeshTCPConfiguration.getEventMeshServerIp())
+                    .withExtension(PROTOCOL_DESC, PROTOCOL_DESC_TCP)
+                    .withDataContentType(CONTENT_TYPE_CLOUDEVENTS_JSON)
                     .build();
                 String topic = event.getSubject();
 
@@ -579,6 +587,8 @@ public class ClientGroupWrapper {
                         String.valueOf(System.currentTimeMillis()))
                     .withExtension(EventMeshConstants.REQ_RECEIVE_EVENTMESH_IP,
                         eventMeshTCPConfiguration.getEventMeshServerIp())
+                    .withExtension(PROTOCOL_DESC, PROTOCOL_DESC_TCP)
+                    .withDataContentType(CONTENT_TYPE_CLOUDEVENTS_JSON)
                     .build();
                 String topic = event.getSubject();
 

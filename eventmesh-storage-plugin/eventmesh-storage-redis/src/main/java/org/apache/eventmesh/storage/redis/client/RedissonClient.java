@@ -17,19 +17,15 @@
 
 package org.apache.eventmesh.storage.redis.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import org.apache.eventmesh.api.exception.StorageRuntimeException;
 import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
 import org.apache.eventmesh.storage.redis.config.RedisProperties;
-
-import java.util.Arrays;
-
 import org.redisson.Redisson;
 import org.redisson.config.Config;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Within EventMesh's JVM, there is no multi-connector server, and redisson itself is pooled management, so a single instance is fine, and it can save

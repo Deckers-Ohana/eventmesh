@@ -159,7 +159,7 @@ public class SessionSender {
             }
             failMsgCount.incrementAndGet();
             return new EventMeshTcpSendResult(header.getSeq(), EventMeshTcpSendStatus.OTHER_EXCEPTION,
-                e.getCause().toString());
+                e.getMessage());
         }
         return new EventMeshTcpSendResult(header.getSeq(), EventMeshTcpSendStatus.SUCCESS,
             EventMeshTcpSendStatus.SUCCESS.name());

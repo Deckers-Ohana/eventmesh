@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpRequestInterceptor;
 
 @Slf4j
 public class EventMeshServer {

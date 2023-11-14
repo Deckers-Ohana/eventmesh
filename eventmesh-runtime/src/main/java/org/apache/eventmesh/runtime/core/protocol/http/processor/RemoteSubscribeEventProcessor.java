@@ -171,8 +171,9 @@ public class RemoteSubscribeEventProcessor extends AbstractEventProcessor {
         long startTime = System.currentTimeMillis();
         try {
             // local subscription url
-            String localUrl = "http://" + localAddress + ":"
-                + eventMeshHttpConfiguration.getHttpServerPort()
+            String localUrl = (eventMeshHttpConfiguration.getEventMeshHost() == null ?
+                "http://" + localAddress + ":" + eventMeshHttpConfiguration.getHttpServerPort() :
+                eventMeshHttpConfiguration.getEventMeshHost())
                 + RequestURI.PUBLISH_BRIDGE.getRequestURI();
             Map<String, Object> remoteBodyMap = new HashMap<>();
             remoteBodyMap.put(EventMeshConstants.URL, localUrl);

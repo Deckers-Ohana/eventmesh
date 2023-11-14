@@ -18,6 +18,8 @@
 package org.apache.eventmesh.runtime.core.protocol.http.push;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.eventmesh.common.config.ConfigService;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -64,9 +66,15 @@ public class HTTPClientPool {
     private static final int SOCKET_TIMEOUT = 5000;
 
     private transient PoolingHttpClientConnectionManager connectionManager;
+    //for spring framework
+    private HttpRequestInterceptor  httpRequestInterceptor;
 
     public HTTPClientPool(final int core) {
         this.core = core <= 0 ? 1 : core;
+    }
+
+    public void setHttpRequestInterceptor(HttpRequestInterceptor httpRequestInterceptor) {
+        this.httpRequestInterceptor = httpRequestInterceptor;
     }
 
     public CloseableHttpClient getClient() {
@@ -121,8 +129,11 @@ public class HTTPClientPool {
             .setConnectTimeout(CONNECT_TIMEOUT)
             .setConnectionRequestTimeout(CONNECT_TIMEOUT)
             .setSocketTimeout(SOCKET_TIMEOUT).build();
-
+        if(httpRequestInterceptor==null){
+            httpRequestInterceptor = ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class);
+        }
         return HttpClients.custom()
+            .addInterceptorLast(httpRequestInterceptor)
             .setDefaultRequestConfig(config)
             .setConnectionManager(connectionManager)
             .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())

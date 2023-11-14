@@ -19,6 +19,13 @@ package org.apache.eventmesh.runtime.boot;
 
 import static org.apache.eventmesh.common.Constants.HTTP;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.RateLimiter;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ThreadPoolExecutor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.eventmesh.api.meta.dto.EventMeshRegisterInfo;
 import org.apache.eventmesh.api.meta.dto.EventMeshUnRegisterInfo;
 import org.apache.eventmesh.common.exception.EventMeshException;
@@ -58,19 +65,7 @@ import org.apache.eventmesh.runtime.core.protocol.http.retry.HttpRetryer;
 import org.apache.eventmesh.runtime.meta.MetaStorage;
 import org.apache.eventmesh.runtime.metrics.http.HTTPMetricsServer;
 import org.apache.eventmesh.webhook.receive.WebHookController;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadPoolExecutor;
-
 import org.assertj.core.util.Lists;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.util.concurrent.RateLimiter;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Add multiple managers to the underlying server
@@ -93,7 +88,6 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
 
     private transient RateLimiter msgRateLimiter;
     private transient RateLimiter batchRateLimiter;
-
     private final transient HTTPClientPool httpClientPool = new HTTPClientPool(10);
 
     public EventMeshHTTPServer(final EventMeshServer eventMeshServer, final EventMeshHTTPConfiguration eventMeshHttpConfiguration) {

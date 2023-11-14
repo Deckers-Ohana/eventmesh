@@ -27,6 +27,7 @@ import org.apache.eventmesh.storage.redis.client.RedissonClient;
 
 import java.util.Properties;
 
+import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
 import org.redisson.Redisson;
 import org.redisson.api.RTopic;
 
@@ -83,7 +84,7 @@ public class RedisProducer implements Producer {
         Preconditions.checkNotNull(sendCallback);
 
         try {
-            RTopic topic = redisson.getTopic(cloudEvent.getSubject());
+            RTopic topic = redisson.getTopic(cloudEvent.getSubject(), CloudEventCodec.getInstance());
 
             topic.publishAsync(cloudEvent).whenCompleteAsync((stage, throwable) -> {
                 if (throwable != null) {
@@ -114,7 +115,7 @@ public class RedisProducer implements Producer {
     public void sendOneway(CloudEvent cloudEvent) {
         Preconditions.checkNotNull(cloudEvent);
 
-        RTopic topic = redisson.getTopic(cloudEvent.getSubject());
+        RTopic topic = redisson.getTopic(cloudEvent.getSubject(), CloudEventCodec.getInstance());
         topic.publish(cloudEvent);
     }
 

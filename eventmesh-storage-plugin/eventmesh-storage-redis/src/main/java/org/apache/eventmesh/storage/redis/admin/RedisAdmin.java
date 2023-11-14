@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
 import org.redisson.Redisson;
 import org.redisson.api.RPatternTopic;
 import org.redisson.api.RTopic;
@@ -43,7 +44,7 @@ public class RedisAdmin extends AbstractAdmin {
     @Override
     public List<TopicProperties> getTopic() throws Exception {
         // TODO: match all the topic with pattern "*" for now.
-        RPatternTopic patternTopic = redisson.getPatternTopic("*");
+        RPatternTopic patternTopic = redisson.getPatternTopic("*", CloudEventCodec.getInstance());
         return patternTopic.getPatternNames()
             .stream()
             .map(s -> new TopicProperties(s, 0))
@@ -57,13 +58,13 @@ public class RedisAdmin extends AbstractAdmin {
 
     @Override
     public void deleteTopic(String topicName) throws Exception {
-        RTopic topic = redisson.getTopic(topicName);
+        RTopic topic = redisson.getTopic(topicName, CloudEventCodec.getInstance());
         topic.removeAllListeners();
     }
 
     @Override
     public void publish(CloudEvent cloudEvent) throws Exception {
-        RTopic topic = redisson.getTopic(cloudEvent.getSubject());
+        RTopic topic = redisson.getTopic(cloudEvent.getSubject(), CloudEventCodec.getInstance());
         topic.publish(cloudEvent);
     }
 }

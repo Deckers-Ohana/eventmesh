@@ -60,17 +60,21 @@ public abstract class AbstractEventMeshTCPSubHandler<ProtocolMessage> extends Si
                 response(MessageUtils.broadcastMessageAck(msg));
                 break;
             case SERVER_GOODBYE_REQUEST:
+            case HEARTBEAT_RESPONSE:
+            case LISTEN_RESPONSE:
+            case SUBSCRIBE_RESPONSE:
+            case HELLO_RESPONSE:
                 // TODO
                 break;
             default:
-                log.error("msg ignored|{}|{}", cmd, msg);
+                log.warn("msg ignored|{}|{}", cmd, msg);
         }
         RequestContext context = contexts.get(RequestContext.key(msg));
         if (context != null) {
             contexts.remove(context.getKey());
             context.finish(msg);
         } else {
-            log.error("msg ignored,context not found.|{}|{}", cmd, msg);
+            log.warn("msg ignored,context not found.|{}|{}", cmd, msg);
         }
     }
 
