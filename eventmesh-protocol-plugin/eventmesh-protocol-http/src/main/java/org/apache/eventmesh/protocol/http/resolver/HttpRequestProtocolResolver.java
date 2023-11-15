@@ -17,26 +17,23 @@
 
 package org.apache.eventmesh.protocol.http.resolver;
 
-import org.apache.eventmesh.common.protocol.http.HttpEventWrapper;
-import org.apache.eventmesh.common.utils.JsonUtils;
-import org.apache.eventmesh.protocol.api.exception.ProtocolHandleException;
-import org.apache.eventmesh.protocol.http.HttpProtocolConstant;
-
-import org.apache.commons.lang3.StringUtils;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.cloudevents.CloudEvent;
+import io.cloudevents.core.v1.CloudEventBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
-import io.cloudevents.CloudEvent;
-import io.cloudevents.core.v1.CloudEventBuilder;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.eventmesh.common.protocol.http.HttpEventWrapper;
+import org.apache.eventmesh.common.utils.JsonUtils;
+import org.apache.eventmesh.protocol.api.exception.ProtocolHandleException;
+import org.apache.eventmesh.protocol.http.HttpProtocolConstant;
 
 public class HttpRequestProtocolResolver {
+    public static final String AUTHORIZATION = "Authorization";
 
     public static CloudEvent buildEvent(HttpEventWrapper httpEventWrapper) throws ProtocolHandleException {
 
@@ -73,6 +70,10 @@ public class HttpRequestProtocolResolver {
                     || StringUtils.equals(HttpProtocolConstant.CONSTANTS_KEY_SOURCE, extension.getKey())
                     || StringUtils.equals(HttpProtocolConstant.CONSTANTS_KEY_TYPE, extension.getKey())
                     || StringUtils.equals(HttpProtocolConstant.CONSTANTS_KEY_SUBJECT, extension.getKey())) {
+                    continue;
+                }
+                if (StringUtils.equals(AUTHORIZATION, extension.getKey())) {
+                    builder.withExtension(extension.getKey(), sysHeaderMap.get(extension.getKey()).toString());
                     continue;
                 }
                 String lowerExtensionKey = extension.getKey().toLowerCase(Locale.getDefault());

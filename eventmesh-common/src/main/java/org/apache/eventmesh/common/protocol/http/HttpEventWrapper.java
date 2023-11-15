@@ -217,6 +217,8 @@ public class HttpEventWrapper implements ProtocolTransportObject {
         sysHeaderMap.put(ProtocolKey.CloudEventsKey.SOURCE, headerMap.getOrDefault("source", URI.create("/")));
         sysHeaderMap.put(ProtocolKey.CloudEventsKey.TYPE, headerMap.getOrDefault("type", "http_request"));
         sysHeaderMap.put(ProtocolKey.ClientInstanceKey.TOKEN.getKey(), headerMap.getOrDefault(AUTHORIZATION, ""));
+        sysHeaderMap.put(AUTHORIZATION, headerMap.getOrDefault(AUTHORIZATION, ""));
+        headerMap.remove(AUTHORIZATION);
 
         String topic = headerMap.getOrDefault("subject", "").toString();
 

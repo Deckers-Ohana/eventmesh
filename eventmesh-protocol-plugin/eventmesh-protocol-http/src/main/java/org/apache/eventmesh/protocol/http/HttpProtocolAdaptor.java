@@ -90,7 +90,8 @@ public class HttpProtocolAdaptor<T extends ProtocolTransportObject>
 
     @Override
     public ProtocolTransportObject fromCloudEvent(CloudEvent cloudEvent) throws ProtocolHandleException {
-        String protocolDesc = Objects.requireNonNull(cloudEvent.getExtension(Constants.PROTOCOL_DESC)).toString();
+        String protocolDesc =
+            cloudEvent.getExtension(Constants.PROTOCOL_DESC) != null ? cloudEvent.getExtension(Constants.PROTOCOL_DESC).toString() : "http";
         switch (protocolDesc) {
             case "http":
                 HttpEventWrapper httpEventWrapper = new HttpEventWrapper();
@@ -116,8 +117,9 @@ public class HttpProtocolAdaptor<T extends ProtocolTransportObject>
                         Objects.requireNonNull(dataContentMap, "Headers must not be null").get(CONSTANTS_KEY_HEADERS));
                     byte[] requestBody = Objects.requireNonNull(
                         JsonUtils.toJSONString(dataContentMap.get(CONSTANTS_KEY_BODY)), "Body must not be null").getBytes(StandardCharsets.UTF_8);
-                    Map<String, Object> requestHeaderMap = JsonUtils.parseTypeReferenceObject(requestHeader, new TypeReference<Map<String, Object>>() {
-                    });
+                    Map<String, Object> requestHeaderMap = JsonUtils.parseTypeReferenceObject(requestHeader,
+                        new TypeReference<Map<String, Object>>() {
+                        });
                     String requestURI = dataContentMap.get(CONSTANTS_KEY_PATH).toString();
                     String httpMethod = dataContentMap.get(CONSTANTS_KEY_METHOD).toString();
 
@@ -141,7 +143,6 @@ public class HttpProtocolAdaptor<T extends ProtocolTransportObject>
             default:
                 throw new ProtocolHandleException(String.format("Unsupported protocolDesc: %s", protocolDesc));
         }
-
 
 
     }
