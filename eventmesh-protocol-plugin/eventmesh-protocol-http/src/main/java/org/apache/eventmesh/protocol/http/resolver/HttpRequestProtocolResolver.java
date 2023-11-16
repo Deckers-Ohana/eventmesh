@@ -72,10 +72,6 @@ public class HttpRequestProtocolResolver {
                     || StringUtils.equals(HttpProtocolConstant.CONSTANTS_KEY_SUBJECT, extension.getKey())) {
                     continue;
                 }
-                if (StringUtils.equals(AUTHORIZATION, extension.getKey())) {
-                    builder.withExtension(extension.getKey(), sysHeaderMap.get(extension.getKey()).toString());
-                    continue;
-                }
                 String lowerExtensionKey = extension.getKey().toLowerCase(Locale.getDefault());
                 builder.withExtension(lowerExtensionKey, sysHeaderMap.get(extension.getKey()).toString());
             }

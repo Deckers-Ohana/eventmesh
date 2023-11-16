@@ -36,6 +36,7 @@ import org.apache.eventmesh.common.protocol.http.common.EventMeshRetCode;
 import org.apache.eventmesh.common.protocol.http.common.ProtocolKey;
 import org.apache.eventmesh.common.protocol.http.common.ProtocolVersion;
 import org.apache.eventmesh.common.protocol.http.common.RequestCode;
+import org.apache.eventmesh.common.protocol.http.common.RequestURI;
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.common.utils.LogUtils;
 
@@ -106,6 +107,28 @@ public class EventMeshHttpConsumer extends AbstractHttpClient implements AutoClo
         }
     }
 
+    public void subscribeRemote(final List<SubscriptionItem> topicList, final String subscribeUrl) throws EventMeshException{
+        Objects.requireNonNull(topicList, "Subscribe item cannot be null");
+        Objects.requireNonNull(subscribeUrl, "SubscribeUrl cannot be null");
+
+        final RequestParam subscribeParam = buildCommonRequestParam()
+            .addBody(SubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
+            .addBody(SubscribeRequestBody.CONSUMERGROUP, eventMeshHttpClientConfig.getConsumerGroup())
+            .addBody(SubscribeRequestBody.URL, subscribeUrl);
+
+        final String target = selectEventMesh() + RequestURI.SUBSCRIBE_REMOTE.getRequestURI();
+        try {
+            final String subRes = HttpUtils.post(httpClient, target, subscribeParam);
+            final EventMeshRetObj ret = JsonUtils.parseObject(subRes, EventMeshRetObj.class);
+            if (Objects.requireNonNull(ret).getRetCode() != EventMeshRetCode.SUCCESS.getRetCode()) {
+                throw new EventMeshException(ret.getRetCode(), ret.getRetMsg());
+            }
+            SUBSCRIPTIONS.addAll(topicList);
+        } catch (Exception ex) {
+            throw new EventMeshException(String.format("Subscribe topic error, target:%s", target), ex);
+        }
+    }
+
     // todo: remove http heartBeat?
     public void heartBeat(final List<SubscriptionItem> topicList, final String subscribeUrl) {
         Objects.requireNonNull(topicList, "Subscribe item cannot be null");
@@ -146,11 +169,34 @@ public class EventMeshHttpConsumer extends AbstractHttpClient implements AutoClo
         Objects.requireNonNull(unSubscribeUrl, "unSubscribeUrl cannot be null");
 
         final RequestParam unSubscribeParam = buildCommonRequestParam()
-            .addHeader(ProtocolKey.REQUEST_CODE, RequestCode.UNSUBSCRIBE.getRequestCode())
             .addBody(UnSubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
             .addBody(UnSubscribeRequestBody.URL, unSubscribeUrl);
 
         final String target = selectEventMesh();
+        try {
+            final String unSubRes = HttpUtils.post(httpClient, target, unSubscribeParam);
+            final EventMeshRetObj ret = JsonUtils.parseObject(unSubRes, EventMeshRetObj.class);
+
+            if (EventMeshRetCode.SUCCESS.getRetCode() != Objects.requireNonNull(ret).getRetCode()) {
+                throw new EventMeshException(ret.getRetCode(), ret.getRetMsg());
+            }
+            // todo: avoid concurrentModifiedException
+            SUBSCRIPTIONS.removeIf(item -> topicList.contains(item.getTopic()));
+        } catch (Exception e) {
+            throw new EventMeshException(String.format("Unsubscribe topic error, target:%s", target), e);
+        }
+    }
+
+    public void unsubscribeRemote(final List<String> topicList, final String unSubscribeUrl) throws EventMeshException {
+        Objects.requireNonNull(topicList, "Topics cannot be null");
+        Objects.requireNonNull(unSubscribeUrl, "unRemoteSubscribeUrl cannot be null");
+
+        final RequestParam unSubscribeParam = buildCommonRequestParam()
+            .addHeader(ProtocolKey.REQUEST_CODE, RequestCode.UNSUBSCRIBE.getRequestCode())
+            .addBody(UnSubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
+            .addBody(UnSubscribeRequestBody.URL, unSubscribeUrl);
+
+        final String target = selectEventMesh() + RequestURI.UNSUBSCRIBE_REMOTE.getRequestURI();
         try {
             final String unSubRes = HttpUtils.post(httpClient, target, unSubscribeParam);
             final EventMeshRetObj ret = JsonUtils.parseObject(unSubRes, EventMeshRetObj.class);
