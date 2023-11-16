@@ -107,14 +107,15 @@ public class EventMeshHttpConsumer extends AbstractHttpClient implements AutoClo
         }
     }
 
-    public void subscribeRemote(final List<SubscriptionItem> topicList, final String subscribeUrl) throws EventMeshException{
+    public void subscribeRemote(final List<SubscriptionItem> topicList, final String remoteMesh) throws EventMeshException {
         Objects.requireNonNull(topicList, "Subscribe item cannot be null");
-        Objects.requireNonNull(subscribeUrl, "SubscribeUrl cannot be null");
+        Objects.requireNonNull(remoteMesh, "SubscribeUrl cannot be null");
 
         final RequestParam subscribeParam = buildCommonRequestParam()
             .addBody(SubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
             .addBody(SubscribeRequestBody.CONSUMERGROUP, eventMeshHttpClientConfig.getConsumerGroup())
-            .addBody(SubscribeRequestBody.URL, subscribeUrl);
+            .addBody(SubscribeRequestBody.URL, "testUrl")
+            .addBody("remoteMesh", remoteMesh + RequestURI.SUBSCRIBE_LOCAL.getRequestURI());
 
         final String target = selectEventMesh() + RequestURI.SUBSCRIBE_REMOTE.getRequestURI();
         try {
@@ -187,14 +188,15 @@ public class EventMeshHttpConsumer extends AbstractHttpClient implements AutoClo
         }
     }
 
-    public void unsubscribeRemote(final List<String> topicList, final String unSubscribeUrl) throws EventMeshException {
+    public void unsubscribeRemote(final List<String> topicList, final String remoteMesh) throws EventMeshException {
         Objects.requireNonNull(topicList, "Topics cannot be null");
-        Objects.requireNonNull(unSubscribeUrl, "unRemoteSubscribeUrl cannot be null");
+        Objects.requireNonNull(remoteMesh, "unRemoteSubscribeUrl cannot be null");
 
         final RequestParam unSubscribeParam = buildCommonRequestParam()
             .addHeader(ProtocolKey.REQUEST_CODE, RequestCode.UNSUBSCRIBE.getRequestCode())
             .addBody(UnSubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
-            .addBody(UnSubscribeRequestBody.URL, unSubscribeUrl);
+            .addBody(UnSubscribeRequestBody.URL, "testUrl")
+            .addBody("remoteMesh", remoteMesh + RequestURI.UNSUBSCRIBE_LOCAL.getRequestURI());
 
         final String target = selectEventMesh() + RequestURI.UNSUBSCRIBE_REMOTE.getRequestURI();
         try {
