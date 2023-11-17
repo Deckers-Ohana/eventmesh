@@ -101,7 +101,9 @@ public class LocalSubscribeEventProcessor extends AbstractEventProcessor {
 
         final String url = requestBodyMap.get("url").toString();
         final String consumerGroup = requestBodyMap.get("consumerGroup").toString();
-        final String topic = JsonUtils.toJSONString(requestBodyMap.get("topic"));
+        final String topic =
+            requestBodyMap.get("topic") instanceof String ? String.valueOf(requestBodyMap.get("topic"))
+                : JsonUtils.toJSONString(requestBodyMap.get("topic"));
 
         // SubscriptionItem
         final List<SubscriptionItem> subscriptionList = Optional.ofNullable(JsonUtils.parseTypeReferenceObject(
