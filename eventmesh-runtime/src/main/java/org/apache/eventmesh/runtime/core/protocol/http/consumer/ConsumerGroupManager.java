@@ -57,8 +57,8 @@ public class ConsumerGroupManager {
         if (!started.compareAndSet(false, true)) {
             return;
         }
-        setupEventMeshConsumer(consumerGroupConfig);
         eventMeshConsumer.start();
+        setupEventMeshConsumer(consumerGroupConfig);
     }
 
     private synchronized void setupEventMeshConsumer(ConsumerGroupConf consumerGroupConfig) throws Exception {
@@ -82,6 +82,7 @@ public class ConsumerGroupManager {
 
         if (started.get()) {
             shutdown();
+            inited.set(false);
         }
 
         this.consumerGroupConfig = consumerGroupConfig;

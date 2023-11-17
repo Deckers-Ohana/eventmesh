@@ -56,9 +56,6 @@ public class RedisProducer implements Producer {
         if (!started) {
             started = true;
         }
-        if(redisson==null){
-            redisson = RedissonClient.getInstance();
-        }
     }
 
     @Override

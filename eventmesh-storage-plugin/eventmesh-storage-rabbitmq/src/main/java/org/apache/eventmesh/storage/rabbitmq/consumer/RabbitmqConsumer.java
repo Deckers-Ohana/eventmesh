@@ -17,6 +17,7 @@
 
 package org.apache.eventmesh.storage.rabbitmq.consumer;
 
+import com.rabbitmq.client.AlreadyClosedException;
 import java.io.IOException;
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
@@ -79,22 +80,15 @@ public class RabbitmqConsumer implements Consumer {
         if (!started) {
             started = true;
         }
-        try {
-            this.connection = getConnection();
-            this.channel = getChannel();
-            rabbitmqConsumerHandler.start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public void shutdown() {
         if (started) {
             try {
+                rabbitmqConsumerHandler.stop();
                 rabbitmqClient.closeChannel(channel);
                 rabbitmqClient.closeConnection(connection);
-                rabbitmqConsumerHandler.stop();
             } finally {
                 started = false;
             }

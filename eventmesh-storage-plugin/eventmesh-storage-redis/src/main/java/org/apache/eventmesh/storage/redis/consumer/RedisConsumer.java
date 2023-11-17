@@ -56,9 +56,6 @@ public class RedisConsumer implements Consumer {
         if (!started) {
             started = true;
         }
-        if(redisson==null){
-            redisson= RedissonClient.getInstance();
-        }
     }
 
     @Override

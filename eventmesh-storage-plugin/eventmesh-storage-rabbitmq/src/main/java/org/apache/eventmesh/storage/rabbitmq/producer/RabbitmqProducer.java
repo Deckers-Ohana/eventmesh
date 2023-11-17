@@ -77,16 +77,6 @@ public class RabbitmqProducer implements Producer {
         if (!started) {
             started = true;
         }
-        try {
-            connection.isOpen();
-        }catch (AlreadyClosedException e){
-            try {
-                this.connection = getConnection();
-                this.channel = getChannel();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }
     }
 
 
