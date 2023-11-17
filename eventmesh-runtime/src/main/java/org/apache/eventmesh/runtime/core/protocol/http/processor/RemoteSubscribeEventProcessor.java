@@ -115,7 +115,9 @@ public class RemoteSubscribeEventProcessor extends AbstractEventProcessor {
         }
 
         // String url = requestBodyMap.get(EventMeshConstants.URL).toString();
-        String topic = JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC));
+        String topic = requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC) instanceof String ? String.valueOf(
+            requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC))
+            : JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC));
 
         // SubscriptionItem
         List<SubscriptionItem> subscriptionList = Optional.ofNullable(JsonUtils.parseTypeReferenceObject(
