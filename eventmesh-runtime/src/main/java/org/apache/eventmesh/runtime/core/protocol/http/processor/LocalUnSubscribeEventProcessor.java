@@ -117,7 +117,9 @@ public class LocalUnSubscribeEventProcessor extends AbstractEventProcessor {
 
         // unSubscriptionItem
         final List<String> unSubTopicList = Optional.ofNullable(JsonUtils.parseTypeReferenceObject(
-            JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC)),
+            requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC) instanceof String ? String.valueOf(
+                requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC))
+                : JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC)),
             new TypeReference<List<String>>() {
             })).orElseGet(Collections::emptyList);
 
@@ -193,7 +195,7 @@ public class LocalUnSubscribeEventProcessor extends AbstractEventProcessor {
 
                 } catch (Exception e) {
                     LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms"
-                        + "|topic={}|url={}", System.currentTimeMillis() - startTime,
+                            + "|topic={}|url={}", System.currentTimeMillis() - startTime,
                         JsonUtils.toJSONString(unSubTopicList), unSubscribeUrl, e);
                     handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_UNSUBSCRIBE_ERR, responseHeaderMap,
                         responseBodyMap, null);
@@ -215,7 +217,7 @@ public class LocalUnSubscribeEventProcessor extends AbstractEventProcessor {
                         .removeIf(s -> StringUtils.equals(consumerGroup, s));
                 } catch (Exception e) {
                     LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms"
-                        + "|topic={}|url={}", System.currentTimeMillis() - startTime,
+                            + "|topic={}|url={}", System.currentTimeMillis() - startTime,
                         JsonUtils.toJSONString(unSubTopicList), unSubscribeUrl, e);
                     handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_UNSUBSCRIBE_ERR, responseHeaderMap,
                         responseBodyMap, null);

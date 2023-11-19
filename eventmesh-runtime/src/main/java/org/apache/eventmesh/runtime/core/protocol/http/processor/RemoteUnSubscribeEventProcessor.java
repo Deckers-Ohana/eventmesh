@@ -113,7 +113,9 @@ public class RemoteUnSubscribeEventProcessor extends AbstractEventProcessor {
             return;
         }
 
-        String topic = JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC).toString());
+        String topic = requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC) instanceof String ? String.valueOf(
+            requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC))
+            : JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC));
 
         long startTime = System.currentTimeMillis();
         try {
@@ -137,7 +139,7 @@ public class RemoteUnSubscribeEventProcessor extends AbstractEventProcessor {
             remoteBodyMap.put(EventMeshConstants.MANAGE_TOPIC, requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC));
 
             List<String> unSubTopicList = Optional.ofNullable(JsonUtils.parseTypeReferenceObject(
-                JsonUtils.toJSONString(requestBodyMap.get(EventMeshConstants.MANAGE_TOPIC)),
+                topic,
                 new TypeReference<List<String>>() {
                 })).orElseGet(Collections::emptyList);
 
