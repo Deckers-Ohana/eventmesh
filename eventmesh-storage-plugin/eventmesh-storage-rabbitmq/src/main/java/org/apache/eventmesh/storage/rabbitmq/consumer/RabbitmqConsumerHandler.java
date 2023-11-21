@@ -39,17 +39,19 @@ public class RabbitmqConsumerHandler implements Runnable {
     private final ConfigurationHolder configurationHolder;
     private final AtomicBoolean stop = new AtomicBoolean(false);
     private EventListener eventListener;
+    private String queueName;
 
-    public RabbitmqConsumerHandler(Channel channel, ConfigurationHolder configurationHolder) {
+    public RabbitmqConsumerHandler(Channel channel, ConfigurationHolder configurationHolder, String queueName) {
         this.channel = channel;
         this.configurationHolder = configurationHolder;
+        this.queueName = queueName;
     }
 
     @Override
     public void run() {
         while (!stop.get()) {
             try {
-                GetResponse response = channel.basicGet(configurationHolder.getQueueName(), configurationHolder.isAutoAck());
+                GetResponse response = channel.basicGet(queueName, configurationHolder.isAutoAck());
                 if (response != null) {
                     RabbitmqCloudEvent rabbitmqCloudEvent = RabbitmqCloudEvent.getFromByteArray(response.getBody());
                     CloudEvent cloudEvent = rabbitmqCloudEvent.convertToCloudEvent();
@@ -81,7 +83,7 @@ public class RabbitmqConsumerHandler implements Runnable {
         stop.set(true);
     }
 
-    public void start(){
+    public void start() {
         stop.set(false);
     }
 }

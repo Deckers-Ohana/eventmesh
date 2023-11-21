@@ -113,7 +113,8 @@ public class RabbitmqConsumer implements Consumer {
         this.rabbitmqClient = new RabbitmqClient(rabbitmqConnectionFactory);
         this.connection = getConnection();
         this.channel = getChannel();
-        this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder);
+        this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder,
+            isBroadcast ? consumerGroup : configurationHolder.getQueueName());
     }
 
     private Channel getChannel() throws IOException {
