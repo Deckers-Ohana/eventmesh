@@ -23,7 +23,9 @@ import static org.apache.eventmesh.common.Constants.IS_BROADCAST;
 
 import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.BuiltinExchangeType;
+
 import java.io.IOException;
+
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.consumer.Consumer;
@@ -64,9 +66,9 @@ public class RabbitmqConsumer implements Consumer {
     private ConfigurationHolder configurationHolder;
 
     private final ThreadPoolExecutor executor = ThreadPoolFactory.createThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() * 2,
-        Runtime.getRuntime().availableProcessors() * 2,
-        "EventMesh-Rabbitmq-Consumer");
+            Runtime.getRuntime().availableProcessors() * 2,
+            Runtime.getRuntime().availableProcessors() * 2,
+            "EventMesh-Rabbitmq-Consumer");
 
     private RabbitmqConsumerHandler rabbitmqConsumerHandler;
 
@@ -114,7 +116,7 @@ public class RabbitmqConsumer implements Consumer {
         this.connection = getConnection();
         this.channel = getChannel();
         this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder,
-            isBroadcast ? consumerGroup : configurationHolder.getQueueName());
+                isBroadcast ? consumerGroup : configurationHolder.getQueueName());
     }
 
     private Channel getChannel() throws IOException {
@@ -123,7 +125,8 @@ public class RabbitmqConsumer implements Consumer {
 
     private Connection getConnection() throws Exception {
         return rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
-            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(), configurationHolder.isSsl());
+                configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(),
+                configurationHolder.isSsl());
     }
 
     @Override
@@ -134,8 +137,8 @@ public class RabbitmqConsumer implements Consumer {
     @Override
     public void subscribe(String topic) {
         rabbitmqClient.binding(channel, configurationHolder.getExchangeType(), configurationHolder.getExchangeName(),
-            configurationHolder.getRoutingKey(),
-            isBroadcast ? consumerGroup : configurationHolder.getQueueName());
+                topic + configurationHolder.getRoutingKey(),
+                isBroadcast ? consumerGroup : configurationHolder.getQueueName());
         executor.execute(rabbitmqConsumerHandler);
     }
 
@@ -143,7 +146,8 @@ public class RabbitmqConsumer implements Consumer {
     public void unsubscribe(String topic) {
         try {
             rabbitmqClient.unbinding(channel, configurationHolder.getExchangeName(),
-                configurationHolder.getRoutingKey(), isBroadcast ? consumerGroup : configurationHolder.getQueueName());
+                    topic + configurationHolder.getRoutingKey(),
+                    isBroadcast ? consumerGroup : configurationHolder.getQueueName());
             rabbitmqConsumerHandler.stop();
         } catch (Exception ex) {
             log.error("[RabbitmqConsumer] unsubscribe happen exception.", ex);
