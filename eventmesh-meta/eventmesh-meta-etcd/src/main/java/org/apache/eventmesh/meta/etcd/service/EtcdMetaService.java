@@ -19,6 +19,7 @@ package org.apache.eventmesh.meta.etcd.service;
 
 import org.apache.eventmesh.api.exception.MetaException;
 import org.apache.eventmesh.api.meta.MetaService;
+import org.apache.eventmesh.api.meta.MetaServiceListener;
 import org.apache.eventmesh.api.meta.dto.EventMeshDataInfo;
 import org.apache.eventmesh.api.meta.dto.EventMeshRegisterInfo;
 import org.apache.eventmesh.api.meta.dto.EventMeshUnRegisterInfo;
@@ -169,6 +170,9 @@ public class EtcdMetaService implements MetaService {
                     eventMeshDataInfoList.add(eventMeshDataInfo);
                 }
             }
+        } catch (InterruptedException e) {
+            log.error("[EtcdRegistryService][findEventMeshInfoByCluster] InterruptedException", e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error("[EtcdRegistryService][findEventMeshInfoByCluster] error, clusterName: {}", clusterName, e);
             throw new MetaException(e.getMessage());
@@ -196,8 +200,14 @@ public class EtcdMetaService implements MetaService {
     }
 
     @Override
-    public String getMetaData(String key) {
+    public Map<String, String> getMetaData(String key, boolean fuzzyEnabled) {
         return null;
+    }
+
+    // todo: to be implemented
+    @Override
+    public void getMetaDataWithListener(MetaServiceListener metaServiceListener, String key) {
+
     }
 
     @Override
@@ -287,7 +297,10 @@ public class EtcdMetaService implements MetaService {
                     List<KeyValue> keyValues = null;
                     try {
                         keyValues = etcdClient.getKVClient().get(etcdKey).get().getKvs();
-                    } catch (InterruptedException | ExecutionException e) {
+                    } catch (InterruptedException e) {
+                        log.error("get etcdKey[{}] failed[InterruptedException]", etcdKey, e);
+                        Thread.currentThread().interrupt();
+                    } catch (ExecutionException e) {
                         log.error("get etcdKey[{}] failed", etcdKey, e);
                     }
                     if (CollectionUtils.isEmpty(keyValues)) {

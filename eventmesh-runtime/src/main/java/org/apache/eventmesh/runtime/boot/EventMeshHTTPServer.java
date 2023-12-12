@@ -59,9 +59,9 @@ import org.apache.eventmesh.runtime.core.protocol.http.processor.SendSyncMessage
 import org.apache.eventmesh.runtime.core.protocol.http.processor.SubscribeProcessor;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.UnSubscribeProcessor;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.WebHookProcessor;
-import org.apache.eventmesh.runtime.core.protocol.http.producer.ProducerManager;
 import org.apache.eventmesh.runtime.core.protocol.http.push.HTTPClientPool;
 import org.apache.eventmesh.runtime.core.protocol.http.retry.HttpRetryer;
+import org.apache.eventmesh.runtime.core.protocol.producer.ProducerManager;
 import org.apache.eventmesh.runtime.meta.MetaStorage;
 import org.apache.eventmesh.runtime.metrics.http.HTTPMetricsServer;
 import org.apache.eventmesh.webhook.receive.WebHookController;
@@ -77,12 +77,17 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
     private final EventMeshHTTPConfiguration eventMeshHttpConfiguration;
 
     private final MetaStorage metaStorage;
+
     private final Acl acl;
     private final EventBus eventBus = new EventBus();
 
     private ConsumerManager consumerManager;
     private ProducerManager producerManager;
     private SubscriptionManager subscriptionManager;
+
+    private FilterEngine filterEngine;
+
+    private TransformerEngine transformerEngine;
 
     private HttpRetryer httpRetryer;
 
@@ -126,6 +131,10 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         producerManager = new ProducerManager(this);
         producerManager.init();
 
+        filterEngine = new FilterEngine(metaStorage, producerManager, consumerManager);
+
+        transformerEngine = new TransformerEngine(metaStorage, producerManager, consumerManager);
+
         super.setHandlerService(new HandlerService());
         super.getHandlerService().setMetrics(this.getMetrics());
 
@@ -149,6 +158,10 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         consumerManager.start();
         producerManager.start();
         httpRetryer.start();
+        // filterEngine depend on metaStorage
+        if (metaStorage.getStarted().get()) {
+            filterEngine.start();
+        }
 
         if (eventMeshHttpConfiguration.isEventMeshServerMetaStorageEnable()) {
             this.register();
@@ -162,6 +175,10 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         super.shutdown();
 
         this.getMetrics().shutdown();
+
+        filterEngine.shutdown();
+
+        transformerEngine.shutdown();
 
         consumerManager.shutdown();
 
@@ -331,6 +348,14 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
 
     public RateLimiter getBatchRateLimiter() {
         return batchRateLimiter;
+    }
+
+    public FilterEngine getFilterEngine() {
+        return filterEngine;
+    }
+
+    public TransformerEngine getTransformerEngine() {
+        return transformerEngine;
     }
 
     public MetaStorage getMetaStorage() {

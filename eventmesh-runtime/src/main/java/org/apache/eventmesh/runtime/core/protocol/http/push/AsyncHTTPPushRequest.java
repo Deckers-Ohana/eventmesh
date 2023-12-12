@@ -31,12 +31,14 @@ import org.apache.eventmesh.common.utils.IPUtils;
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.common.utils.LogUtils;
 import org.apache.eventmesh.common.utils.RandomStringUtils;
+import org.apache.eventmesh.filter.pattern.Pattern;
 import org.apache.eventmesh.protocol.api.ProtocolAdaptor;
 import org.apache.eventmesh.protocol.api.ProtocolPluginFactory;
 import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.HandleMsgContext;
 import org.apache.eventmesh.runtime.util.EventMeshUtil;
 import org.apache.eventmesh.runtime.util.WebhookUtil;
+import org.apache.eventmesh.transformer.Transformer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -52,6 +54,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -126,7 +129,33 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
             .withExtension(EventMeshConstants.RSP_URL, currPushUrl)
             .withExtension(EventMeshConstants.RSP_GROUP, handleMsgContext.getConsumerGroup())
             .build();
+
+        Pattern filterPattern = eventMeshHTTPServer.getFilterEngine()
+            .getFilterPattern(handleMsgContext.getConsumerGroup() + "-" + handleMsgContext.getTopic());
+        if (filterPattern != null) {
+            if (!filterPattern.filter(JsonUtils.toJSONString(event))) {
+                LOGGER.error("apply filter failed, group:{}, topic:{}, bizSeqNo={}, uniqueId={}",
+                    this.handleMsgContext.getConsumerGroup(),
+                    this.handleMsgContext.getTopic(), this.handleMsgContext.getBizSeqNo(), this.handleMsgContext.getUniqueId());
+                return;
+            }
+        }
+        Transformer transformer = eventMeshHTTPServer.getTransformerEngine()
+            .getTransformer(handleMsgContext.getConsumerGroup() + "-" + handleMsgContext.getTopic());
+        if (transformer != null) {
+            try {
+                String data = transformer.transform(JsonUtils.toJSONString(event));
+                event = CloudEventBuilder.from(event).withData(Objects.requireNonNull(JsonUtils.toJSONString(data))
+                    .getBytes(StandardCharsets.UTF_8)).build();
+            } catch (Exception exception) {
+                LOGGER.warn("apply transformer to cloudevents error, group:{}, topic:{}, bizSeqNo={}, uniqueId={}",
+                    this.handleMsgContext.getConsumerGroup(),
+                    this.handleMsgContext.getTopic(), this.handleMsgContext.getBizSeqNo(), this.handleMsgContext.getUniqueId(), exception);
+                return;
+            }
+        }
         handleMsgContext.setEvent(event);
+        super.setEvent(event);
 
         String content = "";
         try {
@@ -316,6 +345,11 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         return false;
     }
 
+    @Override
+    protected HandleMsgContext getHandleMessageContext() {
+        return handleMsgContext;
+    }
+
     ClientRetCode processResponseContent(String content) {
         if (StringUtils.isBlank(content)) {
             return ClientRetCode.FAIL;
@@ -359,7 +393,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
     }
 
     @Override
-    public void doRetry() {
+    public void doRun() {
         tryHTTPRequest();
     }
 }
