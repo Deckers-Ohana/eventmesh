@@ -28,6 +28,7 @@ public interface TimerTask {
     /**
      * Executed after the delay specified with
      * {@link Timer#newTimeout(TimerTask, long, TimeUnit)}.
+     * @throws Exception e
      */
     void run() throws Exception;
 

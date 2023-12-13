@@ -37,13 +37,13 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -169,12 +169,12 @@ public class WebhookPushRequest extends AbstractPushRequest {
             + DateFormatUtils.format(createTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) + "}";
     }
 
-    private ResponseHandler<Object> handleResponse(String selectedPushUrl) {
+    private HttpClientResponseHandler<Object> handleResponse(String selectedPushUrl) {
         return response -> {
             removeWaitingMap(WebhookPushRequest.this);
             long cost = System.currentTimeMillis() - lastPushTime;
 
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            if (response.getCode() != HttpStatus.SC_OK) {
                 MESSAGE_LOGGER.info("message|eventMesh2client|exception|url={}|topic={}|bizSeqNo={}|uniqueId={}|cost={}", selectedPushUrl,
                     EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent), EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost);

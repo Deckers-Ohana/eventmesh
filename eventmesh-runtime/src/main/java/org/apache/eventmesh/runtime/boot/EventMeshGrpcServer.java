@@ -39,8 +39,8 @@ import org.apache.eventmesh.runtime.meta.MetaStorage;
 import org.apache.eventmesh.runtime.metrics.grpc.EventMeshGrpcMonitor;
 
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import java.util.ArrayList;
 import java.util.Iterator;

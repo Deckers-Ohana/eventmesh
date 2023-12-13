@@ -124,26 +124,6 @@ public class SubscribeProcessor implements HttpRequestProcessor {
         final String url = subscribeRequestBody.getUrl();
         final String consumerGroup = subscribeRequestBody.getConsumerGroup();
 
-        // validate URL
-//        try {
-//            if (!IPUtils.isValidDomainOrIp(url, eventMeshHttpConfiguration.getEventMeshIpv4BlackList(),
-//                eventMeshHttpConfiguration.getEventMeshIpv6BlackList())) {
-//                log.error("subscriber url {} is not valid", url);
-//                completeResponse(request, asyncContext, subscribeResponseHeader,
-//                    EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR,
-//                    EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR.getErrMsg() + " invalid URL: " + url,
-//                    SubscribeResponseBody.class);
-//                return;
-//            }
-//        } catch (Exception e) {
-//            LogUtils.error(log, "subscriber url:{} is invalid.", url, e);
-//            completeResponse(request, asyncContext, subscribeResponseHeader,
-//                EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR,
-//                EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR.getErrMsg() + " invalid URL: " + url,
-//                SubscribeResponseBody.class);
-//            return;
-//        }
-
         // obtain webhook delivery agreement for Abuse Protection
         if (!WebhookUtil.obtainDeliveryAgreement(eventMeshHTTPServer.getHttpClientPool().getClient(),
             url, eventMeshHttpConfiguration.getEventMeshWebhookOrigin())) {
@@ -188,7 +168,7 @@ public class SubscribeProcessor implements HttpRequestProcessor {
                     SubscribeResponseBody.class);
                 final long endTime = System.currentTimeMillis();
                 LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}"
-                    + "|bizSeqNo={}|uniqueId={}",
+                        + "|bizSeqNo={}|uniqueId={}",
                     endTime - startTime,
                     JsonUtils.toJSONString(subscribeRequestBody.getTopics()),
                     subscribeRequestBody.getUrl(), e);

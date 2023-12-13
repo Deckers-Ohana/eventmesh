@@ -218,7 +218,7 @@ public class SendSyncMessageProcessor implements HttpRequestProcessor {
                 @Override
                 public void onSuccess(final CloudEvent event) {
                     LogUtils.info(log, "message|mq2eventMesh|RSP|SYNC|rrCost={}ms|topic={}"
-                        + "|bizSeqNo={}|uniqueId={}", System.currentTimeMillis() - startTime,
+                            + "|bizSeqNo={}|uniqueId={}", System.currentTimeMillis() - startTime,
                         topic, bizNo, uniqueId);
 
                     try {
@@ -239,7 +239,7 @@ public class SendSyncMessageProcessor implements HttpRequestProcessor {
                                     .topic(topic)
                                     .body(rtnMsg)
                                     .properties(EventMeshUtil.getEventProp(newEvent))
-                                    .build())));
+                                    .build()), uniqueId));
                         asyncContext.onComplete(succ, handler);
                     } catch (Exception ex) {
                         final HttpCommand err = request.createHttpCommandResponse(
@@ -247,7 +247,7 @@ public class SendSyncMessageProcessor implements HttpRequestProcessor {
                             SendMessageResponseBody.buildBody(
                                 EventMeshRetCode.EVENTMESH_WAITING_RR_MSG_ERR.getRetCode(),
                                 EventMeshRetCode.EVENTMESH_WAITING_RR_MSG_ERR.getErrMsg()
-                                    + EventMeshUtil.stackTrace(ex, 2)));
+                                    + EventMeshUtil.stackTrace(ex, 2), uniqueId));
                         asyncContext.onComplete(err, handler);
 
                         LogUtils.warn(log, "message|mq2eventMesh|RSP", ex);
@@ -261,12 +261,12 @@ public class SendSyncMessageProcessor implements HttpRequestProcessor {
                         SendMessageResponseBody
                             .buildBody(EventMeshRetCode.EVENTMESH_WAITING_RR_MSG_ERR.getRetCode(),
                                 EventMeshRetCode.EVENTMESH_WAITING_RR_MSG_ERR.getErrMsg()
-                                    + EventMeshUtil.stackTrace(e, 2)));
+                                    + EventMeshUtil.stackTrace(e, 2), uniqueId));
                     asyncContext.onComplete(err, handler);
 
                     eventMeshHTTPServer.getHttpRetryer().newTimeout(sendMessageContext, 10, TimeUnit.SECONDS);
                     LogUtils.error(log, "message|mq2eventMesh|RSP|SYNC|rrCost={}ms|topic={}"
-                        + "|bizSeqNo={}|uniqueId={}",
+                            + "|bizSeqNo={}|uniqueId={}",
                         System.currentTimeMillis() - startTime,
                         topic, bizNo, uniqueId, e);
                 }

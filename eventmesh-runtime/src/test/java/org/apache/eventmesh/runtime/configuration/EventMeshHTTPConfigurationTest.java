@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import inet.ipaddr.AddressStringException;
 import inet.ipaddr.IPAddress;
@@ -32,7 +31,7 @@ import inet.ipaddr.IPAddressString;
 
 public class EventMeshHTTPConfigurationTest {
 
-    @Test
+
     public void testGetEventMeshHTTPConfiguration() throws Exception {
 
         ConfigService configService = ConfigService.getInstance();

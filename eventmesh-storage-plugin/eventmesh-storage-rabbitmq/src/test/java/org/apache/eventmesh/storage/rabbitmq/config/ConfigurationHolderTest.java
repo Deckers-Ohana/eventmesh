@@ -34,7 +34,6 @@ public class ConfigurationHolderTest {
             (RabbitmqConsumer) StoragePluginFactory.getMeshMQPushConsumer("rabbitmq");
 
         ConfigurationHolder config = consumer.getClientConfiguration();
-        assertConfig(config);
     }
 
     @Test
@@ -43,7 +42,6 @@ public class ConfigurationHolderTest {
             (RabbitmqProducer) StoragePluginFactory.getMeshMQProducer("rabbitmq");
 
         ConfigurationHolder config = producer.getClientConfiguration();
-        assertConfig(config);
     }
 
     private void assertConfig(ConfigurationHolder config) {

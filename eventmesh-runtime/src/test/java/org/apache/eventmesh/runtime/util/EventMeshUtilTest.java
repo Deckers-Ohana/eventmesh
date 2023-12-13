@@ -25,7 +25,8 @@ import org.apache.eventmesh.common.protocol.tcp.UserAgent;
 import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.storage.standalone.broker.model.TopicMetadata;
 
-import org.apache.http.client.utils.URIBuilder;
+
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 import java.net.InetAddress;

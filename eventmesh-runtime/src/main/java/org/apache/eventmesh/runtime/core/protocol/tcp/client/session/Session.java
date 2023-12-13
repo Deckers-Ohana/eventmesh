@@ -215,46 +215,6 @@ public class Session {
         return JsonUtils.toJSONString(sessionJson);
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//        Session session = (Session) o;
-//        if (!Objects.equals(client, session.client)) {
-//            return false;
-//        }
-////        if (!Objects.equals(context.toString(), session.context.toString())) {
-////            return false;
-////        }
-//
-//        return Objects.equals(sessionState, session.sessionState);
-//
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        int result = 1001; // primeNumber
-//        if (null != client) {
-//            result += 31 * result + Objects.hash(client);
-//        }
-//
-////        if (null != context) {
-////            result += 31 * result + Objects.hash(context.toString());
-////        }
-//
-//        if (null != sessionState) {
-//            result += 31 * result + Objects.hash(sessionState);
-//        }
-//        return result;
-//    }
-//
-//
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

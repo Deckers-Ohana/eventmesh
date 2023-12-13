@@ -26,11 +26,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.representer.Representer;
 
 public class YamlParser {
 
@@ -52,7 +49,7 @@ public class YamlParser {
     private Yaml createYaml() {
         LoaderOptions loadingConfig = new LoaderOptions();
         loadingConfig.setAllowDuplicateKeys(false);
-        return new Yaml(new SafeConstructor(), new Representer(), new DumperOptions(), loadingConfig);
+        return new Yaml(loadingConfig);
     }
 
     private boolean process(MatchCallback callback, Yaml yaml, String content) {

@@ -43,7 +43,7 @@ public class RabbitMQAdmin extends AbstractAdmin {
     }
 
     public void init() throws Exception {
-        this.configurationHolder= ConfigService.getInstance().buildConfigInstance(ConfigurationHolder.class);
+        this.configurationHolder = ConfigService.getInstance().buildConfigInstance(ConfigurationHolder.class);
         this.mgmtHost = configurationHolder.getHost();
         this.mgmtPort = configurationHolder.getMgmtPort();
         this.mgmtProtocol = configurationHolder.getMgmtProtocol();

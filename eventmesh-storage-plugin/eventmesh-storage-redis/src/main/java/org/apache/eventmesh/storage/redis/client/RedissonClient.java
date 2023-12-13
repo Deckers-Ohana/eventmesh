@@ -17,15 +17,10 @@
 
 package org.apache.eventmesh.storage.redis.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
-import org.apache.eventmesh.api.exception.StorageRuntimeException;
-import org.apache.eventmesh.common.Constants;
+
 import org.apache.eventmesh.common.config.ConfigService;
-import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
-import org.apache.eventmesh.storage.redis.config.RedisProperties;
+
 import org.redisson.Redisson;
-import org.redisson.config.Config;
 
 /**
  * Within EventMesh's JVM, there is no multi-connector server, and redisson itself is pooled management, so a single instance is fine, and it can save
@@ -33,78 +28,9 @@ import org.redisson.config.Config;
  */
 public final class RedissonClient {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-//    public static final Redisson INSTANCE;
-//
-//    static {
-//        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//
-//        INSTANCE = create();
-//
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//            try {
-//                INSTANCE.shutdown();
-//            } catch (Exception ignore) {
-//                //
-//            }
-//        }));
-//    }
-
     public static Redisson getInstance() {
         ConfigService configService = ConfigService.getInstance();
-        // RedisProperties properties = configService.buildConfigInstance(RedisProperties.class);
-
         return configService.buildConfigInstance(org.redisson.api.RedissonClient.class);
     }
 
-    private static Redisson create(RedisProperties properties) {
-        RedisProperties.ServerType serverType;
-        try {
-            serverType = properties.getServerType();
-        } catch (IllegalArgumentException ie) {
-            final String message = "Invalid Redis server type: " + properties.getServerType()
-                + ", supported values are: "
-                + Arrays.toString(RedisProperties.ServerType.values());
-            throw new StorageRuntimeException(message, ie);
-        }
-
-        String serverAddress = properties.getServerAddress();
-        String serverPassword = properties.getServerPassword();
-        String masterName = properties.getServerMasterName();
-
-        Config config = OBJECT_MAPPER.convertValue(properties.getRedissonProperties(), Config.class);
-
-        if (config == null) {
-            config = new Config();
-        }
-
-        config.setCodec(CloudEventCodec.getInstance());
-
-        switch (serverType) {
-            case SINGLE:
-                config.useSingleServer()
-                    .setAddress(serverAddress)
-                    .setPassword(serverPassword);
-                break;
-            case CLUSTER:
-                config.useClusterServers()
-                    .addNodeAddress(serverAddress.split(Constants.COMMA))
-                    .setPassword(serverPassword);
-                break;
-            case SENTINEL:
-                config.useSentinelServers()
-                    .setMasterName(masterName)
-                    .addSentinelAddress(serverAddress)
-                    .setPassword(serverPassword);
-                break;
-            default:
-                final String message = "Invalid Redis server type: " + properties.getServerType()
-                    + ", supported values are: "
-                    + Arrays.toString(RedisProperties.ServerType.values());
-                throw new StorageRuntimeException(message);
-        }
-
-        return (Redisson) Redisson.create(config);
-    }
 }

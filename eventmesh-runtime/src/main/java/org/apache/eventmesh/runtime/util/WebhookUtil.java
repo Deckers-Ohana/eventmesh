@@ -23,11 +23,11 @@ import org.apache.eventmesh.spi.EventMeshExtensionFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,7 +103,7 @@ public class WebhookUtil {
     @SuppressWarnings("unchecked")
     private static Map<String, String> getHttpAuthParam(final String authType) {
         if (StringUtils.isEmpty(authType)) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
 
         final AuthService authService = getHttpAuthPlugin(authType);

@@ -68,7 +68,7 @@ public class Trace {
     }
 
     public Span createSpan(String spanName, SpanKind spanKind, long startTime, TimeUnit timeUnit,
-        Context context, boolean isSpanFinishInOtherThread) {
+                           Context context, boolean isSpanFinishInOtherThread) {
         if (!useTrace) {
             return Span.getInvalid();
         }
@@ -77,7 +77,7 @@ public class Trace {
     }
 
     public Span createSpan(String spanName, SpanKind spanKind, Context context,
-        boolean isSpanFinishInOtherThread) {
+                           boolean isSpanFinishInOtherThread) {
         if (!useTrace) {
             return Span.getInvalid();
         }
@@ -127,7 +127,8 @@ public class Trace {
         if (cloudEvent == null) {
             return span;
         }
-
+        span.setAttribute("message-id", cloudEvent.getId());
+        span.setAttribute("subject", cloudEvent.getSubject() == null ? "" : cloudEvent.getSubject());
         // add trace info
         for (String entry : cloudEvent.getExtensionNames()) {
             span.setAttribute(entry, cloudEvent.getExtension(entry) == null ? "" : cloudEvent.getExtension(entry).toString());

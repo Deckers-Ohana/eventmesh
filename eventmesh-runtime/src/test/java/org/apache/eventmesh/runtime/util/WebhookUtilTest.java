@@ -24,10 +24,10 @@ import static org.mockito.Mockito.mock;
 import org.apache.eventmesh.api.auth.AuthService;
 import org.apache.eventmesh.spi.EventMeshExtensionFactory;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +43,8 @@ public class WebhookUtilTest {
     public void testObtainDeliveryAgreement() throws Exception {
         // normal case
         try (CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
-            CloseableHttpResponse response = mock(CloseableHttpResponse.class);
-            CloseableHttpClient httpClient2 = mock(CloseableHttpClient.class)) {
+             CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+             CloseableHttpClient httpClient2 = mock(CloseableHttpClient.class)) {
 
             Mockito.when(response.getLastHeader("WebHook-Allowed-Origin"))
                 .thenReturn(new BasicHeader("WebHook-Allowed-Origin", "*"));
@@ -84,7 +84,7 @@ public class WebhookUtilTest {
 
         try (MockedStatic<EventMeshExtensionFactory> dummyStatic = Mockito.mockStatic(EventMeshExtensionFactory.class)) {
             dummyStatic.when(() -> EventMeshExtensionFactory.getExtension(AuthService.class, authType)).thenReturn(authService);
-            final HttpPost post = new HttpPost();
+            final HttpPost post = new HttpPost("");
             WebhookUtil.setWebhookHeaders(post, "application/json", "eventmesh.FT", authType);
             Assertions.assertEquals(post.getLastHeader(key).getValue(), value, "match expect value");
         }

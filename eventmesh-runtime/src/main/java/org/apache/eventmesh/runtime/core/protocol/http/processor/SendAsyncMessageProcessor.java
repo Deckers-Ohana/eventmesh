@@ -90,7 +90,7 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
         HttpCommand request = asyncContext.getRequest();
         String remoteAddr = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         CMD_LOGGER.info("cmd={}|{}|client2eventMesh|from={}|to={}", RequestCode.get(
-            Integer.valueOf(request.getRequestCode())),
+                Integer.valueOf(request.getRequestCode())),
             EventMeshConstants.PROTOCOL_HTTP,
             remoteAddr, localAddress);
 
@@ -258,7 +258,7 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
                         HttpCommand succ = request.createHttpCommandResponse(
                             sendMessageResponseHeader,
                             SendMessageResponseBody.buildBody(EventMeshRetCode.SUCCESS.getRetCode(),
-                                EventMeshRetCode.SUCCESS.getErrMsg() + sendResult));
+                                EventMeshRetCode.SUCCESS.getErrMsg() + sendResult, uniqueId));
                         asyncContext.onComplete(succ, handler);
                         long endTime = System.currentTimeMillis();
                         summaryMetrics.recordSendMsgCost(endTime - startTime);
@@ -274,7 +274,7 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
                             sendMessageResponseHeader,
                             SendMessageResponseBody.buildBody(EventMeshRetCode.EVENTMESH_SEND_ASYNC_MSG_ERR.getRetCode(),
                                 EventMeshRetCode.EVENTMESH_SEND_ASYNC_MSG_ERR.getErrMsg()
-                                    + EventMeshUtil.stackTrace(context.getException(), 2)));
+                                    + EventMeshUtil.stackTrace(context.getException(), 2), uniqueId));
                         asyncContext.onComplete(err, handler);
 
                         eventMeshHTTPServer.getHttpRetryer().newTimeout(sendMessageContext, 10, TimeUnit.SECONDS);

@@ -22,15 +22,9 @@ import static org.apache.eventmesh.protocol.http.HttpProtocolConstant.CONSTANTS_
 import static org.apache.eventmesh.protocol.http.HttpProtocolConstant.CONSTANTS_KEY_METHOD;
 import static org.apache.eventmesh.protocol.http.HttpProtocolConstant.CONSTANTS_KEY_PATH;
 
-import com.google.common.base.Preconditions;
-import io.cloudevents.core.format.EventFormat;
-import io.cloudevents.core.provider.EventFormatProvider;
-import io.cloudevents.jackson.JsonFormat;
 import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.protocol.ProtocolTransportObject;
-import org.apache.eventmesh.common.protocol.http.HttpCommand;
 import org.apache.eventmesh.common.protocol.http.HttpEventWrapper;
-import org.apache.eventmesh.common.protocol.http.body.Body;
 import org.apache.eventmesh.common.protocol.http.common.RequestURI;
 import org.apache.eventmesh.common.protocol.tcp.Package;
 import org.apache.eventmesh.common.utils.JsonUtils;
@@ -47,8 +41,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.cloudevents.CloudEvent;
+import io.cloudevents.core.format.EventFormat;
+import io.cloudevents.core.provider.EventFormatProvider;
+
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.Preconditions;
 
 /**
  * CloudEvents protocol adaptor, used to transform CloudEvents message to CloudEvents message.
@@ -138,8 +136,6 @@ public class HttpProtocolAdaptor<T extends ProtocolTransportObject>
                     String.format("DateContentType:%s is not supported", dataContentType));
                 pkg.setBody(eventFormat.serialize(cloudEvent));
                 return pkg;
-//            case CloudEventsProtocolConstant.PROTOCOL_DESC_GRPC_CLOUD_EVENT:
-//                return GrpcEventMeshCloudEventProtocolResolver.buildEventMeshCloudEvent(cloudEvent);
             default:
                 throw new ProtocolHandleException(String.format("Unsupported protocolDesc: %s", protocolDesc));
         }

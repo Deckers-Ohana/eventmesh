@@ -284,6 +284,7 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
                 public void onSuccess(final SendResult sendResult) {
                     responseBodyMap.put(EventMeshConstants.RET_CODE, EventMeshRetCode.SUCCESS.getRetCode());
                     responseBodyMap.put(EventMeshConstants.RET_MSG, EventMeshRetCode.SUCCESS.getErrMsg() + sendResult);
+                    responseBodyMap.put(EventMeshConstants.RET_ID, uniqueId);
 
                     LogUtils.info(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
                         System.currentTimeMillis() - startTime, topic, bizNo, uniqueId);
@@ -296,6 +297,7 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
                     responseBodyMap.put(EventMeshConstants.RET_CODE, EventMeshRetCode.EVENTMESH_SEND_ASYNC_MSG_ERR.getRetCode());
                     responseBodyMap.put(EventMeshConstants.RET_MSG, EventMeshRetCode.EVENTMESH_SEND_ASYNC_MSG_ERR.getErrMsg()
                         + EventMeshUtil.stackTrace(context.getException(), 2));
+                    responseBodyMap.put(EventMeshConstants.RET_ID, uniqueId);
                     eventMeshHTTPServer.getHttpRetryer().newTimeout(sendMessageContext, 10, TimeUnit.SECONDS);
                     handlerSpecific.getTraceOperation().exceptionLatestTrace(context.getException(),
                         EventMeshUtil.getCloudEventExtensionMap(SpecVersion.V1.toString(), sendMessageContext.getEvent()));

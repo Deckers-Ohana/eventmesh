@@ -23,30 +23,35 @@ import org.apache.eventmesh.common.utils.LogUtils;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.http.HttpMethod;
 
 import com.google.common.base.Preconditions;
 
 import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 public final class HttpUtils {
@@ -71,13 +76,14 @@ public final class HttpUtils {
         final HttpHost forwardAgent,
         final String uri,
         final RequestParam requestParam,
-        final ResponseHandler<String> responseHandler) throws IOException {
+        final HttpClientResponseHandler<String> responseHandler) throws IOException {
 
         Preconditions.checkState(client != null, "client can't be null");
         Preconditions.checkState(StringUtils.isNotBlank(uri), "uri can't be null");
         Preconditions.checkState(requestParam != null, "requestParam can't be null");
         Preconditions.checkState(responseHandler != null, "responseHandler can't be null");
         Preconditions.checkState(requestParam.getHttpMethod().equals(HttpMethod.POST), "invalid requestParam httpMethod");
+
 
         final HttpPost httpPost = new HttpPost(uri);
 
@@ -99,9 +105,7 @@ public final class HttpUtils {
 
         // ttl
         final RequestConfig.Builder configBuilder = RequestConfig.custom();
-        configBuilder.setSocketTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())))
-            .setConnectTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())))
-            .setConnectionRequestTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())));
+        configBuilder.setConnectionRequestTimeout(Timeout.of(requestParam.getTimeout(), TimeUnit.MILLISECONDS));
 
         if (forwardAgent != null) {
             configBuilder.setProxy(forwardAgent);
@@ -133,7 +137,7 @@ public final class HttpUtils {
         final HttpHost forwardAgent,
         final String uri,
         final RequestParam requestParam,
-        final ResponseHandler<String> responseHandler) throws IOException {
+        final HttpClientResponseHandler<String> responseHandler) throws IOException {
 
         Preconditions.checkState(client != null, "client can't be null");
         Preconditions.checkState(StringUtils.isNotBlank(uri), "uri can't be null");
@@ -151,9 +155,10 @@ public final class HttpUtils {
 
         // ttl
         final RequestConfig.Builder configBuilder = RequestConfig.custom();
-        configBuilder.setSocketTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())))
-            .setConnectTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())))
-            .setConnectionRequestTimeout(Integer.parseInt(String.valueOf(requestParam.getTimeout())));
+        final ConnectionConfig.Builder connectionBuilder = ConnectionConfig.custom();
+        connectionBuilder.setSocketTimeout(Timeout.of(requestParam.getTimeout(), TimeUnit.MILLISECONDS))
+                .setConnectTimeout(Timeout.of(requestParam.getTimeout(), TimeUnit.MILLISECONDS));
+        configBuilder.setConnectionRequestTimeout(Timeout.of(requestParam.getTimeout(), TimeUnit.MILLISECONDS));
 
         if (forwardAgent != null) {
             configBuilder.setProxy(forwardAgent);
@@ -166,7 +171,7 @@ public final class HttpUtils {
         return client.execute(httpGet, responseHandler);
     }
 
-    private static class EventMeshResponseHandler implements ResponseHandler<String> {
+    private static class EventMeshResponseHandler implements HttpClientResponseHandler<String> {
 
         /**
          * Processes an {@link HttpResponse} and returns some value corresponding to that response.
@@ -177,9 +182,9 @@ public final class HttpUtils {
          * @throws IOException             in case of a problem or the connection was aborted
          */
         @Override
-        public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+        public String handleResponse(ClassicHttpResponse response) throws IOException, ParseException {
 
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response.getCode();
             // Successful responses (200-299)
             if (statusCode >= 200 && statusCode < 300) {
                 HttpEntity entity = response.getEntity();

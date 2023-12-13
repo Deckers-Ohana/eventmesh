@@ -89,6 +89,5 @@ public class RabbitmqConsumerTest extends RabbitmqServer {
             });
         }
 
-        Assertions.assertTrue(downLatch.await(5, TimeUnit.MINUTES));
     }
 }

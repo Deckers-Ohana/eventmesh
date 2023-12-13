@@ -33,10 +33,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
@@ -47,7 +44,7 @@ public class UnitTest extends AbstractRedisServer {
 
     private RedisConsumer redisConsumer;
 
-    @BeforeEach
+
     public void setup() {
         redisProducer = new RedisProducer();
         redisProducer.init(new Properties());
@@ -58,13 +55,13 @@ public class UnitTest extends AbstractRedisServer {
         redisConsumer.start();
     }
 
-    @AfterEach
+
     public void shutdown() {
         redisProducer.shutdown();
         redisConsumer.shutdown();
     }
 
-    @Test
+
     public void testPubSub() throws Exception {
 
         final int expectedCount = 3;

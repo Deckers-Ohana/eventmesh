@@ -28,7 +28,7 @@ dependencies {
 
     implementation 'com.google.guava:guava'
     implementation "io.netty:netty-all"
-    implementation 'org.apache.httpcomponents:httpclient'
+    implementation "org.apache.httpcomponents.client5:httpclient5"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

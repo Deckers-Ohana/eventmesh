@@ -26,14 +26,31 @@ import java.util.concurrent.TimeUnit;
  */
 public interface Retryer {
 
+    /**
+     * start
+     */
     void start();
 
+    /**
+     * shutdown
+     */
     void shutdown();
 
+    /**
+     * @return l
+     */
     long getPendingTimeouts();
 
+    /**
+     * printState
+     */
     void printState();
 
+    /**
+     * @param timerTask timer
+     * @param delay time
+     * @param timeUnit timeunit
+     */
     void newTimeout(TimerTask timerTask, long delay, TimeUnit timeUnit);
 
 }

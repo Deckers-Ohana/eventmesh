@@ -17,6 +17,7 @@
 
 package org.apache.eventmesh.connector.openfunction.client;
 
+
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
@@ -29,7 +30,7 @@ import org.apache.eventmesh.common.protocol.grpc.cloudevents.CloudEvent;
 /**
  *
  */
-@javax.annotation.Generated(
+@jakarta.annotation.Generated(
     value = "by gRPC proto compiler (version 1.4.0)",
     comments = "Source: callback-service.proto")
 @io.grpc.stub.annotations.GrpcGenerated

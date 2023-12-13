@@ -17,24 +17,29 @@
 
 package org.apache.eventmesh.runtime.core.protocol.http.push;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.eventmesh.common.config.ConfigService;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.ssl.TrustStrategy;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.TrustStrategy;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -67,14 +72,9 @@ public class HTTPClientPool {
 
     private transient PoolingHttpClientConnectionManager connectionManager;
     //for spring framework
-    private HttpRequestInterceptor  httpRequestInterceptor;
 
     public HTTPClientPool(final int core) {
         this.core = core <= 0 ? 1 : core;
-    }
-
-    public void setHttpRequestInterceptor(HttpRequestInterceptor httpRequestInterceptor) {
-        this.httpRequestInterceptor = httpRequestInterceptor;
     }
 
     public CloseableHttpClient getClient() {
@@ -103,11 +103,13 @@ public class HTTPClientPool {
     }
 
     // @SuppressWarnings("deprecation")
-    public CloseableHttpClient getHttpClient(final int maxTotal, final int idleTimeInSeconds, final SSLContext sslContext) {
+    public CloseableHttpClient getHttpClient(final int maxTotal, final int idleTimeInSeconds,
+                                             final SSLContext sslContext) {
 
         SSLContext innerSSLContext = sslContext;
         try {
-            innerSSLContext = innerSSLContext == null ? SSLContexts.custom().loadTrustMaterial(new TheTrustStrategy()).build() : innerSSLContext;
+            innerSSLContext = innerSSLContext == null ? SSLContexts.custom().loadTrustMaterial(new TheTrustStrategy())
+                    .build() : innerSSLContext;
 
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
             log.error("Get sslContext error", e);
@@ -115,32 +117,37 @@ public class HTTPClientPool {
         }
 
         if (connectionManager == null) {
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(innerSSLContext, NoopHostnameVerifier.INSTANCE);
-            final Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", sslsf)
-                .build();
+            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(innerSSLContext,
+                    NoopHostnameVerifier.INSTANCE);
+            final Registry<ConnectionSocketFactory> socketFactoryRegistry =
+                    RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslsf)
+                    .build();
+            final ConnectionConfig.Builder connectionBuilder = ConnectionConfig.custom();
+            connectionBuilder.setSocketTimeout(Timeout.of(SOCKET_TIMEOUT, TimeUnit.MILLISECONDS))
+                    .setConnectTimeout(Timeout.of(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS));
             connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+            connectionManager.setDefaultConnectionConfig(connectionBuilder.build());
             connectionManager.setDefaultMaxPerRoute(maxTotal);
             connectionManager.setMaxTotal(maxTotal);
         }
 
         RequestConfig config = RequestConfig.custom()
-            .setConnectTimeout(CONNECT_TIMEOUT)
-            .setConnectionRequestTimeout(CONNECT_TIMEOUT)
-            .setSocketTimeout(SOCKET_TIMEOUT).build();
-        if(httpRequestInterceptor==null){
-            httpRequestInterceptor = ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class);
+                .setConnectionRequestTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS).build();
+
+        HttpClientBuilder builder = HttpClients.custom();
+        if (ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class) != null) {
+            builder.addRequestInterceptorFirst(ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class));
         }
-        return HttpClients.custom()
-            .addInterceptorLast(httpRequestInterceptor)
-            .setDefaultRequestConfig(config)
-            .setConnectionManager(connectionManager)
-            .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
-            .evictIdleConnections(idleTimeInSeconds, TimeUnit.SECONDS)
-            .setConnectionReuseStrategy(new DefaultConnectionReuseStrategy())
-            .setRetryHandler(new DefaultHttpRequestRetryHandler())
-            .build();
+        return builder
+                .setDefaultRequestConfig(config)
+                .setConnectionManager(connectionManager)
+                .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
+                .evictIdleConnections(TimeValue.of(idleTimeInSeconds, TimeUnit.SECONDS))
+                .setConnectionReuseStrategy(new DefaultConnectionReuseStrategy())
+                .setRetryStrategy(new DefaultHttpRequestRetryStrategy())
+                .build();
     }
 
     private static class TheTrustStrategy implements TrustStrategy {

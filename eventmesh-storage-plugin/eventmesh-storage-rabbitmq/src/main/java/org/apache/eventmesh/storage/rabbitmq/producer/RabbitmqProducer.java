@@ -17,17 +17,12 @@
 
 package org.apache.eventmesh.storage.rabbitmq.producer;
 
-import com.rabbitmq.client.AlreadyClosedException;
-
-import java.io.IOException;
-
 import org.apache.eventmesh.api.RequestReplyCallback;
 import org.apache.eventmesh.api.SendCallback;
 import org.apache.eventmesh.api.SendResult;
 import org.apache.eventmesh.api.exception.OnExceptionContext;
 import org.apache.eventmesh.api.exception.StorageRuntimeException;
 import org.apache.eventmesh.api.producer.Producer;
-import org.apache.eventmesh.common.config.Config;
 import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
@@ -36,6 +31,7 @@ import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEventWriter
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
 import org.apache.eventmesh.storage.rabbitmq.utils.ByteArrayUtils;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 

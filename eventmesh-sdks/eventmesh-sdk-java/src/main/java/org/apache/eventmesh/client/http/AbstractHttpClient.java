@@ -21,21 +21,27 @@ import org.apache.eventmesh.client.http.conf.EventMeshHttpClientConfig;
 import org.apache.eventmesh.client.http.ssl.MyX509TrustManager;
 import org.apache.eventmesh.client.http.util.HttpLoadBalanceUtils;
 import org.apache.eventmesh.common.Constants;
+import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.common.exception.EventMeshException;
 import org.apache.eventmesh.common.loadbalance.LoadBalanceSelector;
 
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -62,7 +68,7 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 
         this.eventMeshHttpClientConfig = eventMeshHttpClientConfig;
         this.eventMeshServerSelector = HttpLoadBalanceUtils.createEventMeshServerLoadBalanceSelector(
-            eventMeshHttpClientConfig);
+                eventMeshHttpClientConfig);
         this.httpClient = setHttpClient();
     }
 
@@ -89,12 +95,18 @@ public abstract class AbstractHttpClient implements AutoCloseable {
             sslContext = SSLContext.getInstance(protocol);
             sslContext.init(null, tm, new SecureRandom());
 
-            return HttpClients.custom()
-                .setConnectionManager(getHttpPoolManager(sslContext, eventMeshHttpClientConfig.getMaxConnectionPoolSize()))
-                .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
-                .evictIdleConnections(eventMeshHttpClientConfig.getConnectionIdleTimeSeconds(), TimeUnit.SECONDS)
-                .setConnectionReuseStrategy(new DefaultConnectionReuseStrategy())
-                .build();
+            HttpClientBuilder builder = HttpClients.custom();
+            if (ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class) != null) {
+                builder.addRequestInterceptorFirst(ConfigService.getInstance().buildConfigInstance(HttpRequestInterceptor.class));
+            }
+            return builder
+                    .setConnectionManager(
+                            getHttpPoolManager(sslContext, eventMeshHttpClientConfig.getMaxConnectionPoolSize()))
+                    .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
+                    .evictIdleConnections(
+                            TimeValue.of(eventMeshHttpClientConfig.getConnectionIdleTimeSeconds(), TimeUnit.SECONDS))
+                    .setConnectionReuseStrategy(new DefaultConnectionReuseStrategy())
+                    .build();
         } catch (Exception e) {
             log.error("Error in creating HttpClient.", e);
             throw new EventMeshException(e);
@@ -102,12 +114,20 @@ public abstract class AbstractHttpClient implements AutoCloseable {
     }
 
     private HttpClientConnectionManager getHttpPoolManager(final SSLContext sslContext, final int poolSize) {
-        final SSLConnectionSocketFactory sslFactory = new SSLConnectionSocketFactory(sslContext, new DefaultHostnameVerifier());
-        final Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("http", PlainConnectionSocketFactory.getSocketFactory())
-            .register("https", sslFactory)
-            .build();
-        final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        final SSLConnectionSocketFactory sslFactory = new SSLConnectionSocketFactory(sslContext,
+                new DefaultHostnameVerifier());
+        final Registry<ConnectionSocketFactory> socketFactoryRegistry =
+                RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslFactory)
+                .build();
+        final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
+                socketFactoryRegistry);
+        final ConnectionConfig.Builder connectionBuilder = ConnectionConfig.custom();
+        connectionBuilder.setSocketTimeout(
+                        Timeout.of(eventMeshHttpClientConfig.getConnectionTimeout(), TimeUnit.MILLISECONDS))
+                .setConnectTimeout(Timeout.of(eventMeshHttpClientConfig.getConnectionTimeout(), TimeUnit.MILLISECONDS));
+        connectionManager.setDefaultConnectionConfig(connectionBuilder.build());
         connectionManager.setMaxTotal(poolSize);
         return connectionManager;
     }

@@ -21,7 +21,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
+@jakarta.annotation.Generated(
     value = "by gRPC proto compiler (version 1.43.2)",
     comments = "Source: eventmesh-service.proto")
 @io.grpc.stub.annotations.GrpcGenerated

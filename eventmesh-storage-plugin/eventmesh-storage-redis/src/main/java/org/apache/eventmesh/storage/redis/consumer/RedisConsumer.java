@@ -17,11 +17,7 @@
 
 package org.apache.eventmesh.storage.redis.consumer;
 
-import com.google.common.base.Preconditions;
-import io.cloudevents.CloudEvent;
-import java.util.List;
-import java.util.Properties;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.EventMeshAction;
@@ -29,8 +25,18 @@ import org.apache.eventmesh.api.EventMeshAsyncConsumeContext;
 import org.apache.eventmesh.api.consumer.Consumer;
 import org.apache.eventmesh.storage.redis.client.RedissonClient;
 import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
+
+import java.util.List;
+import java.util.Properties;
+
 import org.redisson.Redisson;
 import org.redisson.api.listener.MessageListener;
+
+import io.cloudevents.CloudEvent;
+
+import com.google.common.base.Preconditions;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class RedisConsumer implements Consumer {

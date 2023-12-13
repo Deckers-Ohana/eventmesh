@@ -26,7 +26,7 @@ import org.apache.eventmesh.metrics.api.model.HttpSummaryMetrics;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.opentelemetry.api.metrics.GlobalMeterProvider;
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.Meter;
 
 import com.google.common.collect.ImmutableMap;
@@ -112,7 +112,7 @@ public class PrometheusHttpExporter {
         .build();
 
     public void export(String name, HttpSummaryMetrics summaryMetrics) {
-        Meter meter = GlobalMeterProvider.getMeter(name);
+        Meter meter = GlobalOpenTelemetry.getMeter(name);
         paramPairs.forEach((metricInfo, getMetric) -> observeOfValue(meter, metricInfo[0], metricInfo[1],
             HTTP, summaryMetrics, getMetric, HttpSummaryMetrics.class));
     }

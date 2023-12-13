@@ -28,6 +28,10 @@ import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+ * Abstract retry
+ */
 @Slf4j
 public abstract class AbstractRetryer implements Retryer {
 

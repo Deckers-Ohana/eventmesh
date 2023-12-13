@@ -25,6 +25,9 @@ import io.cloudevents.CloudEvent;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Retry Configuration
+ */
 @Data
 @Builder
 public class RetryConfiguration {

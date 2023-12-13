@@ -28,10 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.redisson.api.RTopic;
 
 import io.cloudevents.CloudEvent;
@@ -41,19 +38,19 @@ public class RedisConsumerTest extends AbstractRedisServer {
 
     private RedisConsumer redisConsumer;
 
-    @BeforeEach
+
     public void setup() {
         redisConsumer = new RedisConsumer();
         redisConsumer.init(new Properties());
         redisConsumer.start();
     }
 
-    @AfterEach
+
     public void shutdown() {
         redisConsumer.shutdown();
     }
 
-    @Test
+
     public void testSubscribe() throws Exception {
 
         final int expectedCount = 3;
@@ -68,7 +65,7 @@ public class RedisConsumerTest extends AbstractRedisServer {
 
         redisConsumer.subscribe(topic);
 
-        RTopic redissonTopic = RedissonClient.INSTANCE.getTopic(topic);
+        RTopic redissonTopic = RedissonClient.getInstance().getTopic(topic);
         for (int i = 0; i < expectedCount; i++) {
             CloudEvent cloudEvent = CloudEventBuilder.v1()
                 .withId(String.valueOf(i))

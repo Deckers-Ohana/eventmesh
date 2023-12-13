@@ -41,18 +41,20 @@ import org.apache.eventmesh.runtime.meta.MetaStorage;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.util.Timeout;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
 
@@ -197,8 +199,8 @@ public abstract class AbstractEventProcessor implements AsyncHttpProcessor {
      * @throws IOException
      */
     public static String post(CloseableHttpClient client, String uri,
-        Map<String, String> requestHeader, Map<String, Object> requestBody,
-        ResponseHandler<String> responseHandler) throws IOException {
+                              Map<String, String> requestHeader, Map<String, Object> requestBody,
+                              HttpClientResponseHandler<String> responseHandler) throws IOException {
         AssertUtils.notNull(client, "client can't be null");
         AssertUtils.notBlank(uri, "uri can't be null");
         AssertUtils.notNull(requestHeader, "requestParam can't be null");
@@ -221,9 +223,7 @@ public abstract class AbstractEventProcessor implements AsyncHttpProcessor {
 
         // ttl
         RequestConfig.Builder configBuilder = RequestConfig.custom();
-        configBuilder.setSocketTimeout(Integer.parseInt(String.valueOf(Constants.DEFAULT_HTTP_TIME_OUT)))
-            .setConnectTimeout(Integer.parseInt(String.valueOf(Constants.DEFAULT_HTTP_TIME_OUT)))
-            .setConnectionRequestTimeout(Integer.parseInt(String.valueOf(Constants.DEFAULT_HTTP_TIME_OUT)));
+        configBuilder.setConnectionRequestTimeout(Timeout.of(Constants.DEFAULT_HTTP_TIME_OUT, TimeUnit.MILLISECONDS));
 
         httpPost.setConfig(configBuilder.build());
 

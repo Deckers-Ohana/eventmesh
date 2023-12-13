@@ -28,11 +28,9 @@ import org.apache.eventmesh.metrics.prometheus.metrics.PrometheusGrpcExporter;
 import org.apache.eventmesh.metrics.prometheus.metrics.PrometheusHttpExporter;
 import org.apache.eventmesh.metrics.prometheus.metrics.PrometheusTcpExporter;
 
-import java.io.IOException;
-
-import io.opentelemetry.exporter.prometheus.PrometheusCollector;
+import io.opentelemetry.exporter.prometheus.PrometheusHttpServer;
+import io.opentelemetry.exporter.prometheus.internal.PrometheusMetricReaderProvider;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
-import io.prometheus.client.exporter.HTTPServer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Config(field = "prometheusConfiguration")
 public class PrometheusMetricsRegistry implements MetricsRegistry {
 
-    private volatile HTTPServer prometheusHttpServer;
+    private volatile PrometheusHttpServer prometheusHttpServer;
 
     /**
      * Unified configuration class corresponding to prometheus.properties
@@ -52,16 +50,11 @@ public class PrometheusMetricsRegistry implements MetricsRegistry {
         if (prometheusHttpServer == null) {
             synchronized (PrometheusMetricsRegistry.class) {
                 if (prometheusHttpServer == null) {
-                    SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder().buildAndRegisterGlobal();
-                    PrometheusCollector
-                        .builder().setMetricProducer(sdkMeterProvider).buildAndRegister();
+                    PrometheusMetricReaderProvider readerProvider = new PrometheusMetricReaderProvider();
+                    SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder().build();
                     int port = prometheusConfiguration.getEventMeshPrometheusPort();
-                    try {
-                        // Use the daemon thread to start an HTTP server to serve the default Prometheus registry.
-                        prometheusHttpServer = new HTTPServer(port, true);
-                    } catch (IOException e) {
-                        log.error("failed to start prometheus server, port: {} due to {}", port, e.getMessage());
-                    }
+                    // Use the daemon thread to start an HTTP server to serve the default Prometheus registry.
+                    prometheusHttpServer = PrometheusHttpServer.builder().setPort(port).build();
                 }
             }
         }
@@ -71,7 +64,7 @@ public class PrometheusMetricsRegistry implements MetricsRegistry {
     @Override
     public void showdown() {
         if (prometheusHttpServer != null) {
-            prometheusHttpServer.stop();
+            prometheusHttpServer.shutdown();
         }
     }
 

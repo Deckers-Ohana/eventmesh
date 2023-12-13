@@ -17,11 +17,9 @@
 
 package org.apache.eventmesh.runtime.core.protocol.tcp.client.group;
 
-import java.lang.management.ManagementFactory;
 import org.apache.eventmesh.api.meta.config.EventMeshMetaConfig;
 import org.apache.eventmesh.common.protocol.SubscriptionItem;
 import org.apache.eventmesh.common.protocol.SubscriptionMode;
-import org.apache.eventmesh.common.protocol.http.common.ProtocolKey.ClientInstanceKey;
 import org.apache.eventmesh.common.protocol.tcp.UserAgent;
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.common.utils.LogUtils;
@@ -108,9 +106,7 @@ public class ClientSessionGroupMapping {
         InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
         user.setHost(addr.getHostString());
         user.setPort(addr.getPort());
-        user.setPid(Long.valueOf(ThreadUtils.getPID()).intValue());
-//        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-//        user.setPid(Integer.parseInt(jvmName.split("@")[0]));
+        user.setPid(((Long) ThreadUtils.getPID()).intValue());
         Session session;
         if (!sessionTable.containsKey(addr)) {
             log.info("createSession client[{}]", RemotingHelper.parseChannelRemoteAddr(ctx.channel()));

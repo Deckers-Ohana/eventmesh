@@ -42,15 +42,15 @@ import org.apache.eventmesh.transformer.Transformer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -216,7 +216,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         String urlAuthType = handleMsgContext.getConsumerGroupConfig().getConsumerGroupTopicConf()
             .get(handleMsgContext.getTopic()).getHttpAuthTypeMap().get(currPushUrl);
 
-        WebhookUtil.setWebhookHeaders(builder, httpEntity.getContentType().getValue(),
+        WebhookUtil.setWebhookHeaders(builder, httpEntity.getContentType(),
             eventMeshHttpConfiguration.getEventMeshWebhookOrigin(),
             urlAuthType);
 
@@ -235,7 +235,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                 long cost = System.currentTimeMillis() - lastPushTime;
                 eventMeshHTTPServer.getMetrics().getSummaryMetrics().recordHTTPPushTimeCost(cost);
 
-                if (processResponseStatus(response.getStatusLine().getStatusCode(), response)) {
+                if (processResponseStatus(response.getCode(), response)) {
                     // this is successful response, process response payload
                     String res;
                     try {
@@ -320,7 +320,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         return sb.toString();
     }
 
-    boolean processResponseStatus(int httpStatus, HttpResponse httpResponse) {
+    boolean processResponseStatus(int httpStatus, ClassicHttpResponse httpResponse) {
         if (httpStatus == HttpStatus.SC_OK || httpStatus == HttpStatus.SC_CREATED
             || httpStatus == HttpStatus.SC_NO_CONTENT || httpStatus == HttpStatus.SC_ACCEPTED) {
             // success http response

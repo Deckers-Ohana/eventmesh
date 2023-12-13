@@ -17,11 +17,9 @@
 
 package org.apache.eventmesh.runtime.core.protocol.tcp.client.group;
 
-import static org.apache.eventmesh.common.Constants.CLOUD_EVENTS_PROTOCOL_NAME;
 import static org.apache.eventmesh.common.Constants.CONTENT_TYPE_CLOUDEVENTS_JSON;
 import static org.apache.eventmesh.common.Constants.PROTOCOL_DESC;
 import static org.apache.eventmesh.common.Constants.PROTOCOL_DESC_TCP;
-import static org.apache.eventmesh.common.Constants.PROTOCOL_TYPE;
 
 import org.apache.eventmesh.api.AsyncConsumeContext;
 import org.apache.eventmesh.api.EventListener;

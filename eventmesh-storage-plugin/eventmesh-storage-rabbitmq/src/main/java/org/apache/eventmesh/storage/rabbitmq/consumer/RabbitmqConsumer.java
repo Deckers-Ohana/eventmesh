@@ -21,21 +21,16 @@ import static org.apache.eventmesh.common.Constants.CONSUMER_GROUP;
 import static org.apache.eventmesh.common.Constants.INSTANCE_NAME;
 import static org.apache.eventmesh.common.Constants.IS_BROADCAST;
 
-import com.rabbitmq.client.AlreadyClosedException;
-import com.rabbitmq.client.BuiltinExchangeType;
-
-import java.io.IOException;
-
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.consumer.Consumer;
 import org.apache.eventmesh.common.ThreadPoolFactory;
-import org.apache.eventmesh.common.config.Config;
 import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadPoolExecutor;

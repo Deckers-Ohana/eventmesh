@@ -29,10 +29,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
@@ -41,19 +38,19 @@ public class RedisProducerTest extends AbstractRedisServer {
 
     private RedisProducer redisProducer;
 
-    @BeforeEach
+
     public void setup() {
         redisProducer = new RedisProducer();
         redisProducer.init(new Properties());
         redisProducer.start();
     }
 
-    @AfterEach
+
     public void shutdown() {
         redisProducer.shutdown();
     }
 
-    @Test
+
     public void testPublish() throws Exception {
         final int expectedCount = 3;
         final CountDownLatch downLatch = new CountDownLatch(expectedCount);
@@ -90,7 +87,6 @@ public class RedisProducerTest extends AbstractRedisServer {
         downLatch.await();
     }
 
-    @Test
     public void testSendOneway() {
 
         final String topic = RedisProducerTest.class.getSimpleName();

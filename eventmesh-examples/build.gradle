@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-def grpcVersion = '1.43.2'
+def grpcVersion = '1.60.0'
 
 configurations {
     implementation.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
@@ -37,6 +37,7 @@ dependencies {
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-netty:${grpcVersion}"
     implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "org.apache.httpcomponents.client5:httpclient5"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

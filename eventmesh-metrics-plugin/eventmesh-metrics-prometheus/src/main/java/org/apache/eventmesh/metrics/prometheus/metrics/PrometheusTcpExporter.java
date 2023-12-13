@@ -27,7 +27,7 @@ import org.apache.eventmesh.metrics.api.model.TcpSummaryMetrics;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.opentelemetry.api.metrics.GlobalMeterProvider;
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.Meter;
 
 import com.google.common.collect.ImmutableMap;
@@ -61,7 +61,7 @@ public class PrometheusTcpExporter {
         .build();
 
     public void export(final String meterName, final TcpSummaryMetrics summaryMetrics) {
-        final Meter meter = GlobalMeterProvider.getMeter(meterName);
+        final Meter meter = GlobalOpenTelemetry.getMeter(meterName);
         paramPairs.forEach(
             (metricInfo, getMetric) -> observeOfValue(meter, METRICS_TCP_PREFIX + metricInfo[0], metricInfo[1],
                 TCP, summaryMetrics, getMetric, TcpSummaryMetrics.class));

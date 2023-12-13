@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-def grpcVersion = '1.43.2'
+def grpcVersion = '1.60.0'
 
 dependencies {
     api project(":eventmesh-common")
@@ -26,7 +26,8 @@ dependencies {
     implementation "org.apache.commons:commons-collections4"
 
     implementation "io.netty:netty-all"
-    implementation "org.apache.httpcomponents:httpclient"
+//    implementation "org.apache.httpcomponents:httpclient"
+    implementation "org.apache.httpcomponents.client5:httpclient5"
 
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
@@ -46,7 +47,8 @@ dependencies {
     testImplementation "com.fasterxml.jackson.core:jackson-annotations"
 
     testImplementation "io.netty:netty-all"
-    testImplementation "org.apache.httpcomponents:httpclient"
+//    testImplementation "org.apache.httpcomponents:httpclient"
+    testImplementation "org.apache.httpcomponents.client5:httpclient5"
 
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"

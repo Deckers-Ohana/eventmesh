@@ -35,8 +35,8 @@ import org.apache.eventmesh.runtime.core.protocol.http.processor.inf.AbstractEve
 import org.apache.eventmesh.runtime.util.RemotingHelper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -142,39 +142,11 @@ public class RemoteSubscribeEventProcessor extends AbstractEventProcessor {
             }
         }
 
-        // validate URL
-        // try {
-        // if (!IPUtils.isValidDomainOrIp(url, eventMeshHttpConfiguration.getEventMeshIpv4BlackList(),
-        // eventMeshHttpConfiguration.getEventMeshIpv6BlackList())) {
-        // httpLogger.error("subscriber url {} is not valid", url);
-        // handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
-        // responseBodyMap, null);
-        // return;
-        // }
-        // } catch (Exception e) {
-        // httpLogger.error("subscriber url {} is not valid, error {}", url, e.getMessage());
-        // handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
-        // responseBodyMap, null);
-        // return;
-        // }
-        //
-        // CloseableHttpClient closeableHttpClient = eventMeshHTTPServer.getHttpClientPool().getClient();
-        // // obtain webhook delivery agreement for Abuse Protection
-        // boolean isWebhookAllowed = WebhookUtil.obtainDeliveryAgreement(closeableHttpClient,
-        // url, eventMeshHttpConfiguration.getEventMeshWebhookOrigin());
-        //
-        // if (!isWebhookAllowed) {
-        // httpLogger.error("subscriber url {} is not allowed by the target system", url);
-        // handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
-        // responseBodyMap, null);
-        // return;
-        // }
-
         long startTime = System.currentTimeMillis();
         try {
             // local subscription url
-            String localUrl = (eventMeshHttpConfiguration.getEventMeshHost() == null ?
-                "http://" + localAddress + ":" + eventMeshHttpConfiguration.getHttpServerPort() :
+            String localUrl = (eventMeshHttpConfiguration.getEventMeshHost() == null
+                ? "http://" + localAddress + ":" + eventMeshHttpConfiguration.getHttpServerPort() :
                 eventMeshHttpConfiguration.getEventMeshHost())
                 + RequestURI.PUBLISH_BRIDGE.getRequestURI();
             Map<String, Object> remoteBodyMap = new HashMap<>();

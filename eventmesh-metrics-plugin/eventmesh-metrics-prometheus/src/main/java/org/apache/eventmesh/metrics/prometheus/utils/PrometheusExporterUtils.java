@@ -22,8 +22,8 @@ import org.apache.eventmesh.metrics.api.model.Metric;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.api.metrics.common.Labels;
 
 import lombok.SneakyThrows;
 
@@ -44,21 +44,19 @@ public class PrometheusExporterUtils {
      */
     @SneakyThrows
     public static <T extends Metric> void observeOfValue(Meter meter, String metricName, String metricDesc, String protocol,
-        Metric summaryMetrics, Function<T, Number> getMetric, Class<T> clazz) {
+                                                         Metric summaryMetrics, Function<T, Number> getMetric, Class<T> clazz) {
         Method method = getMetric.getClass().getMethod("apply", Object.class);
         Class<?> metricType = (Class<?>) method.getGenericReturnType();
         if (metricType == Long.class) {
-            meter.longValueObserverBuilder(metricName)
+            meter.upDownCounterBuilder(metricName)
                 .setDescription(metricDesc)
                 .setUnit(protocol)
-                .setUpdater(result -> result.observe((long) getMetric.apply(clazz.cast(summaryMetrics)), Labels.empty()))
-                .build();
+                .buildWithCallback(result -> result.record((long) getMetric.apply(clazz.cast(summaryMetrics)), Attributes.empty()));
         } else if (metricType == Double.class) {
-            meter.doubleValueObserverBuilder(metricName)
+            meter.gaugeBuilder(metricName)
                 .setDescription(metricDesc)
                 .setUnit(protocol)
-                .setUpdater(result -> result.observe((double) getMetric.apply(clazz.cast(summaryMetrics)), Labels.empty()))
-                .build();
+                .buildWithCallback(result -> result.record((double) getMetric.apply(clazz.cast(summaryMetrics)), Attributes.empty()));
         }
     }
 

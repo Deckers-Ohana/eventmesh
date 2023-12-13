@@ -86,4 +86,7 @@ public class EventMeshHttpClientConfig {
     @Builder.Default
     private transient int connectionIdleTimeSeconds = 10;
 
+    @Builder.Default
+    private transient long connectionTimeout = 15000;
+
 }

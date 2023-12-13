@@ -25,10 +25,11 @@ import org.apache.eventmesh.common.protocol.http.body.message.SendMessageRespons
 import org.apache.eventmesh.common.protocol.http.common.EventMeshRetCode;
 import org.apache.eventmesh.common.utils.JsonUtils;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -39,7 +40,7 @@ import io.openmessaging.api.Message;
 /**
  * RRCallbackResponseHandlerAdapter.
  */
-public class RRCallbackResponseHandlerAdapter<ProtocolMessage> implements ResponseHandler<String> {
+public class RRCallbackResponseHandlerAdapter<ProtocolMessage> implements HttpClientResponseHandler<String> {
 
     private final transient long createTime;
 
@@ -50,7 +51,7 @@ public class RRCallbackResponseHandlerAdapter<ProtocolMessage> implements Respon
     private final transient long timeout;
 
     public RRCallbackResponseHandlerAdapter(final ProtocolMessage protocolMessage, final RRCallback<ProtocolMessage> rrCallback,
-        final long timeout) {
+                                            final long timeout) {
         Objects.requireNonNull(rrCallback, "rrCallback invalid");
         Objects.requireNonNull(protocolMessage, "message invalid");
 
@@ -66,10 +67,10 @@ public class RRCallbackResponseHandlerAdapter<ProtocolMessage> implements Respon
     }
 
     @Override
-    public String handleResponse(final HttpResponse response) throws IOException {
+    public String handleResponse(final ClassicHttpResponse response) throws IOException, ParseException {
         Objects.requireNonNull(response, "HttpResponse must not be null");
 
-        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+        if (response.getCode() != HttpStatus.SC_OK) {
             rrCallback.onException(new EventMeshException(response.toString()));
             return response.toString();
         }

@@ -34,8 +34,8 @@ import org.apache.eventmesh.runtime.core.protocol.http.processor.inf.AbstractEve
 import org.apache.eventmesh.runtime.util.RemotingHelper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -128,8 +128,8 @@ public class RemoteUnSubscribeEventProcessor extends AbstractEventProcessor {
             String meshGroup = String.join("-", env, idc, cluster, sysId);
 
             // local unSubscription url
-            String unsubscribeUrl = (eventMeshHttpConfiguration.getEventMeshHost() == null ?
-                "http://" + localAddress + ":" + eventMeshHttpConfiguration.getHttpServerPort() :
+            String unsubscribeUrl = (eventMeshHttpConfiguration.getEventMeshHost() == null ? "http://" + localAddress + ":"
+                + eventMeshHttpConfiguration.getHttpServerPort() :
                 eventMeshHttpConfiguration.getEventMeshHost())
                 + RequestURI.PUBLISH_BRIDGE.getRequestURI();
 

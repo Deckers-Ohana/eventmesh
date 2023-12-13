@@ -32,6 +32,8 @@ public class SendMessageResponseBody extends Body {
 
     private String retMsg;
 
+    private String retId;
+
     private long resTime = System.currentTimeMillis();
 
     public Integer getRetCode() {
@@ -57,6 +59,25 @@ public class SendMessageResponseBody extends Body {
     public void setResTime(long resTime) {
         this.resTime = resTime;
     }
+
+    public String getRetId() {
+        return retId;
+    }
+
+    public void setRetId(String retId) {
+        this.retId = retId;
+    }
+
+
+    public static SendMessageResponseBody buildBody(Integer retCode, String retMsg, String retId) {
+        SendMessageResponseBody sendMessageResponseBody = new SendMessageResponseBody();
+        sendMessageResponseBody.setRetMsg(retMsg);
+        sendMessageResponseBody.setResTime(System.currentTimeMillis());
+        sendMessageResponseBody.setRetCode(retCode);
+        sendMessageResponseBody.setRetId(retId);
+        return sendMessageResponseBody;
+    }
+
 
     public static SendMessageResponseBody buildBody(Integer retCode, String retMsg) {
         SendMessageResponseBody sendMessageResponseBody = new SendMessageResponseBody();
