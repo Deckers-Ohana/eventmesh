@@ -78,7 +78,7 @@ public class WebhookPushRequest extends AbstractPushRequest {
     private final SubscriptionMode subscriptionMode;
 
     public WebhookPushRequest(HandleMsgContext handleMsgContext,
-        Map<String, Set<AbstractPushRequest>> waitingRequests) {
+                              Map<String, Set<AbstractPushRequest>> waitingRequests) {
         super(handleMsgContext, waitingRequests);
 
         WebhookTopicConfig topicConfig = (WebhookTopicConfig) handleMsgContext.getConsumeTopicConfig();
@@ -139,14 +139,17 @@ public class WebhookPushRequest extends AbstractPushRequest {
 
             try {
                 eventMeshGrpcServer.getHttpClient().execute(builder, handleResponse(selectedPushUrl));
-                MESSAGE_LOGGER.info("message|eventMesh2client|url={}|topic={}|bizSeqNo={}|uniqueId={}",
-                    selectedPushUrl, EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),
+                MESSAGE_LOGGER.info("message|eventMesh2client|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    selectedPushUrl,
+                    EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),
+                    EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent));
             } catch (IOException e) {
                 long cost = System.currentTimeMillis() - lastPushTime;
-                MESSAGE_LOGGER.error("message|eventMesh2client|exception={} |emitter|topic={}|bizSeqNo={}|uniqueId={}|cost={}",
+                MESSAGE_LOGGER.error("message|eventMesh2client|exception={} |emitter|topic={}|eventId={}|bizSeqNo={}|uniqueId={}|cost={}",
                     e.getMessage(), EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),
+                    EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent), EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost, e);
                 removeWaitingMap(this);
                 delayRetry();
@@ -175,8 +178,8 @@ public class WebhookPushRequest extends AbstractPushRequest {
             long cost = System.currentTimeMillis() - lastPushTime;
 
             if (response.getCode() != HttpStatus.SC_OK) {
-                MESSAGE_LOGGER.info("message|eventMesh2client|exception|url={}|topic={}|bizSeqNo={}|uniqueId={}|cost={}", selectedPushUrl,
-                    EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent), EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
+                MESSAGE_LOGGER.info("message|eventMesh2client|exception|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}|cost={}", selectedPushUrl,
+                    EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent), EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost);
                 delayRetry();
             } else {
@@ -189,8 +192,8 @@ public class WebhookPushRequest extends AbstractPushRequest {
                     return new Object();
                 }
                 ClientRetCode result = processResponseContent(res, selectedPushUrl);
-                MESSAGE_LOGGER.info("message|eventMesh2client|{}|url={}|topic={}|bizSeqNo={}|uniqueId={}|cost={}",
-                    result, selectedPushUrl, EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),
+                MESSAGE_LOGGER.info("message|eventMesh2client|{}|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}|cost={}",
+                    result, selectedPushUrl, EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent), EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost);
                 switch (result) {
                     case OK:

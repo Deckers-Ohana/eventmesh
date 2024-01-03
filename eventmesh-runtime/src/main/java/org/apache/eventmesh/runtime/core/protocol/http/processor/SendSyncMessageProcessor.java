@@ -281,10 +281,8 @@ public class SendSyncMessageProcessor implements HttpRequestProcessor {
             summaryMetrics.recordSendMsgFailed();
             summaryMetrics.recordSendMsgCost(endTime - startTime);
 
-            LogUtils.error(log, "message|eventMesh2mq|REQ|SYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                endTime - startTime, topic, bizNo, uniqueId, ex);
+            LogUtils.error(log, "message|eventMesh2mq|REQ|SYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                endTime - startTime, topic, event.getId(), bizNo, uniqueId, ex);
         }
-
-        return;
     }
 }

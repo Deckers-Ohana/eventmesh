@@ -278,6 +278,7 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
             handlerSpecific.getTraceOperation().createClientTraceOperation(EventMeshUtil.getCloudEventExtensionMap(SpecVersion.V1.toString(), event),
                 EventMeshTraceConstants.TRACE_UPSTREAM_EVENTMESH_CLIENT_SPAN, false);
 
+            CloudEvent finalEvent = event;
             eventMeshProducer.send(sendMessageContext, new SendCallback() {
 
                 @Override
@@ -286,8 +287,8 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
                     responseBodyMap.put(EventMeshConstants.RET_MSG, EventMeshRetCode.SUCCESS.getErrMsg() + sendResult);
                     responseBodyMap.put(EventMeshConstants.RET_ID, uniqueId);
 
-                    LogUtils.info(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        System.currentTimeMillis() - startTime, topic, bizNo, uniqueId);
+                    LogUtils.info(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        System.currentTimeMillis() - startTime, topic, finalEvent.getId(), bizNo, uniqueId);
                     handlerSpecific.getTraceOperation().endLatestTrace(sendMessageContext.getEvent());
                     handlerSpecific.sendResponse(responseHeaderMap, responseBodyMap);
                 }
@@ -304,8 +305,8 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
 
                     handlerSpecific.sendResponse(responseHeaderMap, responseBodyMap);
 
-                    LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        System.currentTimeMillis() - startTime, topic, bizNo, uniqueId, context.getException());
+                    LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        System.currentTimeMillis() - startTime, topic, finalEvent.getId(), bizNo, uniqueId, context.getException());
                 }
             });
         } catch (Exception ex) {
@@ -313,8 +314,8 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
             handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_SEND_ASYNC_MSG_ERR, responseHeaderMap,
                 responseBodyMap, null);
 
-            LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                System.currentTimeMillis() - startTime, topic, bizNo, uniqueId, ex);
+            LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                System.currentTimeMillis() - startTime, topic, event.getId(), bizNo, uniqueId, ex);
         }
     }
 
@@ -326,7 +327,7 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
 
     @Override
     public String[] paths() {
-        return new String[]{RequestURI.PUBLISH_BRIDGE.getRequestURI()};
+        return new String[] {RequestURI.PUBLISH_BRIDGE.getRequestURI()};
     }
 
 }

@@ -251,6 +251,7 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
             Span clientSpan = TraceUtils.prepareClientSpan(EventMeshUtil.getCloudEventExtensionMap(protocolVersion, event),
                 EventMeshTraceConstants.TRACE_UPSTREAM_EVENTMESH_CLIENT_SPAN, false);
             try {
+                CloudEvent finalEvent = event;
                 eventMeshProducer.send(sendMessageContext, new SendCallback() {
 
                     @Override
@@ -262,8 +263,8 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
                         asyncContext.onComplete(succ, handler);
                         long endTime = System.currentTimeMillis();
                         summaryMetrics.recordSendMsgCost(endTime - startTime);
-                        MESSAGE_LOGGER.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                            endTime - startTime, topic, bizNo, uniqueId);
+                        MESSAGE_LOGGER.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                            endTime - startTime, topic, finalEvent.getId(), bizNo, uniqueId);
 
                         TraceUtils.finishSpan(span, sendMessageContext.getEvent());
                     }
@@ -281,8 +282,8 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
                         long endTime = System.currentTimeMillis();
                         summaryMetrics.recordSendMsgFailed();
                         summaryMetrics.recordSendMsgCost(endTime - startTime);
-                        MESSAGE_LOGGER.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                            endTime - startTime, topic, bizNo, uniqueId, context.getException());
+                        MESSAGE_LOGGER.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                            endTime - startTime, topic, finalEvent.getId(), bizNo, uniqueId, context.getException());
 
                         TraceUtils.finishSpanWithException(span,
                             EventMeshUtil.getCloudEventExtensionMap(protocolVersion, sendMessageContext.getEvent()),
@@ -300,8 +301,8 @@ public class SendAsyncMessageProcessor implements HttpRequestProcessor {
 
             eventMeshHTTPServer.getHttpRetryer().newTimeout(sendMessageContext, 10, TimeUnit.SECONDS);
             long endTime = System.currentTimeMillis();
-            MESSAGE_LOGGER.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                endTime - startTime, topic, bizNo, uniqueId, ex);
+            MESSAGE_LOGGER.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                endTime - startTime, topic, event.getId(), bizNo, uniqueId, ex);
             summaryMetrics.recordSendMsgFailed();
             summaryMetrics.recordSendMsgCost(endTime - startTime);
         }

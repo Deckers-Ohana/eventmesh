@@ -316,7 +316,7 @@ public class EventMeshConsumer {
                 log.debug("message|mq2eventMesh|topic={}|msg={}", topic, event);
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("message|mq2eventMesh|topic={}|bizSeqNo={}|uniqueId={}", topic,
+                    log.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic, event.getId(),
                         bizSeqNo, uniqueId);
                 }
                 eventMeshGrpcServer.getMetricsMonitor().recordReceiveMsgFromQueue();

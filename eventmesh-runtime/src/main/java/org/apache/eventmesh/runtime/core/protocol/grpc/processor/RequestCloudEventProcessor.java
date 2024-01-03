@@ -74,15 +74,15 @@ public class RequestCloudEventProcessor extends AbstractPublishCloudEventProcess
                     emitter.onCompleted();
 
                     long endTime = System.currentTimeMillis();
-                    log.info("message|eventmesh2client|REPLY|RequestReply|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        endTime - startTime, topic, seqNum, uniqueId);
+                    log.info("message|eventmesh2client|REPLY|RequestReply|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId);
                     eventMeshGrpcServer.getMetricsMonitor().recordSendMsgToClient();
                 } catch (Exception e) {
                     ServiceUtils.sendStreamResponseCompleted(message, StatusCode.EVENTMESH_REQUEST_REPLY_MSG_ERR, EventMeshUtil.stackTrace(e, 2),
                         emitter);
                     long endTime = System.currentTimeMillis();
-                    log.error("message|mq2eventmesh|REPLY|RequestReply|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        endTime - startTime, topic, seqNum, uniqueId, e);
+                    log.error("message|mq2eventmesh|REPLY|RequestReply|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId, e);
                 }
             }
 
@@ -91,8 +91,8 @@ public class RequestCloudEventProcessor extends AbstractPublishCloudEventProcess
                 ServiceUtils.sendStreamResponseCompleted(message, StatusCode.EVENTMESH_REQUEST_REPLY_MSG_ERR, EventMeshUtil.stackTrace(e, 2),
                     emitter);
                 long endTime = System.currentTimeMillis();
-                log.error("message|eventMesh2mq|REPLY|RequestReply|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, topic, seqNum, uniqueId, e);
+                log.error("message|eventMesh2mq|REPLY|RequestReply|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, topic, cloudEvent.getId(),seqNum, uniqueId, e);
             }
         }, ttl);
     }

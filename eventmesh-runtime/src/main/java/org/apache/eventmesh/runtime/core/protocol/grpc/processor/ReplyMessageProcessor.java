@@ -116,8 +116,8 @@ public class ReplyMessageProcessor {
             @Override
             public void onSuccess(SendResult sendResult) {
                 long endTime = System.currentTimeMillis();
-                log.info("message|mq2eventmesh|REPLY|ReplyToServer|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, replyTopic, seqNum, uniqueId);
+                log.info("message|mq2eventmesh|REPLY|ReplyToServer|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, cloudEvent.getId(), replyTopic, seqNum, uniqueId);
             }
 
             @Override
@@ -125,8 +125,8 @@ public class ReplyMessageProcessor {
                 ServiceUtils.sendStreamResponseCompleted(messageReply, StatusCode.EVENTMESH_REPLY_MSG_ERR,
                     EventMeshUtil.stackTrace(onExceptionContext.getException(), 2), emitter);
                 long endTime = System.currentTimeMillis();
-                log.error("message|mq2eventmesh|REPLY|ReplyToServer|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, replyTopic, seqNum, uniqueId, onExceptionContext.getException());
+                log.error("message|mq2eventmesh|REPLY|ReplyToServer|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, replyTopic, cloudEvent.getId(), seqNum, uniqueId, onExceptionContext.getException());
             }
         });
     }

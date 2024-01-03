@@ -73,15 +73,15 @@ public class BatchPublishCloudEventProcessor extends AbstractPublishBatchCloudEv
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     long endTime = System.currentTimeMillis();
-                    log.info("message|eventMesh2mq|REQ|BatchSend|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        endTime - startTime, topic, seqNum, uniqueId);
+                    log.info("message|eventMesh2mq|REQ|BatchSend|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        endTime - startTime, topic, event.getId(), seqNum, uniqueId);
                 }
 
                 @Override
                 public void onException(OnExceptionContext context) {
                     long endTime = System.currentTimeMillis();
-                    log.error("message|eventMesh2mq|REQ|BatchSend|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                        endTime - startTime, topic, seqNum, uniqueId, context.getException());
+                    log.error("message|eventMesh2mq|REQ|BatchSend|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        endTime - startTime, topic, event.getId(), seqNum, uniqueId, context.getException());
                 }
             });
         }

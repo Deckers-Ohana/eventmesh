@@ -35,16 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RabbitmqConsumerHandler implements Runnable {
 
-    private final Channel channel;
+    private Channel channel;
     private final ConfigurationHolder configurationHolder;
     private final AtomicBoolean stop = new AtomicBoolean(false);
     private EventListener eventListener;
     private String queueName;
+    private RabbitmqConsumer consumer;
 
-    public RabbitmqConsumerHandler(Channel channel, ConfigurationHolder configurationHolder, String queueName) {
+    public RabbitmqConsumerHandler(Channel channel, ConfigurationHolder configurationHolder, String queueName, RabbitmqConsumer consumer) {
         this.channel = channel;
         this.configurationHolder = configurationHolder;
         this.queueName = queueName;
+        this.consumer = consumer;
     }
 
     @Override
@@ -71,6 +73,13 @@ public class RabbitmqConsumerHandler implements Runnable {
                 }
             } catch (Exception ex) {
                 log.error("[RabbitmqConsumerHandler] thread run happen exception.", ex);
+                if (!stop.get()) {
+                    try {
+                        this.channel = consumer.reConnectChannel();
+                    } catch (Exception e) {
+                        log.error("[RabbitmqConsumerHandler] reconnect error.", e);
+                    }
+                }
             }
         }
     }

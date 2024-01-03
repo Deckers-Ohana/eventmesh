@@ -69,8 +69,8 @@ public class PublishCloudEventsProcessor extends AbstractPublishCloudEventProces
             public void onSuccess(SendResult sendResult) {
                 ServiceUtils.sendResponseCompleted(StatusCode.SUCCESS, sendResult.toString(), emitter);
                 long endTime = System.currentTimeMillis();
-                log.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, topic, seqNum, uniqueId);
+                log.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId);
                 eventMeshGrpcServer.getMetricsMonitor().recordSendMsgToClient();
             }
 
@@ -79,8 +79,8 @@ public class PublishCloudEventsProcessor extends AbstractPublishCloudEventProces
                 ServiceUtils.sendResponseCompleted(StatusCode.EVENTMESH_SEND_ASYNC_MSG_ERR,
                     EventMeshUtil.stackTrace(context.getException(), 2), emitter);
                 long endTime = System.currentTimeMillis();
-                log.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, topic, seqNum, uniqueId, context.getException());
+                log.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId, context.getException());
             }
         });
     }

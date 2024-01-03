@@ -127,7 +127,7 @@ public class EventMeshConsumer {
                 if (messageLogger.isDebugEnabled()) {
                     messageLogger.debug("message|mq2eventMesh|topic={}|event={}", topic, event);
                 } else {
-                    messageLogger.info("message|mq2eventMesh|topic={}|bizSeqNo={}|uniqueId={}", topic, bizSeqNo, uniqueId);
+                    messageLogger.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic,event.getId(), bizSeqNo, uniqueId);
                 }
 
                 if (topicNameHelper.isPresent() && topicNameHelper.get().isRetryTopic(topic)) {
@@ -209,8 +209,8 @@ public class EventMeshConsumer {
                 if (messageLogger.isDebugEnabled()) {
                     messageLogger.debug("message|mq2eventMesh|topic={}|msg={}", topic, event);
                 } else {
-                    messageLogger.info("message|mq2eventMesh|topic={}|bizSeqNo={}|uniqueId={}",
-                        topic, bizSeqNo,
+                    messageLogger.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                        topic, event.getId(), bizSeqNo,
                         uniqueId);
                 }
 
