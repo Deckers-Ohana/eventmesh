@@ -18,7 +18,7 @@
 List lark = [
         "com.larksuite.oapi:oapi-sdk:$lark_version",
         "com.github.rholder:guava-retrying:$guava_retrying_version",
-        "org.apache.httpcomponents:httpclient",
+        "org.apache.httpcomponents.client5:httpclient5",
         project(":eventmesh-common")
 ]
 
