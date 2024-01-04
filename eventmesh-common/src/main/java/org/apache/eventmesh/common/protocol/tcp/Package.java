@@ -54,4 +54,11 @@ public class Package implements ProtocolTransportObject {
         this.body = body;
     }
 
+    @Override
+    public String toString() {
+        return "Package{" +
+            "header=" + header +
+            ", body=" + body +
+            '}';
+    }
 }

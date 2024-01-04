@@ -138,7 +138,9 @@ public class Codec extends ByteToMessageCodec<Package> {
                 Package pkg = new Package(header, body);
                 out.add(pkg);
             } catch (Exception e) {
-                log.error("decode error| received data: {}.", deserializeBytes(in.array()), e);
+                byte[] data = new byte[in.readableBytes()];
+                in.readBytes(data);
+                log.error("decode error| received data: {}.", deserializeBytes(data), e);
                 throw e;
             }
         }
