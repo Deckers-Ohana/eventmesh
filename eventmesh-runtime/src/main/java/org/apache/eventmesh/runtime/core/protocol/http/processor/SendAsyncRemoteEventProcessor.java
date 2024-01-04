@@ -131,9 +131,11 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
         requestWrapper.buildSysHeaderForCE();
 
         final String bizNo = requestHeaderMap.getOrDefault(ProtocolKey.ClientInstanceKey.BIZSEQNO.getKey(),
-            RandomStringUtils.generateNum(30)).toString();
+            bodyMap.getOrDefault(ProtocolKey.ClientInstanceKey.BIZSEQNO.getKey(),
+                RandomStringUtils.generateNum(30))).toString();
         final String uniqueId = requestHeaderMap.getOrDefault(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey(),
-            RandomStringUtils.generateNum(30)).toString();
+            bodyMap.getOrDefault(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey(),
+                RandomStringUtils.generateNum(30))).toString();
         final String ttl = requestHeaderMap.getOrDefault(Constants.EVENTMESH_MESSAGE_CONST_TTL,
             4 * 1000).toString();
 

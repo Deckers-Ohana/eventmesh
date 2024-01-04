@@ -34,6 +34,7 @@ import org.apache.eventmesh.common.utils.RandomStringUtils;
 import org.apache.eventmesh.filter.pattern.Pattern;
 import org.apache.eventmesh.protocol.api.ProtocolAdaptor;
 import org.apache.eventmesh.protocol.api.ProtocolPluginFactory;
+import org.apache.eventmesh.protocol.http.HttpProtocolConstant;
 import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.HandleMsgContext;
 import org.apache.eventmesh.runtime.util.EventMeshUtil;
@@ -86,7 +87,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
     private final Map<String, Set<AbstractHTTPPushRequest>> waitingRequests;
 
     public AsyncHTTPPushRequest(HandleMsgContext handleMsgContext,
-        Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
+                                Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
         super(handleMsgContext);
         this.waitingRequests = waitingRequests;
     }
@@ -122,6 +123,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
             handleMsgContext.getEventMeshHTTPServer().getEventMeshHttpConfiguration().getEventMeshEnv());
         builder.addHeader(ProtocolKey.EventMeshInstanceKey.EVENTMESHIDC,
             handleMsgContext.getEventMeshHTTPServer().getEventMeshHttpConfiguration().getEventMeshIDC());
+        builder.addHeader(HttpProtocolConstant.CONSTANTS_KEY_ID, handleMsgContext.getEvent().getId());
 
         CloudEvent event = CloudEventBuilder.from(handleMsgContext.getEvent())
             .withExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP,
@@ -270,7 +272,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                 } else {
                     eventMeshHTTPServer.getMetrics().getSummaryMetrics().recordHttpPushMsgFailed();
                     LogUtils.info(MESSAGE_LOGGER, "message|eventMesh2client|exception|url={}|topic={}|bizSeqNo={}"
-                        + "|uniqueId={}|cost={}",
+                            + "|uniqueId={}|cost={}",
                         currPushUrl, handleMsgContext.getTopic(),
                         handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId(), cost);
 
