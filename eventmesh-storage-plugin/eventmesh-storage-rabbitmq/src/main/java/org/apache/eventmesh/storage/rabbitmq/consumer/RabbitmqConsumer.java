@@ -111,10 +111,13 @@ public class RabbitmqConsumer implements Consumer {
         this.connection = getConnection();
         this.channel = getChannel();
         this.rabbitmqConsumerHandler = new RabbitmqConsumerHandler(channel, configurationHolder,
-            isBroadcast ? consumerGroup : configurationHolder.getQueueName(),this);
+            isBroadcast ? consumerGroup : configurationHolder.getQueueName(), this);
     }
 
     public Channel reConnectChannel() throws Exception {
+        if (isClosed()) {
+            return null;
+        }
         this.connection = getConnection();
         this.channel = getChannel();
         return this.channel;

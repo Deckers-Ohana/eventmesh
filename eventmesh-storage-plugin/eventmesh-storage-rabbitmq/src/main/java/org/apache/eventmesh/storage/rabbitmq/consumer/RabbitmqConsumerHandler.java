@@ -53,6 +53,9 @@ public class RabbitmqConsumerHandler implements Runnable {
     public void run() {
         while (!stop.get()) {
             try {
+                if (!stop.get() && consumer.isStarted() && !channel.isOpen()) {
+                    this.channel = consumer.reConnectChannel();
+                }
                 GetResponse response = channel.basicGet(queueName, configurationHolder.isAutoAck());
                 if (response != null) {
                     RabbitmqCloudEvent rabbitmqCloudEvent = RabbitmqCloudEvent.getFromByteArray(response.getBody());
@@ -73,13 +76,6 @@ public class RabbitmqConsumerHandler implements Runnable {
                 }
             } catch (Exception ex) {
                 log.error("[RabbitmqConsumerHandler] thread run happen exception.", ex);
-                if (!stop.get()) {
-                    try {
-                        this.channel = consumer.reConnectChannel();
-                    } catch (Exception e) {
-                        log.error("[RabbitmqConsumerHandler] reconnect error.", e);
-                    }
-                }
             }
         }
     }
