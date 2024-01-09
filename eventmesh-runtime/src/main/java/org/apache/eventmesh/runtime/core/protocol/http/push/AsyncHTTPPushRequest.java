@@ -105,7 +105,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
 
         HttpPost builder = new HttpPost(currPushUrl);
 
-        String requestCode = "";
+        String requestCode;
         if (SubscriptionType.SYNC == handleMsgContext.getSubscriptionItem().getType()) {
             requestCode = String.valueOf(RequestCode.HTTP_PUSH_CLIENT_SYNC.getRequestCode());
         } else {

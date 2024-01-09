@@ -30,6 +30,8 @@ import java.util.Properties;
 
 import org.redisson.Redisson;
 import org.redisson.api.RTopic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import io.cloudevents.CloudEvent;
@@ -37,8 +39,8 @@ import io.cloudevents.CloudEvent;
 import com.google.common.base.Preconditions;
 
 
-
 public class RedisProducer implements Producer {
+    private final Logger log = LoggerFactory.getLogger(RedisProducer.class);
 
     private Redisson redisson;
 
@@ -121,12 +123,15 @@ public class RedisProducer implements Producer {
 
     @Override
     public void request(CloudEvent cloudEvent, RequestReplyCallback rrCallback, long timeout) {
-        throw new StorageRuntimeException("Request is not supported");
+        log.warn("Requesting cloud event : {}", cloudEvent);
+        // throw new StorageRuntimeException("Request is not supported");
     }
 
     @Override
     public boolean reply(CloudEvent cloudEvent, SendCallback sendCallback) {
-        throw new StorageRuntimeException("Reply is not supported");
+        log.warn("Reply is not supported : {}", cloudEvent);
+        // throw new StorageRuntimeException("Reply is not supported");
+        return true;
     }
 
     @Override
