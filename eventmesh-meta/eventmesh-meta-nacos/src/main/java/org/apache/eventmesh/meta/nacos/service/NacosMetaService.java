@@ -218,11 +218,18 @@ public class NacosMetaService implements MetaService {
         }
         try {
             nacosNamingService.shutDown();
+            log.info("NacosRegistryService close");
         } catch (NacosException e) {
             log.error("[NacosRegistryService][shutdown] error", e);
             throw new MetaException(e.getMessage());
         }
-        log.info("NacosRegistryService close");
+        try {
+            nacosConfigService.shutDown();
+            log.info("NacosConfigService close");
+        } catch (NacosException e) {
+            log.error("[NacosConfigService][shutdown] error", e);
+            throw new MetaException(e.getMessage());
+        }
     }
 
     @Override
@@ -308,6 +315,8 @@ public class NacosMetaService implements MetaService {
             }
             URI uri = uriBuilder.build();
             HttpGet httpGet = new HttpGet(uri);
+            httpGet.setHeader(NacosConstant.USERNAME, username);
+            httpGet.setHeader(NacosConstant.PASSWORD, password);
             try (CloseableHttpResponse closeableHttpResponse = httpclient.execute(httpGet)) {
                 if (closeableHttpResponse.getStatusLine().getStatusCode() == 200) {
                     String response = EntityUtils.toString(closeableHttpResponse.getEntity(), StandardCharsets.UTF_8);

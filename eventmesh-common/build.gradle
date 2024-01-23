@@ -52,15 +52,13 @@ dependencies {
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "org.springframework:spring-context"
 
-
+    testImplementation "org.junit-pioneer:junit-pioneer"
     implementation "org.yaml:snakeyaml"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     testCompileOnly 'org.projectlombok:lombok'
-
-  testImplementation "org.junit-pioneer:junit-pioneer"
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     testImplementation "org.apache.commons:commons-lang3"

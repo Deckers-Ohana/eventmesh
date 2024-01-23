@@ -40,11 +40,11 @@ buildscript {
     }
 }
 
-//Remove doclint warnings that pollute javadoc logs when building with java8
-if(JavaVersion.current().isJava8()){
+// Remove doclint warnings that pollute javadoc logs when building
+if (JavaVersion.current().isJava8()) {
     allprojects {
-        tasks.withType(Javadoc){
-            options.addStringOption('xdoclint:none','-quiet')
+        tasks.withType(Javadoc) {
+            options.addStringOption('xdoclint:none', '-quiet')
         }
     }
 }
@@ -94,7 +94,6 @@ allprojects {
                   .exclude('**/org/apache/eventmesh/connector/openfunction/client/EventMeshGrpcService**')
                   .exclude('**/org/apache/eventmesh/connector/openfunction/client/CallbackServiceGrpc**')
                   .exclude('**/org/apache/eventmesh/connector/jdbc/antlr**')
-                  .dependsOn(spotlessApply)
 
     dependencies {
         repositories {
@@ -111,7 +110,7 @@ allprojects {
         enforceCheck false
         java {
             target project.fileTree(project.projectDir) {
-                include '**/*.java'
+                include 'src/*/java/**/*.java'
                 exclude '**/org/apache/eventmesh/**/protos**'
                 exclude '**/org/apache/eventmesh/connector/openfunction/client/EventMeshGrpcService**'
                 exclude '**/org/apache/eventmesh/connector/openfunction/client/CallbackServiceGrpc**'
@@ -438,7 +437,7 @@ subprojects {
                     licenses {
                         license {
                             name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
                     }
                     developers {
@@ -477,6 +476,7 @@ subprojects {
     def grpcVersion = '1.60.0'
     def jacksonVersion = '2.16.0'
     def openTelemetryVersion='1.33.0'
+    def log4jVersion = '2.17.2'
 
     dependencyManagement {
         dependencies {
@@ -491,10 +491,10 @@ subprojects {
 
             dependency "com.google.guava:guava:32.1.3-jre"
 
-            dependency "org.slf4j:slf4j-api:1.7.36"
-            dependency "org.apache.logging.log4j:log4j-api:2.17.2"
-            dependency "org.apache.logging.log4j:log4j-core:2.17.2"
-            dependency "org.apache.logging.log4j:log4j-to-slf4j:2.17.2"
+            dependency "org.slf4j:slf4j-api:2.0.9"
+            dependency "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+            dependency "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+            dependency "org.apache.logging.log4j:log4j-to-slf4j:${log4jVersion}"
 
             dependency "com.lmax:disruptor:3.4.4"
 

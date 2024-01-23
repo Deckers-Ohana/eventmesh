@@ -27,7 +27,6 @@ import org.apache.eventmesh.common.protocol.http.header.client.SubscribeRequestH
 import org.apache.eventmesh.common.protocol.http.header.client.SubscribeResponseHeader;
 import org.apache.eventmesh.common.utils.IPUtils;
 import org.apache.eventmesh.common.utils.JsonUtils;
-import org.apache.eventmesh.common.utils.LogUtils;
 import org.apache.eventmesh.metrics.api.model.HttpSummaryMetrics;
 import org.apache.eventmesh.runtime.acl.Acl;
 import org.apache.eventmesh.runtime.boot.EventMeshHTTPServer;
@@ -71,7 +70,7 @@ public class SubscribeProcessor implements HttpRequestProcessor {
         final Integer requestCode = Integer.valueOf(request.getRequestCode());
         final String localAddress = IPUtils.getLocalAddress();
         final String remoteAddr = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        LogUtils.info(log, "cmd={}|{}|client2eventMesh|from={}|to={}",
+        log.info("cmd={}|{}|client2eventMesh|from={}|to={}",
             RequestCode.get(requestCode), EventMeshConstants.PROTOCOL_HTTP, remoteAddr, localAddress);
 
         final SubscribeRequestHeader subscribeRequestHeader = (SubscribeRequestHeader) request.getHeader();
@@ -115,7 +114,7 @@ public class SubscribeProcessor implements HttpRequestProcessor {
                 } catch (Exception e) {
                     completeResponse(request, asyncContext, subscribeResponseHeader,
                         EventMeshRetCode.EVENTMESH_ACL_ERR, e.getMessage(), SubscribeResponseBody.class);
-                    LogUtils.warn(log, "CLIENT HAS NO PERMISSION,SubscribeProcessor subscribe failed", e);
+                    log.warn("CLIENT HAS NO PERMISSION,SubscribeProcessor subscribe failed", e);
                     return;
                 }
             }
@@ -150,7 +149,7 @@ public class SubscribeProcessor implements HttpRequestProcessor {
 
                 final CompleteHandler<HttpCommand> handler = httpCommand -> {
                     try {
-                        LogUtils.debug(log, "{}", httpCommand);
+                        log.debug("{}", httpCommand);
                         eventMeshHTTPServer.sendResponse(ctx, httpCommand.httpResponse());
 
                         summaryMetrics.recordHTTPReqResTimeCost(System.currentTimeMillis() - request.getReqTime());
@@ -167,11 +166,8 @@ public class SubscribeProcessor implements HttpRequestProcessor {
                     EventMeshRetCode.EVENTMESH_SUBSCRIBE_ERR.getErrMsg() + EventMeshUtil.stackTrace(e, 2),
                     SubscribeResponseBody.class);
                 final long endTime = System.currentTimeMillis();
-                LogUtils.error(log, "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}"
-                        + "|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime,
-                    JsonUtils.toJSONString(subscribeRequestBody.getTopics()),
-                    subscribeRequestBody.getUrl(), e);
+                log.error("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|bizSeqNo={}|uniqueId={}",
+                    endTime - startTime, JsonUtils.toJSONString(subscribeRequestBody.getTopics()), subscribeRequestBody.getUrl(), e);
                 summaryMetrics.recordSendMsgFailed();
                 summaryMetrics.recordSendMsgCost(endTime - startTime);
             }

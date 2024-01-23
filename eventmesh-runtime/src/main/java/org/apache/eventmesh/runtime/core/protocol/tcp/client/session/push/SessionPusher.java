@@ -55,7 +55,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionPusher {
 
-    private final Logger messageLogger = LoggerFactory.getLogger(EventMeshConstants.MESSAGE);
+    private static final Logger MESSAGE_LOGGER = LoggerFactory.getLogger(EventMeshConstants.MESSAGE);
 
     private final AtomicLong deliveredMsgsCount = new AtomicLong(0);
 
@@ -107,7 +107,7 @@ public class SessionPusher {
             pkg = (Package) protocolAdaptor.fromCloudEvent(downStreamMsgContext.event);
             pkg.setHeader(new Header(cmd, OPStatus.SUCCESS.getCode(), null, downStreamMsgContext.seq));
             pkg.getHeader().putProperty(Constants.PROTOCOL_TYPE, "http".equalsIgnoreCase(protocolType) ? CLOUD_EVENTS_PROTOCOL_NAME : protocolType);
-            messageLogger.info("pkg|mq2eventMesh|cmd={}|mqMsg={}|user={}", cmd, pkg, session.getClient());
+            MESSAGE_LOGGER.info("pkg|mq2eventMesh|cmd={}|mqMsg={}|user={}", cmd, pkg, session.getClient());
         } catch (Exception e) {
             pkg.setHeader(new Header(cmd, OPStatus.FAIL.getCode(), Arrays.toString(e.getStackTrace()), downStreamMsgContext.seq));
         } finally {

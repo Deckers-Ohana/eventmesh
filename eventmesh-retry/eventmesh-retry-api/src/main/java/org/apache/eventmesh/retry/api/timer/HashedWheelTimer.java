@@ -467,9 +467,7 @@ public class HashedWheelTimer implements Timer {
                 try {
                     timeout.remove();
                 } catch (Throwable t) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("An exception was thrown while process a cancellation task", t);
-                    }
+                    logger.warn("An exception was thrown while process a cancellation task", t);
                 }
             }
         }
@@ -609,9 +607,7 @@ public class HashedWheelTimer implements Timer {
                 task.run();
                 task.setExecuteTimeHook(System.currentTimeMillis());
             } catch (Throwable t) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("An exception was thrown by " + TimerTask.class.getSimpleName() + '.', t);
-                }
+                logger.warn("An exception was thrown by " + TimerTask.class.getSimpleName() + '.', t);
             }
         }
 
