@@ -556,7 +556,6 @@ subprojects {
 
             dependency "jakarta.annotation:jakarta.annotation-api:2.1.1"
 
-            dependency "com.github.seancfoley:ipaddress:5.3.3"
             dependency "com.google.code.gson:gson:2.10.1"
 
             dependency "org.yaml:snakeyaml:2.2"

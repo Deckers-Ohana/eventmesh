@@ -68,7 +68,7 @@ public class HTTPClientPool {
     private static final int DEFAULT_IDLETIME_SECONDS = 30;
 
     private static final int CONNECT_TIMEOUT = 5000;
-    private static final int SOCKET_TIMEOUT = 5000;
+    private static final int SOCKET_TIMEOUT = 30000;
 
     private transient PoolingHttpClientConnectionManager connectionManager;
     //for spring framework
