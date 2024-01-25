@@ -286,6 +286,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                     MESSAGE_LOGGER
                         .info("message|eventMesh2client|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
                             currPushUrl, handleMsgContext.getTopic(),
+                            event.getId(),
                             handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId());
                 }
             }
@@ -301,19 +302,17 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("asyncPushRequest={")
-            .append("bizSeqNo=").append(handleMsgContext.getBizSeqNo())
-            .append(",startIdx=").append(startIdx)
-            .append(",retryTimes=").append(retryTimes)
-            .append(",uniqueId=").append(handleMsgContext.getUniqueId())
-            .append(",executeTime=")
-            .append(DateFormatUtils.format(executeTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS))
-            .append(",lastPushTime=")
-            .append(DateFormatUtils.format(lastPushTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS))
-            .append(",createTime=")
-            .append(DateFormatUtils.format(createTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS)).append("}");
-        return sb.toString();
+        return "asyncPushRequest={" +
+            "bizSeqNo=" + handleMsgContext.getBizSeqNo() +
+            ",startIdx=" + startIdx +
+            ",retryTimes=" + retryTimes +
+            ",uniqueId=" + handleMsgContext.getUniqueId() +
+            ",executeTime=" +
+            DateFormatUtils.format(executeTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) +
+            ",lastPushTime=" +
+            DateFormatUtils.format(lastPushTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) +
+            ",createTime=" +
+            DateFormatUtils.format(createTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) + "}";
     }
 
     boolean processResponseStatus(int httpStatus, ClassicHttpResponse httpResponse) {
@@ -334,6 +333,10 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         } else if (httpStatus == HttpStatus.SC_GONE || httpStatus == HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE) {
             // failed with no retry
             return false;
+        } else if (httpStatus == HttpStatus.SC_SERVER_ERROR ||
+            httpStatus == HttpStatus.SC_UNAUTHORIZED || httpStatus == HttpStatus.SC_FORBIDDEN) {
+            MESSAGE_LOGGER.error("Push error: headers:{} , entity:{} ", Arrays.stream(httpResponse.getHeaders()).toArray(),
+                httpResponse.getEntity().toString());
         }
 
         // failed with default retry
@@ -360,10 +363,6 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                 return ClientRetCode.get(retCode);
             }
 
-            return ClientRetCode.FAIL;
-        } catch (NumberFormatException e) {
-            MESSAGE_LOGGER.warn("url:{}, bizSeqno:{}, uniqueId:{}, httpResponse:{}",
-                currPushUrl, handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId(), content);
             return ClientRetCode.FAIL;
         } catch (Exception e) {
             MESSAGE_LOGGER.warn("url:{}, bizSeqno:{}, uniqueId:{}, httpResponse:{}",

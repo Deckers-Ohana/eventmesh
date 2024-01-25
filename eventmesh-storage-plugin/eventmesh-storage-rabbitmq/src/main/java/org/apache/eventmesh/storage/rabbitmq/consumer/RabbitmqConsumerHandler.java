@@ -30,6 +30,7 @@ import io.cloudevents.CloudEvent;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.GetResponse;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,9 +39,10 @@ public class RabbitmqConsumerHandler implements Runnable {
     private Channel channel;
     private final ConfigurationHolder configurationHolder;
     private final AtomicBoolean stop = new AtomicBoolean(false);
+    @Setter
     private EventListener eventListener;
-    private String queueName;
-    private RabbitmqConsumer consumer;
+    private final String queueName;
+    private final RabbitmqConsumer consumer;
 
     public RabbitmqConsumerHandler(Channel channel, ConfigurationHolder configurationHolder, String queueName, RabbitmqConsumer consumer) {
         this.channel = channel;
@@ -61,7 +63,6 @@ public class RabbitmqConsumerHandler implements Runnable {
                     RabbitmqCloudEvent rabbitmqCloudEvent = RabbitmqCloudEvent.getFromByteArray(response.getBody());
                     CloudEvent cloudEvent = rabbitmqCloudEvent.convertToCloudEvent();
                     final EventMeshAsyncConsumeContext consumeContext = new EventMeshAsyncConsumeContext() {
-
                         @Override
                         public void commit(EventMeshAction action) {
                             log.info("[RabbitmqConsumerHandler] Rabbitmq consumer context commit.");
@@ -80,15 +81,7 @@ public class RabbitmqConsumerHandler implements Runnable {
         }
     }
 
-    public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
     public void stop() {
         stop.set(true);
-    }
-
-    public void start() {
-        stop.set(false);
     }
 }

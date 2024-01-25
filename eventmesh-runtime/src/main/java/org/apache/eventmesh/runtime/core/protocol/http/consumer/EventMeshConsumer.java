@@ -62,6 +62,8 @@ import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.opentelemetry.api.trace.Span;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -69,6 +71,7 @@ public class EventMeshConsumer {
 
     public static final Logger MESSAGE_LOGGER = LoggerFactory.getLogger(EventMeshConstants.MESSAGE);
 
+    @Getter
     private final EventMeshHTTPServer eventMeshHTTPServer;
 
     private final AtomicBoolean started4Persistent = new AtomicBoolean(Boolean.FALSE);
@@ -79,6 +82,8 @@ public class EventMeshConsumer {
 
     private final AtomicBoolean inited4Broadcast = new AtomicBoolean(Boolean.FALSE);
 
+    @Setter
+    @Getter
     private ConsumerGroupConf consumerGroupConf;
 
     private final MQConsumerWrapper persistentMqConsumer;
@@ -305,18 +310,6 @@ public class EventMeshConsumer {
         } else {
             persistentMqConsumer.updateOffset(events, context);
         }
-    }
-
-    public ConsumerGroupConf getConsumerGroupConf() {
-        return consumerGroupConf;
-    }
-
-    public void setConsumerGroupConf(ConsumerGroupConf consumerGroupConf) {
-        this.consumerGroupConf = consumerGroupConf;
-    }
-
-    public EventMeshHTTPServer getEventMeshHTTPServer() {
-        return eventMeshHTTPServer;
     }
 
     public void sendMessageBack(final CloudEvent event, final String uniqueId, String bizSeqNo) throws Exception {
