@@ -94,8 +94,6 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
     private transient RateLimiter msgRateLimiter;
     private transient RateLimiter batchRateLimiter;
 
-    private final transient HTTPClientPool httpClientPool = new HTTPClientPool(10);
-
     public EventMeshHTTPServer(final EventMeshServer eventMeshServer, final EventMeshHTTPConfiguration eventMeshHttpConfiguration) {
 
         super(eventMeshHttpConfiguration.getHttpServerPort(),
