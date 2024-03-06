@@ -50,6 +50,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import io.cloudevents.CloudEvent;
@@ -106,6 +107,13 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
             eventMeshHTTPServer.getEventMeshHttpConfiguration().getSysID());
         requestHeaderMap.put(ProtocolKey.ClientInstanceKey.PRODUCERGROUP.getKey(), meshGroup);
 
+        // build sys header
+        requestWrapper.buildSysHeaderForClient();
+
+        // build cloudevents attributes
+        requestHeaderMap.putIfAbsent("source", source);
+        requestWrapper.buildSysHeaderForCE();
+
         // process remote event body
         final Map<String, Object> bodyMap = Optional.ofNullable(JsonUtils.parseTypeReferenceObject(
             new String(requestWrapper.getBody(), Constants.DEFAULT_CHARSET),
@@ -115,13 +123,6 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
         )).orElseGet(Maps::newHashMap);
 
         requestWrapper.setBody(bodyMap.get("content").toString().getBytes(StandardCharsets.UTF_8));
-        requestHeaderMap.put("subject", bodyMap.get("topic").toString());
-        // build sys header
-        requestWrapper.buildSysHeaderForClient();
-
-        // build cloudevents attributes
-        requestHeaderMap.putIfAbsent("source", source);
-        requestWrapper.buildSysHeaderForCE();
 
         final String bizNo = requestHeaderMap.getOrDefault(ProtocolKey.ClientInstanceKey.BIZSEQNO.getKey(),
             bodyMap.getOrDefault(ProtocolKey.ClientInstanceKey.BIZSEQNO.getKey(),
@@ -322,6 +323,11 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
     @Override
     public String[] paths() {
         return new String[] {RequestURI.PUBLISH_BRIDGE.getRequestURI()};
+    }
+
+    @Override
+    public Executor executor() {
+        return eventMeshHTTPServer.getHttpThreadPoolGroup().getRemoteMsgExecutor();
     }
 
 }
