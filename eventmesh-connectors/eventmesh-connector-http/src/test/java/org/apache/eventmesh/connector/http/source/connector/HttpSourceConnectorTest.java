@@ -23,14 +23,14 @@ import org.apache.eventmesh.connector.http.source.config.SourceConnectorConfig;
 import org.apache.eventmesh.openconnect.offsetmgmt.api.data.ConnectRecord;
 import org.apache.eventmesh.openconnect.util.ConfigUtil;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +67,7 @@ class HttpSourceConnectorTest {
         // test binary content mode
         for (int i = 0; i < batchSize; i++) {
             HttpResponse resp = mockBinaryRequest();
-            Assertions.assertEquals(resp.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+            Assertions.assertEquals(resp.getCode(), HttpStatus.SC_OK);
 
         }
         List<ConnectRecord> res = connector.poll();
@@ -79,7 +79,7 @@ class HttpSourceConnectorTest {
         // test structured content mode
         for (int i = 0; i < batchSize; i++) {
             HttpResponse resp = mockStructuredRequest();
-            Assertions.assertEquals(resp.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+            Assertions.assertEquals(resp.getCode(), HttpStatus.SC_OK);
         }
         res = connector.poll();
         Assertions.assertEquals(batchSize, res.size());
@@ -92,7 +92,7 @@ class HttpSourceConnectorTest {
         invalidPost.setHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
         invalidPost.setHeader("ce-id", String.valueOf(UUID.randomUUID()));
         HttpResponse resp = httpClient.execute(invalidPost);
-        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, resp.getStatusLine().getStatusCode());
+        Assertions.assertEquals(HttpStatus.SC_BAD_REQUEST, resp.getCode());
     }
 
     HttpResponse mockBinaryRequest() throws Exception {
