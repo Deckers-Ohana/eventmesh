@@ -132,7 +132,7 @@ public class EventMeshHTTPConfiguration extends CommonConfiguration {
     @ConfigField(field = "blacklist.ipv6")
     private List<IPAddress> eventMeshIpv6BlackList = Collections.emptyList();
 
-    @ConfigFiled(field = "http.host", notNull = true, beNumber = true)
+    @ConfigField(field = "http.host", notNull = true, beNumber = true)
     private String eventMeshHost;
 
 }
