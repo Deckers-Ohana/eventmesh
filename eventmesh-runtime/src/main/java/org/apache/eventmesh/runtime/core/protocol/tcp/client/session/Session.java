@@ -207,9 +207,9 @@ public class Session {
         sessionJson.put("remoteAddr", RemotingHelper.parseSocketAddressAddr(remoteAddress));
         sessionJson.put("client", client);
         sessionJson.put("sessionState", sessionState);
-        sessionJson.put("sessionContext", sessionContext);
-        sessionJson.put("pusher", pusher);
-        sessionJson.put("sender", sender);
+        sessionJson.put("sessionContext", sessionContext.toString());
+        sessionJson.put("pusher", pusher.toString());
+        sessionJson.put("sender", sender.toString());
         sessionJson.put("createTime", DateFormatUtils.format(createTime, EventMeshConstants.DATE_FORMAT));
         sessionJson.put("lastHeartbeatTime", DateFormatUtils.format(lastHeartbeatTime, EventMeshConstants.DATE_FORMAT));
         return JsonUtils.toJSONString(sessionJson);
