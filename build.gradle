@@ -571,7 +571,7 @@ subprojects {
 
             dependency "org.projectlombok:lombok:1.18.30"
             dependency "com.github.seancfoley:ipaddress:5.4.0"
-            dependency "com.alibaba.fastjson2:fastjson2:2.0.43"
+            dependency "com.alibaba.fastjson2:fastjson2:2.0.48"
 
 
             dependency "software.amazon.awssdk:s3:2.21.42"
