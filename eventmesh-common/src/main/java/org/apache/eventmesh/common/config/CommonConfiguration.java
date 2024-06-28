@@ -67,12 +67,6 @@ public class CommonConfiguration {
     @ConfigField(field = "metaStorage.plugin.password")
     private String eventMeshMetaStoragePluginPassword = "";
 
-    @ConfigField(field = "metaStorage.plugin.metaStorageIntervalInMills")
-    private Integer eventMeshMetaStorageIntervalInMills = 10 * 1000;
-
-    @ConfigField(field = "metaStorage.plugin.fetchMetaStorageAddrIntervalInMills")
-    private Integer eventMeshFetchMetaStorageAddrInterval = 10 * 1000;
-
     @ConfigField(field = "metaStorage.plugin.enabled")
     private boolean eventMeshServerMetaStorageEnable = false;
 
@@ -85,11 +79,8 @@ public class CommonConfiguration {
     @ConfigField(field = "security.plugin.type", notEmpty = true)
     private String eventMeshSecurityPluginType = "security";
 
-    @ConfigField(field = "connector.plugin.type", notEmpty = true)
-    private String eventMeshConnectorPluginType = "rocketmq";
-
     @ConfigField(field = "storage.plugin.type", notEmpty = true)
-    private String eventMeshStoragePluginType = "rocketmq";
+    private String eventMeshStoragePluginType = "standalone";
 
     @ConfigField(field = "security.validation.type.token", notEmpty = true)
     private boolean eventMeshSecurityValidateTypeToken = false;
@@ -114,6 +105,21 @@ public class CommonConfiguration {
 
     @ConfigField(field = "server.retry.plugin.type")
     private String eventMeshRetryPluginType = Constants.DEFAULT;
+
+    @ConfigField(field = "registry.plugin.server-addr", notEmpty = true)
+    private String registryAddr = "";
+
+    @ConfigField(field = "registry.plugin.type", notEmpty = true)
+    private String eventMeshRegistryPluginType = "nacos";
+
+    @ConfigField(field = "registry.plugin.username")
+    private String eventMeshRegistryPluginUsername = "";
+
+    @ConfigField(field = "registry.plugin.password")
+    private String eventMeshRegistryPluginPassword = "";
+
+    @ConfigField(field = "registry.plugin.enabled")
+    private boolean eventMeshRegistryPluginEnabled = false;
 
     public void reload() {
         this.eventMeshWebhookOrigin = "eventmesh." + eventMeshIDC;

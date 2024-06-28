@@ -31,7 +31,6 @@ import org.apache.eventmesh.runtime.configuration.EventMeshHTTPConfiguration;
 import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.consumer.SubscriptionManager;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.ConsumerManager;
-import org.apache.eventmesh.runtime.core.protocol.http.processor.AdminMetricsProcessor;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.BatchSendMessageProcessor;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.BatchSendMessageV2Processor;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.CreateTopicProcessor;
@@ -55,7 +54,7 @@ import org.apache.eventmesh.runtime.core.protocol.http.push.HTTPClientPool;
 import org.apache.eventmesh.runtime.core.protocol.http.retry.HttpRetryer;
 import org.apache.eventmesh.runtime.core.protocol.producer.ProducerManager;
 import org.apache.eventmesh.runtime.meta.MetaStorage;
-import org.apache.eventmesh.runtime.metrics.http.HTTPMetricsServer;
+import org.apache.eventmesh.runtime.metrics.http.EventMeshHttpMetricsManager;
 import org.apache.eventmesh.webhook.receive.WebHookController;
 
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +67,7 @@ import org.assertj.core.util.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -75,6 +75,7 @@ import lombok.extern.slf4j.Slf4j;
  * Add multiple managers to the underlying server
  */
 @Slf4j
+@Getter
 public class EventMeshHTTPServer extends AbstractHTTPServer {
 
     private final EventMeshServer eventMeshServer;
@@ -95,7 +96,6 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
     private transient RateLimiter batchRateLimiter;
 
     public EventMeshHTTPServer(final EventMeshServer eventMeshServer, final EventMeshHTTPConfiguration eventMeshHttpConfiguration) {
-
         super(eventMeshHttpConfiguration.getHttpServerPort(),
             eventMeshHttpConfiguration.isEventMeshServerUseTls(),
             eventMeshHttpConfiguration);
@@ -103,7 +103,6 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         this.eventMeshHttpConfiguration = eventMeshHttpConfiguration;
         this.metaStorage = eventMeshServer.getMetaStorage();
         this.acl = eventMeshServer.getAcl();
-
     }
 
     public void init() throws Exception {
@@ -121,7 +120,7 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
 
         httpRetryer = new HttpRetryer(this);
 
-        super.setMetrics(new HTTPMetricsServer(this, metricsRegistries));
+        super.setEventMeshHttpMetricsManager(new EventMeshHttpMetricsManager(this, metricsRegistries));
         subscriptionManager = new SubscriptionManager(eventMeshHttpConfiguration.isEventMeshServerMetaStorageEnable(), metaStorage);
 
         consumerManager = new ConsumerManager(this);
@@ -135,7 +134,7 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         transformerEngine = new TransformerEngine(metaStorage, producerManager, consumerManager);
 
         super.setHandlerService(new HandlerService());
-        super.getHandlerService().setMetrics(this.getMetrics());
+        super.getHandlerService().setMetrics(this.getEventMeshHttpMetricsManager());
 
         // get the trace-plugin
         if (StringUtils.isNotEmpty(eventMeshHttpConfiguration.getEventMeshTracePluginType())
@@ -152,7 +151,7 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
     @Override
     public void start() throws Exception {
         super.start();
-        this.getMetrics().start();
+        this.getEventMeshHttpMetricsManager().start();
 
         consumerManager.start();
         producerManager.start();
@@ -173,7 +172,7 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
 
         super.shutdown();
 
-        this.getMetrics().shutdown();
+        this.getEventMeshHttpMetricsManager().shutdown();
 
         filterEngine.shutdown();
 
@@ -251,9 +250,6 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
         final SendAsyncRemoteEventProcessor sendAsyncRemoteEventProcessor = new SendAsyncRemoteEventProcessor(this);
         this.getHandlerService().register(sendAsyncRemoteEventProcessor);
 
-        final AdminMetricsProcessor adminMetricsProcessor = new AdminMetricsProcessor(this);
-        registerProcessor(RequestCode.ADMIN_METRICS.getRequestCode(), adminMetricsProcessor);
-
         final HeartBeatProcessor heartProcessor = new HeartBeatProcessor(this);
         registerProcessor(RequestCode.HEARTBEAT.getRequestCode(), heartProcessor);
 
@@ -299,62 +295,4 @@ public class EventMeshHTTPServer extends AbstractHTTPServer {
 
         this.getHandlerService().register(webHookProcessor, super.getHttpThreadPoolGroup().getWebhookExecutor());
     }
-
-    public SubscriptionManager getSubscriptionManager() {
-        return subscriptionManager;
-    }
-
-    public ConsumerManager getConsumerManager() {
-        return consumerManager;
-    }
-
-    public ProducerManager getProducerManager() {
-        return producerManager;
-    }
-
-    public EventMeshHTTPConfiguration getEventMeshHttpConfiguration() {
-        return eventMeshHttpConfiguration;
-    }
-
-    public EventBus getEventBus() {
-        return eventBus;
-    }
-
-    public HttpRetryer getHttpRetryer() {
-        return httpRetryer;
-    }
-
-    public Acl getAcl() {
-        return acl;
-    }
-
-    public EventMeshServer getEventMeshServer() {
-        return eventMeshServer;
-    }
-
-    public RateLimiter getMsgRateLimiter() {
-        return msgRateLimiter;
-    }
-
-    public RateLimiter getBatchRateLimiter() {
-        return batchRateLimiter;
-    }
-
-    public FilterEngine getFilterEngine() {
-        return filterEngine;
-    }
-
-    public TransformerEngine getTransformerEngine() {
-        return transformerEngine;
-    }
-
-    public MetaStorage getMetaStorage() {
-        return metaStorage;
-    }
-
-    public HTTPClientPool getHttpClientPool() {
-        return httpClientPool;
-    }
-
-
 }

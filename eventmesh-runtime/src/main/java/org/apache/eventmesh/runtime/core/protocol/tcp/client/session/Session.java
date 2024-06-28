@@ -25,6 +25,7 @@ import org.apache.eventmesh.common.protocol.tcp.Header;
 import org.apache.eventmesh.common.protocol.tcp.OPStatus;
 import org.apache.eventmesh.common.protocol.tcp.Package;
 import org.apache.eventmesh.common.protocol.tcp.UserAgent;
+import org.apache.eventmesh.common.utils.IPUtils;
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.runtime.configuration.EventMeshTCPConfiguration;
 import org.apache.eventmesh.runtime.constants.EventMeshConstants;
@@ -188,10 +189,7 @@ public class Session {
                             MESSAGE_LOGGER.error("write2Client fail, pkg[{}] session[{}]", pkg, this);
                         } else {
                             Objects.requireNonNull(clientGroupWrapper.get())
-                                .getEventMeshTcpMonitor()
-                                .getTcpSummaryMetrics()
-                                .getEventMesh2clientMsgNum()
-                                .incrementAndGet();
+                                .getEventMeshTcpMetricsManager().eventMesh2clientMsgNumIncrement(IPUtils.parseChannelRemoteAddr(future.channel()));
                         }
                     }
                 });
@@ -220,16 +218,36 @@ public class Session {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Session)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Session session = (Session) o;
-        return Objects.equals(getSessionId(), session.getSessionId());
+        if (!Objects.equals(client, session.client)) {
+            return false;
+        }
+        if (!Objects.equals(context, session.context)) {
+            return false;
+        }
+
+        return Objects.equals(sessionState, session.sessionState);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSessionId());
+        int result = 1001; // primeNumber
+        if (client != null) {
+            result += 31 * result + Objects.hash(client);
+        }
+
+        if (context != null) {
+            result += 31 * result + Objects.hash(context);
+        }
+
+        if (sessionState != null) {
+            result += 31 * result + Objects.hash(sessionState);
+        }
+        return result;
     }
 
     public Session(UserAgent client, ChannelHandlerContext context, EventMeshTCPConfiguration eventMeshTCPConfiguration) {

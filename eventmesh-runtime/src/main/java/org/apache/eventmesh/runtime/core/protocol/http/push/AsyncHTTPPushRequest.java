@@ -220,7 +220,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         WebhookUtil.setWebhookHeaders(builder, httpEntity.getContentType(),
             eventMeshHttpConfiguration.getEventMeshWebhookOrigin(), urlAuthType);
 
-        eventMeshHTTPServer.getMetrics().getSummaryMetrics().recordPushMsg();
+        eventMeshHTTPServer.getEventMeshHttpMetricsManager().getHttpMetrics().recordPushMsg();
 
         this.lastPushTime = System.currentTimeMillis();
 
@@ -232,7 +232,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
             eventMeshHTTPServer.getHttpClientPool().getClient().execute(builder, response -> {
                 removeWaitingMap(AsyncHTTPPushRequest.this);
                 long cost = System.currentTimeMillis() - lastPushTime;
-                eventMeshHTTPServer.getMetrics().getSummaryMetrics().recordHTTPPushTimeCost(cost);
+                eventMeshHTTPServer.getEventMeshHttpMetricsManager().getHttpMetrics().recordHTTPPushTimeCost(cost);
 
                 if (processResponseStatus(response.getCode(), response)) {
                     // this is successful response, process response payload
@@ -267,7 +267,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                         default: // do nothing
                     }
                 } else {
-                    eventMeshHTTPServer.getMetrics().getSummaryMetrics().recordHttpPushMsgFailed();
+                    eventMeshHTTPServer.getEventMeshHttpMetricsManager().getHttpMetrics().recordHttpPushMsgFailed();
                     MESSAGE_LOGGER.info("message|eventMesh2client|exception|url={}|topic={}|bizSeqNo={}|uniqueId={}|cost={}",
                         currPushUrl, handleMsgContext.getTopic(), handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId(), cost);
 

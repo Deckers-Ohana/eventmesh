@@ -24,7 +24,6 @@ import org.apache.eventmesh.runtime.admin.handler.v1.GrpcClientHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.HTTPClientHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.InsertWebHookConfigHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.MetaHandler;
-import org.apache.eventmesh.runtime.admin.handler.v1.MetricsHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.QueryRecommendEventMeshHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.QueryWebHookConfigByIdHandler;
 import org.apache.eventmesh.runtime.admin.handler.v1.QueryWebHookConfigByManufacturerHandler;
@@ -58,6 +57,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AdminHandlerManager {
 
+    private EventMeshServer eventMeshServer;
+
     private EventMeshTCPServer eventMeshTCPServer;
 
     private EventMeshHTTPServer eventMeshHTTPServer;
@@ -71,9 +72,10 @@ public class AdminHandlerManager {
     private final Map<String, HttpHandler> httpHandlerMap = new ConcurrentHashMap<>();
 
     public AdminHandlerManager(EventMeshServer eventMeshServer) {
+        this.eventMeshServer = eventMeshServer;
+        this.eventMeshTCPServer = eventMeshServer.getEventMeshTCPServer();
         this.eventMeshGrpcServer = eventMeshServer.getEventMeshGrpcServer();
         this.eventMeshHTTPServer = eventMeshServer.getEventMeshHTTPServer();
-        this.eventMeshTCPServer = eventMeshServer.getEventMeshTCPServer();
         this.eventMeshMetaStorage = eventMeshServer.getMetaStorage();
         this.adminWebHookConfigOperationManage = eventMeshTCPServer.getAdminWebHookConfigOperationManage();
     }
@@ -97,7 +99,6 @@ public class AdminHandlerManager {
             eventMeshTCPServer.getEventMeshTCPConfiguration(),
             eventMeshHTTPServer.getEventMeshHttpConfiguration(),
             eventMeshGrpcServer.getEventMeshGrpcConfiguration()));
-        initHandler(new MetricsHandler(eventMeshHTTPServer, eventMeshTCPServer));
         initHandler(new TopicHandler(eventMeshTCPServer.getEventMeshTCPConfiguration().getEventMeshStoragePluginType()));
         initHandler(new EventHandler(eventMeshTCPServer.getEventMeshTCPConfiguration().getEventMeshStoragePluginType()));
         initHandler(new MetaHandler(eventMeshMetaStorage));
@@ -112,6 +113,7 @@ public class AdminHandlerManager {
 
         // v2 endpoints
         initHandler(new ConfigurationHandler(
+            eventMeshServer.getConfiguration(),
             eventMeshTCPServer.getEventMeshTCPConfiguration(),
             eventMeshHTTPServer.getEventMeshHttpConfiguration(),
             eventMeshGrpcServer.getEventMeshGrpcConfiguration()));

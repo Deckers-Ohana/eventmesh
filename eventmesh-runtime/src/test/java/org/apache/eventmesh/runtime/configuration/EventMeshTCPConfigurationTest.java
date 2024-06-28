@@ -58,7 +58,6 @@ public class EventMeshTCPConfigurationTest {
         Assertions.assertEquals(15816, config.getEventMeshTcpMsgRetryAsyncDelayInMills());
         Assertions.assertEquals(16816, config.getEventMeshTcpMsgRetryQueueSize());
         Assertions.assertEquals(Integer.valueOf(17816), config.getEventMeshTcpRebalanceIntervalInMills());
-        Assertions.assertEquals(18816, config.getEventMeshServerAdminPort());
         Assertions.assertEquals(Boolean.TRUE, config.isEventMeshTcpSendBackEnabled());
         Assertions.assertEquals(3, config.getEventMeshTcpSendBackMaxTimes());
         Assertions.assertEquals(21816, config.getEventMeshTcpPushFailIsolateTimeInMills());
@@ -74,7 +73,6 @@ public class EventMeshTCPConfigurationTest {
         Assertions.assertEquals("cluster-succeed!!!", config.getEventMeshCluster());
         Assertions.assertEquals("name-succeed!!!", config.getEventMeshName());
         Assertions.assertEquals("816", config.getSysID());
-        Assertions.assertEquals("connector-succeed!!!", config.getEventMeshConnectorPluginType());
         Assertions.assertEquals("storage-succeed!!!", config.getEventMeshStoragePluginType());
         Assertions.assertEquals("security-succeed!!!", config.getEventMeshSecurityPluginType());
         Assertions.assertEquals("metaStorage-succeed!!!", config.getEventMeshMetaStoragePluginType());

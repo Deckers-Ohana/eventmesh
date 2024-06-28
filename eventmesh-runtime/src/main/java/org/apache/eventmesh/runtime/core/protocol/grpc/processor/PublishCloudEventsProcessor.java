@@ -61,7 +61,7 @@ public class PublishCloudEventsProcessor extends AbstractPublishCloudEventProces
 
         SendMessageContext sendMessageContext = new SendMessageContext(seqNum, cloudEvent, eventMeshProducer, eventMeshGrpcServer);
 
-        eventMeshGrpcServer.getMetricsMonitor().recordSendMsgToQueue();
+        eventMeshGrpcServer.getEventMeshGrpcMetricsManager().recordSendMsgToQueue();
         long startTime = System.currentTimeMillis();
         eventMeshProducer.send(sendMessageContext, new SendCallback() {
 

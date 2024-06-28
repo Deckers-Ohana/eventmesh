@@ -32,7 +32,7 @@ import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.protocol.http.async.AsyncContext;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.HandlerService;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.inf.HttpRequestProcessor;
-import org.apache.eventmesh.runtime.metrics.http.HTTPMetricsServer;
+import org.apache.eventmesh.runtime.metrics.http.EventMeshHttpMetricsManager;
 import org.apache.eventmesh.runtime.util.HttpRequestUtil;
 import org.apache.eventmesh.runtime.util.RemotingHelper;
 import org.apache.eventmesh.runtime.util.TraceUtils;
@@ -86,6 +86,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import io.opentelemetry.api.trace.Span;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -96,7 +98,9 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
 
     private final transient EventMeshHTTPConfiguration eventMeshHttpConfiguration;
 
-    private HTTPMetricsServer metrics;
+    @Getter
+    @Setter
+    private EventMeshHttpMetricsManager eventMeshHttpMetricsManager;
 
     private static final DefaultHttpDataFactory DEFAULT_HTTP_DATA_FACTORY = new DefaultHttpDataFactory(false);
 
@@ -105,8 +109,14 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
     }
 
     protected final transient AtomicBoolean started = new AtomicBoolean(false);
+
+    @Getter
     private final transient boolean useTLS;
+
+    @Getter
+    @Setter
     private Boolean useTrace = false; // Determine whether trace is enabled
+
     private static final int MAX_CONNECTIONS = 20_000;
 
     /**
@@ -118,10 +128,13 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
     private HttpConnectionHandler httpConnectionHandler;
     private HttpDispatcher httpDispatcher;
 
+    @Setter
+    @Getter
     private HandlerService handlerService;
     private final transient ThreadPoolExecutor asyncContextCompleteHandler =
         ThreadPoolFactory.createThreadPoolExecutor(10, 10, "EventMesh-http-asyncContext");
 
+    @Getter
     private final HTTPThreadPoolGroup httpThreadPoolGroup;
 
     public AbstractHTTPServer(final int port, final boolean useTLS,
@@ -253,7 +266,7 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
      */
     private Map<String, Object> parseHttpRequestBody(final HttpRequest httpRequest) throws IOException {
         return HttpRequestUtil.parseHttpRequestBody(httpRequest, () -> System.currentTimeMillis(),
-            (startTime) -> metrics.getSummaryMetrics().recordDecodeTimeCost(System.currentTimeMillis() - startTime));
+            (startTime) -> eventMeshHttpMetricsManager.getHttpMetrics().recordDecodeTimeCost(System.currentTimeMillis() - startTime));
     }
 
     @Sharable
@@ -292,7 +305,7 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
                     TraceUtils.finishSpanWithException(span, headerMap, errorStatus.reasonPhrase(), null);
                     return;
                 }
-                metrics.getSummaryMetrics().recordHTTPRequest();
+                eventMeshHttpMetricsManager.getHttpMetrics().recordHTTPRequest();
 
                 // process http
                 final HttpCommand requestCommand = new HttpCommand();
@@ -403,8 +416,7 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
                     }
 
                     log.debug("{}", asyncContext.getResponse());
-                    metrics.getSummaryMetrics()
-                        .recordHTTPReqResTimeCost(System.currentTimeMillis() - request.getReqTime());
+                    eventMeshHttpMetricsManager.getHttpMetrics().recordHTTPReqResTimeCost(System.currentTimeMillis() - request.getReqTime());
                     sendResponse(ctx, asyncContext.getResponse().httpResponse());
 
                 } catch (Exception e) {
@@ -423,8 +435,8 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
 
             } catch (RejectedExecutionException re) {
                 asyncContext.onComplete(request.createHttpCommandResponse(EventMeshRetCode.OVERLOAD));
-                metrics.getSummaryMetrics().recordHTTPDiscard();
-                metrics.getSummaryMetrics().recordHTTPReqResTimeCost(System.currentTimeMillis() - request.getReqTime());
+                eventMeshHttpMetricsManager.getHttpMetrics().recordHTTPDiscard();
+                eventMeshHttpMetricsManager.getHttpMetrics().recordHTTPReqResTimeCost(System.currentTimeMillis() - request.getReqTime());
                 try {
                     sendResponse(ctx, asyncContext.getResponse().httpResponse());
 
@@ -451,11 +463,11 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
 
         @Override
         public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
-            if (null != cause) {
+            if (cause != null) {
                 log.error("", cause);
             }
 
-            if (null != ctx) {
+            if (ctx != null) {
                 ctx.close();
             }
         }
@@ -523,33 +535,5 @@ public abstract class AbstractHTTPServer extends AbstractRemotingServer {
                 new HttpObjectAggregator(Integer.MAX_VALUE),
                 httpDispatcher);
         }
-    }
-
-    public void setUseTrace(final Boolean useTrace) {
-        this.useTrace = useTrace;
-    }
-
-    public Boolean getUseTrace() {
-        return useTrace;
-    }
-
-    public HTTPMetricsServer getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(final HTTPMetricsServer metrics) {
-        this.metrics = metrics;
-    }
-
-    public HTTPThreadPoolGroup getHttpThreadPoolGroup() {
-        return httpThreadPoolGroup;
-    }
-
-    public HandlerService getHandlerService() {
-        return handlerService;
-    }
-
-    public void setHandlerService(HandlerService handlerService) {
-        this.handlerService = handlerService;
     }
 }
