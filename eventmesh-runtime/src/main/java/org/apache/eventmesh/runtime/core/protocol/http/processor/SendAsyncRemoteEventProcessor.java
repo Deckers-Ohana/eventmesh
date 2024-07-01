@@ -95,9 +95,9 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
         final String source = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
 
         final String env = eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshEnv();
-        final String meshGroup = env + '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIDC() +
-            '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshCluster() + '-' +
-            eventMeshHTTPServer.getEventMeshHttpConfiguration().getSysID();
+        final String meshGroup = env + '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIDC()
+            + '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshCluster() + '-'
+            + eventMeshHTTPServer.getEventMeshHttpConfiguration().getSysID();
         requestHeaderMap.put(ProtocolKey.ClientInstanceKey.IP.getKey(), source);
         requestHeaderMap.put(ProtocolKey.ClientInstanceKey.ENV.getKey(),
             eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshEnv());
@@ -281,7 +281,7 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
                     responseBodyMap.put(EventMeshConstants.RET_MSG, EventMeshRetCode.SUCCESS.getErrMsg() + sendResult);
                     responseBodyMap.put(EventMeshConstants.RET_ID, uniqueId);
 
-                    log.info( "message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
+                    log.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
                         System.currentTimeMillis() - startTime, topic, finalEvent.getId(), bizNo, uniqueId);
                     handlerSpecific.getTraceOperation().endLatestTrace(sendMessageContext.getEvent());
                     handlerSpecific.sendResponse(responseHeaderMap, responseBodyMap);

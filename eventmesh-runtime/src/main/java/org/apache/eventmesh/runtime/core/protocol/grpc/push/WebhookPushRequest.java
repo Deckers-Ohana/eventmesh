@@ -179,7 +179,8 @@ public class WebhookPushRequest extends AbstractPushRequest {
 
             if (response.getCode() != HttpStatus.SC_OK) {
                 MESSAGE_LOGGER.info("message|eventMesh2client|exception|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}|cost={}", selectedPushUrl,
-                    EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent), EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
+                    EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent), EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
+                    EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost);
                 delayRetry();
             } else {
@@ -193,7 +194,8 @@ public class WebhookPushRequest extends AbstractPushRequest {
                 }
                 ClientRetCode result = processResponseContent(res, selectedPushUrl);
                 MESSAGE_LOGGER.info("message|eventMesh2client|{}|url={}|topic={}|eventId={}|bizSeqNo={}|uniqueId={}|cost={}",
-                    result, selectedPushUrl, EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
+                    result, selectedPushUrl, EventMeshCloudEventUtils.getSubject(eventMeshCloudEvent),
+                    EventMeshCloudEventUtils.getEventId(eventMeshCloudEvent),
                     EventMeshCloudEventUtils.getSeqNum(eventMeshCloudEvent), EventMeshCloudEventUtils.getUniqueId(eventMeshCloudEvent), cost);
                 switch (result) {
                     case OK:

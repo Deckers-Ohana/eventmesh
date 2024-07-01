@@ -76,7 +76,7 @@ public class RequestCloudEventProcessor extends AbstractPublishCloudEventProcess
                     long endTime = System.currentTimeMillis();
                     log.info("message|eventmesh2client|REPLY|RequestReply|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
                         endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId);
-                    eventMeshGrpcServer.getEventMeshGrpcMetricsManager().recordSendMsgToClient();
+                    eventMeshGrpcServer.getEventMeshGrpcMetricsManager().recordSendMsgToClient(null);
                 } catch (Exception e) {
                     ServiceUtils.sendStreamResponseCompleted(message, StatusCode.EVENTMESH_REQUEST_REPLY_MSG_ERR, EventMeshUtil.stackTrace(e, 2),
                         emitter);
@@ -92,7 +92,7 @@ public class RequestCloudEventProcessor extends AbstractPublishCloudEventProcess
                     emitter);
                 long endTime = System.currentTimeMillis();
                 log.error("message|eventMesh2mq|REPLY|RequestReply|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
-                    endTime - startTime, topic, cloudEvent.getId(),seqNum, uniqueId, e);
+                    endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId, e);
             }
         }, ttl);
     }

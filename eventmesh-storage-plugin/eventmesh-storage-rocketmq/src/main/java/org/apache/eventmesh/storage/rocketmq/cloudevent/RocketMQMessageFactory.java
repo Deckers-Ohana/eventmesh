@@ -25,6 +25,7 @@ import org.apache.rocketmq.common.message.Message;
 
 import java.util.Map;
 
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import io.cloudevents.core.message.MessageReader;

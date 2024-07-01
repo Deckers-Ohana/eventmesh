@@ -71,7 +71,7 @@ public class PublishCloudEventsProcessor extends AbstractPublishCloudEventProces
                 long endTime = System.currentTimeMillis();
                 log.info("message|eventMesh2mq|REQ|ASYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
                     endTime - startTime, topic, cloudEvent.getId(), seqNum, uniqueId);
-                eventMeshGrpcServer.getMetricsMonitor().recordSendMsgToClient();
+                eventMeshGrpcServer.getEventMeshGrpcMetricsManager().recordSendMsgToClient(null);
             }
 
             @Override

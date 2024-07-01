@@ -362,7 +362,7 @@ kafka-clients 3.0.0 licensed under 'Apache-2.0'. For details see: licenses/Apach
 listenablefuture 9999.0-empty-to-avoid-conflict-with-guava licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
 log4j-api 2.22.1 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
 log4j-core 2.22.1 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
-log4j-slf4j2-impl 2.22.1 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
+log4j-to-slf4j 2.22.1 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
 lz4-java 1.7.1 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
 lz4-java 1.8.0 licensed under 'Apache-2.0'. For details see: licenses/Apache-2.0.txt
 mbknor-jackson-jsonschema_2.12 1.0.34 licensed under 'MIT'. For details see: licenses/MIT.txt

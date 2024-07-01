@@ -306,7 +306,7 @@ public class EventMeshConsumer {
 
             final String topic = event.getSubject();
             final String bizSeqNo = Optional.ofNullable(
-                (String) event.getExtension(Constants.PROPERTY_MESSAGE_SEARCH_KEYS))
+                    (String) event.getExtension(Constants.PROPERTY_MESSAGE_SEARCH_KEYS))
                 .orElse("");
             final String uniqueId = Optional.ofNullable((String) event.getExtension(Constants.RMB_UNIQ_ID))
                 .orElse("");
@@ -314,8 +314,8 @@ public class EventMeshConsumer {
             if (log.isDebugEnabled()) {
                 log.debug("message|mq2eventMesh|topic={}|msg={}", topic, event);
             } else {
-                log.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic,event.getId(), bizSeqNo, uniqueId);
-                eventMeshGrpcServer.getMetricsMonitor().recordReceiveMsgFromQueue();
+                log.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic, event.getId(), bizSeqNo, uniqueId);
+                eventMeshGrpcServer.getEventMeshGrpcMetricsManager().recordReceiveMsgFromQueue();
             }
 
             final EventMeshAsyncConsumeContext eventMeshAsyncConsumeContext = (EventMeshAsyncConsumeContext) context;
@@ -351,7 +351,7 @@ public class EventMeshConsumer {
     }
 
     public void sendMessageBack(final String consumerGroup, final CloudEvent event,
-        final String uniqueId, final String bizSeqNo) throws Exception {
+                                final String uniqueId, final String bizSeqNo) throws Exception {
         final EventMeshProducer producer = eventMeshGrpcServer.getProducerManager().getEventMeshProducer(consumerGroup);
 
         if (producer == null) {

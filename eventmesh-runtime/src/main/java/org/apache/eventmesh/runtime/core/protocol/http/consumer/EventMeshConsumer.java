@@ -132,7 +132,7 @@ public class EventMeshConsumer {
                 if (MESSAGE_LOGGER.isDebugEnabled()) {
                     MESSAGE_LOGGER.debug("message|mq2eventMesh|topic={}|event={}", topic, event);
                 } else {
-                    MESSAGE_LOGGER.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic,event.getId(), bizSeqNo, uniqueId);
+                    MESSAGE_LOGGER.info("message|mq2eventMesh|topic={}|eventId={}|bizSeqNo={}|uniqueId={}", topic, event.getId(), bizSeqNo, uniqueId);
                 }
 
                 if (topicNameHelper.isPresent() && topicNameHelper.get().isRetryTopic(topic)) {
@@ -304,7 +304,7 @@ public class EventMeshConsumer {
     }
 
     public void updateOffset(String topic, SubscriptionMode subscriptionMode, List<CloudEvent> events,
-        AbstractContext context) {
+                             AbstractContext context) {
         if (SubscriptionMode.BROADCASTING == subscriptionMode) {
             broadcastMqConsumer.updateOffset(events, context);
         } else {

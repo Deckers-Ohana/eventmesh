@@ -31,13 +31,13 @@ import org.apache.eventmesh.registry.RegistryService;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 @Slf4j

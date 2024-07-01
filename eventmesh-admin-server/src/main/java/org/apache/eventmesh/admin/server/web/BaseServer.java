@@ -20,10 +20,10 @@ package org.apache.eventmesh.admin.server.web;
 import org.apache.eventmesh.admin.server.ComponentLifeCycle;
 import org.apache.eventmesh.common.remote.payload.PayloadFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Slf4j
 public abstract class BaseServer implements ComponentLifeCycle {

@@ -302,17 +302,17 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
 
     @Override
     public String toString() {
-        return "asyncPushRequest={" +
-            "bizSeqNo=" + handleMsgContext.getBizSeqNo() +
-            ",startIdx=" + startIdx +
-            ",retryTimes=" + retryTimes +
-            ",uniqueId=" + handleMsgContext.getUniqueId() +
-            ",executeTime=" +
-            DateFormatUtils.format(executeTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) +
-            ",lastPushTime=" +
-            DateFormatUtils.format(lastPushTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) +
-            ",createTime=" +
-            DateFormatUtils.format(createTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) + "}";
+        return "asyncPushRequest={"
+            + "bizSeqNo=" + handleMsgContext.getBizSeqNo()
+            + ",startIdx=" + startIdx
+            + ",retryTimes=" + retryTimes
+            + ",uniqueId=" + handleMsgContext.getUniqueId()
+            + ",executeTime="
+            + DateFormatUtils.format(executeTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS)
+            + ",lastPushTime="
+            + DateFormatUtils.format(lastPushTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS)
+            + ",createTime="
+            + DateFormatUtils.format(createTime, Constants.DATE_FORMAT_INCLUDE_MILLISECONDS) + "}";
     }
 
     boolean processResponseStatus(int httpStatus, ClassicHttpResponse httpResponse) {
@@ -333,8 +333,8 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
         } else if (httpStatus == HttpStatus.SC_GONE || httpStatus == HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE) {
             // failed with no retry
             return false;
-        } else if (httpStatus == HttpStatus.SC_SERVER_ERROR ||
-            httpStatus == HttpStatus.SC_UNAUTHORIZED || httpStatus == HttpStatus.SC_FORBIDDEN) {
+        } else if (httpStatus == HttpStatus.SC_SERVER_ERROR
+            || httpStatus == HttpStatus.SC_UNAUTHORIZED || httpStatus == HttpStatus.SC_FORBIDDEN) {
             MESSAGE_LOGGER.error("Push error: headers:{} , entity:{} ", Arrays.stream(httpResponse.getHeaders()).toArray(),
                 httpResponse.getEntity().toString());
         }

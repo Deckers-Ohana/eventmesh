@@ -25,13 +25,13 @@ import org.apache.eventmesh.openconnect.offsetmgmt.api.data.ConnectRecord;
 import org.apache.eventmesh.openconnect.util.ConfigUtil;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ class ChatGPTSourceConnectorTest {
 
         for (int i = 0; i < batchSize; i++) {
             HttpResponse resp = mockStructuredChatRequest();
-            Assertions.assertEquals(resp.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+            Assertions.assertEquals(resp.getCode(), HttpStatus.SC_OK);
         }
 
         List<ConnectRecord> res = connector.poll();
@@ -103,7 +103,7 @@ class ChatGPTSourceConnectorTest {
 
         for (int i = 0; i < batchSize; i++) {
             HttpResponse resp = mockStructuredParseRequest();
-            Assertions.assertEquals(resp.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+            Assertions.assertEquals(resp.getCode(), HttpStatus.SC_OK);
         }
 
         List<ConnectRecord> res1 = connector.poll();
