@@ -23,8 +23,8 @@ import org.apache.eventmesh.common.protocol.grpc.adminserver.AdminServiceGrpc.Ad
 import org.apache.eventmesh.common.protocol.grpc.adminserver.AdminServiceGrpc.AdminServiceStub;
 import org.apache.eventmesh.common.protocol.grpc.adminserver.Metadata;
 import org.apache.eventmesh.common.protocol.grpc.adminserver.Payload;
-import org.apache.eventmesh.common.remote.JobState;
-import org.apache.eventmesh.common.remote.job.DataSourceType;
+import org.apache.eventmesh.common.remote.TaskState;
+import org.apache.eventmesh.common.remote.datasource.DataSourceType;
 import org.apache.eventmesh.common.remote.offset.RecordOffset;
 import org.apache.eventmesh.common.remote.offset.RecordPartition;
 import org.apache.eventmesh.common.remote.offset.RecordPosition;
@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -71,7 +72,7 @@ public class AdminOffsetService implements OffsetManagementService {
 
     private String jobId;
 
-    private JobState jobState;
+    private TaskState jobState;
 
     private DataSourceType dataSourceType;
 
@@ -106,9 +107,12 @@ public class AdminOffsetService implements OffsetManagementService {
         ReportPositionRequest reportPositionRequest = new ReportPositionRequest();
         reportPositionRequest.setJobID(jobId);
         reportPositionRequest.setState(jobState);
+        reportPositionRequest.setDataSourceType(dataSourceType);
         reportPositionRequest.setAddress(IPUtils.getLocalAddress());
 
         reportPositionRequest.setRecordPositionList(recordToSyncList);
+
+        log.debug("start report position request: {}", JsonUtils.toJSONString(reportPositionRequest));
 
         Metadata metadata = Metadata.newBuilder()
             .setType(ReportPositionRequest.class.getSimpleName())
@@ -119,6 +123,11 @@ public class AdminOffsetService implements OffsetManagementService {
                 .build())
             .build();
         requestObserver.onNext(payload);
+        log.debug("end report position request: {}", JsonUtils.toJSONString(reportPositionRequest));
+
+        for (Map.Entry<RecordPartition, RecordOffset> entry : recordMap.entrySet()) {
+            positionStore.remove(entry.getKey());
+        }
     }
 
     @Override
@@ -157,8 +166,9 @@ public class AdminOffsetService implements OffsetManagementService {
                     JsonUtils.parseObject(response.getBody().getValue().toStringUtf8(), FetchPositionResponse.class);
                 assert fetchPositionResponse != null;
                 if (fetchPositionResponse.isSuccess()) {
-                    positionStore.put(fetchPositionResponse.getRecordPosition().getRecordPartition(),
-                        fetchPositionResponse.getRecordPosition().getRecordOffset());
+                    for (RecordPosition recordPosition : fetchPositionResponse.getRecordPosition()) {
+                        positionStore.put(recordPosition.getRecordPartition(), recordPosition.getRecordOffset());
+                    }
                 }
             }
         }
@@ -175,9 +185,9 @@ public class AdminOffsetService implements OffsetManagementService {
             fetchPositionRequest.setJobID(jobId);
             fetchPositionRequest.setAddress(IPUtils.getLocalAddress());
             fetchPositionRequest.setDataSourceType(dataSourceType);
-            RecordPosition recordPosition = new RecordPosition();
-            recordPosition.setRecordPartition(partition);
-            fetchPositionRequest.setRecordPosition(recordPosition);
+            RecordPosition fetchRecordPosition = new RecordPosition();
+            fetchRecordPosition.setRecordPartition(partition);
+            fetchPositionRequest.setRecordPosition(fetchRecordPosition);
 
             Metadata metadata = Metadata.newBuilder()
                 .setType(FetchPositionRequest.class.getSimpleName())
@@ -195,8 +205,9 @@ public class AdminOffsetService implements OffsetManagementService {
                     JsonUtils.parseObject(response.getBody().getValue().toStringUtf8(), FetchPositionResponse.class);
                 assert fetchPositionResponse != null;
                 if (fetchPositionResponse.isSuccess()) {
-                    positionStore.put(fetchPositionResponse.getRecordPosition().getRecordPartition(),
-                        fetchPositionResponse.getRecordPosition().getRecordOffset());
+                    for (RecordPosition recordPosition : fetchPositionResponse.getRecordPosition()) {
+                        positionStore.put(recordPosition.getRecordPartition(), recordPosition.getRecordOffset());
+                    }
                 }
             }
         }
@@ -229,7 +240,7 @@ public class AdminOffsetService implements OffsetManagementService {
         this.dataSourceType = offsetStorageConfig.getDataSourceType();
         this.dataSinkType = offsetStorageConfig.getDataSinkType();
 
-        this.adminServerAddr = offsetStorageConfig.getOffsetStorageAddr();
+        this.adminServerAddr = getRandomAdminServerAddr(offsetStorageConfig.getOffsetStorageAddr());
         this.channel = ManagedChannelBuilder.forTarget(adminServerAddr)
             .usePlaintext()
             .build();
@@ -264,7 +275,17 @@ public class AdminOffsetService implements OffsetManagementService {
             log.info("init record offset {}", initialRecordOffsetMap);
             positionStore.putAll(initialRecordOffsetMap);
         }
-        this.jobState = JobState.RUNNING;
+        this.jobState = TaskState.RUNNING;
         this.jobId = offsetStorageConfig.getExtensions().get("jobId");
+    }
+
+    private String getRandomAdminServerAddr(String adminServerAddrList) {
+        String[] addresses = adminServerAddrList.split(";");
+        if (addresses.length == 0) {
+            throw new IllegalArgumentException("Admin server address list is empty");
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(addresses.length);
+        return addresses[randomIndex];
     }
 }

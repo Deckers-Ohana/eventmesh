@@ -28,6 +28,8 @@ import lombok.Data;
 @Data
 public class DbLoadContext {
 
+    private String gtid;
+
     private List<CanalConnectRecord> lastProcessedRecords;
 
     private List<CanalConnectRecord> prepareRecords;

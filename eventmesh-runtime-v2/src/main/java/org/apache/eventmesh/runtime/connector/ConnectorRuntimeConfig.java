@@ -31,7 +31,13 @@ public class ConnectorRuntimeConfig {
 
     private String connectorRuntimeInstanceId;
 
+    private String taskID;
+
     private String jobID;
+
+    private String region;
+
+    private Map<String, Object> runtimeConfig;
 
     private String sourceConnectorType;
 
@@ -44,5 +50,7 @@ public class ConnectorRuntimeConfig {
     private String sinkConnectorDesc;
 
     private Map<String, Object> sinkConnectorConfig;
+
+    public boolean enableIncrementalDataConsistencyCheck = true;
 
 }

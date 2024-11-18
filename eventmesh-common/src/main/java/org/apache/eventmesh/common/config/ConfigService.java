@@ -151,7 +151,7 @@ public class ConfigService {
             filePath = path.startsWith(FILE_PATH_PREFIX) ? path.substring(
                 FILE_PATH_PREFIX.length()) : this.configPath + path;
         }
-
+        filePath = normalizeFilePath(filePath);
         if (filePath.contains(".jar")) {
             try (final InputStream inputStream = getClass().getResourceAsStream(Objects.requireNonNull(resourceUrl))) {
                 if (inputStream == null) {
@@ -170,6 +170,15 @@ public class ConfigService {
         configInfo.setResourceUrl(resourceUrl);
         object = FileLoad.getFileLoad(suffix).getConfig(configInfo);
         return (T) object;
+    }
+
+    private String normalizeFilePath(String filePath) {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            if (filePath.startsWith("/")) {
+                filePath = filePath.substring(1);
+            }
+        }
+        return filePath;
     }
 
     private void populateConfig(Object object, Class<?> clazz, Config config)

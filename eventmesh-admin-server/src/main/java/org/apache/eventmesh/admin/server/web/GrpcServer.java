@@ -18,6 +18,7 @@
 package org.apache.eventmesh.admin.server.web;
 
 import org.apache.eventmesh.admin.server.AdminServerProperties;
+import org.apache.eventmesh.admin.server.web.service.AdminGrpcServer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +53,7 @@ public class GrpcServer extends BaseServer {
     }
 
     @Override
-    public void destroy() {
+    public void stop() {
         try {
             if (server != null) {
                 server.shutdown();

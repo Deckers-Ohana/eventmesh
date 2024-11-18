@@ -17,7 +17,7 @@
 
 package org.apache.eventmesh.connector.canal.interceptor;
 
-import org.apache.eventmesh.common.config.connector.rdb.canal.CanalSinkConfig;
+import org.apache.eventmesh.common.config.connector.rdb.canal.CanalSinkIncrementConfig;
 import org.apache.eventmesh.connector.canal.CanalConnectRecord;
 import org.apache.eventmesh.connector.canal.dialect.DbDialect;
 import org.apache.eventmesh.connector.canal.model.EventColumn;
@@ -28,14 +28,19 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * compute latest sql
  */
 public class SqlBuilderLoadInterceptor {
 
+    @Getter
+    @Setter
     private DbDialect dbDialect;
 
-    public boolean before(CanalSinkConfig sinkConfig, CanalConnectRecord record) {
+    public boolean before(CanalSinkIncrementConfig sinkConfig, CanalConnectRecord record) {
         // build sql
         SqlTemplate sqlTemplate = dbDialect.getSqlTemplate();
         EventType type = record.getEventType();
@@ -46,35 +51,21 @@ public class SqlBuilderLoadInterceptor {
         String shardColumns = null;
 
         if (type.isInsert()) {
-            if (CollectionUtils.isEmpty(record.getColumns())
-                && (dbDialect.isDRDS())) {
-                // sql
-                sql = sqlTemplate.getInsertSql(schemaName,
-                    record.getTableName(),
-                    buildColumnNames(record.getKeys()),
-                    buildColumnNames(record.getColumns()));
-            } else {
-                sql = sqlTemplate.getMergeSql(schemaName,
-                    record.getTableName(),
-                    buildColumnNames(record.getKeys()),
-                    buildColumnNames(record.getColumns()),
-                    new String[] {},
-                    !dbDialect.isDRDS(),
-                    shardColumns);
-            }
+            sql = sqlTemplate.getMergeSql(schemaName,
+                record.getTableName(),
+                buildColumnNames(record.getKeys()),
+                buildColumnNames(record.getColumns()),
+                new String[] {},
+                true,
+                shardColumns);
         } else if (type.isUpdate()) {
-
             boolean existOldKeys = !CollectionUtils.isEmpty(record.getOldKeys());
             boolean rowMode = sinkConfig.getSyncMode().isRow();
             String[] keyColumns = null;
             String[] otherColumns = null;
             if (existOldKeys) {
                 keyColumns = buildColumnNames(record.getOldKeys());
-                if (dbDialect.isDRDS()) {
-                    otherColumns = buildColumnNames(record.getUpdatedColumns(), record.getUpdatedKeys());
-                } else {
-                    otherColumns = buildColumnNames(record.getUpdatedColumns(), record.getKeys());
-                }
+                otherColumns = buildColumnNames(record.getUpdatedColumns(), record.getKeys());
             } else {
                 keyColumns = buildColumnNames(record.getKeys());
                 otherColumns = buildColumnNames(record.getUpdatedColumns());
@@ -86,10 +77,10 @@ public class SqlBuilderLoadInterceptor {
                     keyColumns,
                     otherColumns,
                     new String[] {},
-                    !dbDialect.isDRDS(),
+                    true,
                     shardColumns);
             } else {
-                sql = sqlTemplate.getUpdateSql(schemaName, record.getTableName(), keyColumns, otherColumns, !dbDialect.isDRDS(), shardColumns);
+                sql = sqlTemplate.getUpdateSql(schemaName, record.getTableName(), keyColumns, otherColumns, true, shardColumns);
             }
         } else if (type.isDelete()) {
             sql = sqlTemplate.getDeleteSql(schemaName,
@@ -127,13 +118,5 @@ public class SqlBuilderLoadInterceptor {
             result[i] = column.getColumnName();
         }
         return result;
-    }
-
-    public DbDialect getDbDialect() {
-        return dbDialect;
-    }
-
-    public void setDbDialect(DbDialect dbDialect) {
-        this.dbDialect = dbDialect;
     }
 }

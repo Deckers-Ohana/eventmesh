@@ -27,20 +27,25 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * event_mesh_mysql_position
+ * TableName event_mesh_mysql_position
  */
 @TableName(value = "event_mesh_mysql_position")
 @Data
 public class EventMeshMysqlPosition implements Serializable {
-
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer jobID;
+    private String jobID;
+
+    private String serverUUID;
 
     private String address;
 
     private Long position;
+
+    private String gtid;
+
+    private String currentGtid;
 
     private Long timestamp;
 

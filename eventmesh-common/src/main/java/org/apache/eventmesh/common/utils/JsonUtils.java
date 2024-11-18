@@ -54,12 +54,28 @@ public class JsonUtils {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
+    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
+        return OBJECT_MAPPER.convertValue(fromValue, toValueType);
+    }
+
+    public static <T> T convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
+        return OBJECT_MAPPER.convertValue(fromValue, toValueTypeRef);
+    }
+
     public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass) {
         if (map == null) {
             return null;
         }
         Object obj = OBJECT_MAPPER.convertValue(map, beanClass);
         return beanClass.cast(obj);
+    }
+
+    public static Map<String, Object> objectToMap(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        return OBJECT_MAPPER.convertValue(obj, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     /**
@@ -163,6 +179,13 @@ public class JsonUtils {
         } catch (JsonProcessingException e) {
             throw new JsonException("deserialize json string to typeReference error", e);
         }
+    }
+
+    public static <T> T parseTypeReferenceObject(Object object, TypeReference<T> typeReference) {
+        if (object == null) {
+            return null;
+        }
+        return convertValue(object, typeReference);
     }
 
     public static <T> T parseTypeReferenceObject(byte[] text, TypeReference<T> typeReference) {

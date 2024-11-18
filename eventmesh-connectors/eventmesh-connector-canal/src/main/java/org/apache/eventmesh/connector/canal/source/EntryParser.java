@@ -17,15 +17,17 @@
 
 package org.apache.eventmesh.connector.canal.source;
 
-import org.apache.eventmesh.common.config.connector.rdb.canal.CanalSourceConfig;
+import org.apache.eventmesh.common.config.connector.rdb.canal.CanalSourceIncrementConfig;
 import org.apache.eventmesh.connector.canal.CanalConnectRecord;
 import org.apache.eventmesh.connector.canal.model.EventColumn;
 import org.apache.eventmesh.connector.canal.model.EventColumnIndexComparable;
 import org.apache.eventmesh.connector.canal.model.EventType;
+import org.apache.eventmesh.connector.canal.source.table.RdbTableMgr;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,32 +48,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntryParser {
 
-    public List<CanalConnectRecord> parse(CanalSourceConfig sourceConfig, List<Entry> datas) {
+    public static Map<Long, List<CanalConnectRecord>> parse(CanalSourceIncrementConfig sourceConfig, List<Entry> datas,
+        RdbTableMgr tables) {
         List<CanalConnectRecord> recordList = new ArrayList<>();
         List<Entry> transactionDataBuffer = new ArrayList<>();
+        // need check weather the entry is loopback
+        boolean needSync;
+        Map<Long, List<CanalConnectRecord>> recordMap = new HashMap<>();
         try {
             for (Entry entry : datas) {
                 switch (entry.getEntryType()) {
-                    case TRANSACTIONBEGIN:
-                        break;
                     case ROWDATA:
-                        transactionDataBuffer.add(entry);
+                        RowChange rowChange = RowChange.parseFrom(entry.getStoreValue());
+                        // don't support gtid for mariadb
+                        if (sourceConfig.getServerUUID() != null && sourceConfig.isGTIDMode() && !sourceConfig.isMariaDB()) {
+                            if (checkGtidForEntry(entry, sourceConfig)) {
+                                transactionDataBuffer.add(entry);
+                            }
+                        } else {
+                            // if not gtid mode, need check weather the entry is loopback by specified column value
+                            needSync = checkNeedSync(sourceConfig, rowChange);
+                            if (needSync) {
+                                transactionDataBuffer.add(entry);
+                            }
+                        }
                         break;
                     case TRANSACTIONEND:
-                        for (Entry bufferEntry : transactionDataBuffer) {
-                            List<CanalConnectRecord> recordParsedList = internParse(sourceConfig, bufferEntry);
-                            if (CollectionUtils.isEmpty(recordParsedList)) {
-                                continue;
-                            }
-                            long totalSize = bufferEntry.getHeader().getEventLength();
-                            long eachSize = totalSize / recordParsedList.size();
-                            for (CanalConnectRecord record : recordParsedList) {
-                                if (record == null) {
-                                    continue;
-                                }
-                                record.setSize(eachSize);
-                                recordList.add(record);
-                            }
+                        parseRecordListWithEntryBuffer(sourceConfig, recordList, transactionDataBuffer, tables);
+                        if (!recordList.isEmpty()) {
+                            recordMap.put(entry.getHeader().getLogfileOffset(), recordList);
                         }
                         transactionDataBuffer.clear();
                         break;
@@ -79,34 +84,68 @@ public class EntryParser {
                         break;
                 }
             }
-
-            for (Entry bufferEntry : transactionDataBuffer) {
-                List<CanalConnectRecord> recordParsedList = internParse(sourceConfig, bufferEntry);
-                if (CollectionUtils.isEmpty(recordParsedList)) {
-                    continue;
-                }
-
-                long totalSize = bufferEntry.getHeader().getEventLength();
-                long eachSize = totalSize / recordParsedList.size();
-                for (CanalConnectRecord record : recordParsedList) {
-                    if (record == null) {
-                        continue;
-                    }
-                    record.setSize(eachSize);
-                    recordList.add(record);
-                }
-            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return recordList;
+        return recordMap;
     }
 
-    private List<CanalConnectRecord> internParse(CanalSourceConfig sourceConfig, Entry entry) {
+    private static boolean checkGtidForEntry(Entry entry, CanalSourceIncrementConfig sourceConfig) {
+        String currentGtid = entry.getHeader().getPropsList().get(0).getValue();
+        return currentGtid.contains(sourceConfig.getServerUUID());
+    }
+
+    private static void parseRecordListWithEntryBuffer(CanalSourceIncrementConfig sourceConfig,
+        List<CanalConnectRecord> recordList,
+        List<Entry> transactionDataBuffer, RdbTableMgr tables) {
+        for (Entry bufferEntry : transactionDataBuffer) {
+            List<CanalConnectRecord> recordParsedList = internParse(sourceConfig, bufferEntry, tables);
+            if (CollectionUtils.isEmpty(recordParsedList)) {
+                continue;
+            }
+            long totalSize = bufferEntry.getHeader().getEventLength();
+            long eachSize = totalSize / recordParsedList.size();
+            for (CanalConnectRecord record : recordParsedList) {
+                if (record == null) {
+                    continue;
+                }
+                record.setSize(eachSize);
+                recordList.add(record);
+            }
+        }
+    }
+
+    private static boolean checkNeedSync(CanalSourceIncrementConfig sourceConfig, RowChange rowChange) {
+        Column markedColumn = null;
+        CanalEntry.EventType eventType = rowChange.getEventType();
+        if (eventType.equals(CanalEntry.EventType.DELETE)) {
+            markedColumn = getColumnIgnoreCase(rowChange.getRowDatas(0).getBeforeColumnsList(),
+                sourceConfig.getNeedSyncMarkTableColumnName());
+        } else if (eventType.equals(CanalEntry.EventType.INSERT) || eventType.equals(CanalEntry.EventType.UPDATE)) {
+            markedColumn = getColumnIgnoreCase(rowChange.getRowDatas(0).getAfterColumnsList(),
+                sourceConfig.getNeedSyncMarkTableColumnName());
+        }
+        if (markedColumn != null) {
+            return StringUtils.equalsIgnoreCase(markedColumn.getValue(),
+                sourceConfig.getNeedSyncMarkTableColumnValue());
+        }
+        return false;
+    }
+
+    private static Column getColumnIgnoreCase(List<Column> columns, String columName) {
+        for (Column column : columns) {
+            if (column.getName().equalsIgnoreCase(columName)) {
+                return column;
+            }
+        }
+        return null;
+    }
+
+    private static List<CanalConnectRecord> internParse(CanalSourceIncrementConfig sourceConfig, Entry entry,
+        RdbTableMgr tableMgr) {
         String schemaName = entry.getHeader().getSchemaName();
         String tableName = entry.getHeader().getTableName();
-        if (!schemaName.equalsIgnoreCase(sourceConfig.getSourceConnectorConfig().getSchemaName())
-            || !tableName.equalsIgnoreCase(sourceConfig.getSourceConnectorConfig().getTableName())) {
+        if (tableMgr.getTable(schemaName, tableName) == null) {
             return null;
         }
 
@@ -127,20 +166,9 @@ public class EntryParser {
             return null;
         }
 
-        if (StringUtils.equalsIgnoreCase(sourceConfig.getSystemSchema(), schemaName)) {
-            // do noting
-            if (eventType.isDdl()) {
-                return null;
-            }
-
-            if (StringUtils.equalsIgnoreCase(sourceConfig.getSystemDualTable(), tableName)) {
-                return null;
-            }
-        } else {
-            if (eventType.isDdl()) {
-                log.warn("unsupported ddl event type: {}", eventType);
-                return null;
-            }
+        if (eventType.isDdl()) {
+            log.warn("unsupported ddl event type: {}", eventType);
+            return null;
         }
 
         List<CanalConnectRecord> recordList = new ArrayList<>();
@@ -152,7 +180,8 @@ public class EntryParser {
         return recordList;
     }
 
-    private CanalConnectRecord internParse(CanalSourceConfig canalSourceConfig, Entry entry, RowChange rowChange, RowData rowData) {
+    private static CanalConnectRecord internParse(CanalSourceIncrementConfig canalSourceConfig, Entry entry,
+        RowChange rowChange, RowData rowData) {
         CanalConnectRecord canalConnectRecord = new CanalConnectRecord();
         canalConnectRecord.setTableName(entry.getHeader().getTableName());
         canalConnectRecord.setSchemaName(entry.getHeader().getSchemaName());
@@ -160,17 +189,30 @@ public class EntryParser {
         canalConnectRecord.setExecuteTime(entry.getHeader().getExecuteTime());
         canalConnectRecord.setJournalName(entry.getHeader().getLogfileName());
         canalConnectRecord.setBinLogOffset(entry.getHeader().getLogfileOffset());
+        // if enabled gtid mode, gtid not null
+        if (canalSourceConfig.isGTIDMode()) {
+            if (canalSourceConfig.isMariaDB()) {
+                String currentGtid = entry.getHeader().getGtid();
+                canalConnectRecord.setGtid(currentGtid);
+                canalConnectRecord.setCurrentGtid(currentGtid);
+            } else {
+                String currentGtid = entry.getHeader().getPropsList().get(0).getValue();
+                String gtidRange = replaceGtidRange(entry.getHeader().getGtid(), currentGtid, canalSourceConfig.getServerUUID());
+                canalConnectRecord.setGtid(gtidRange);
+                canalConnectRecord.setCurrentGtid(currentGtid);
+            }
+        }
+
         EventType eventType = canalConnectRecord.getEventType();
 
         List<Column> beforeColumns = rowData.getBeforeColumnsList();
         List<Column> afterColumns = rowData.getAfterColumnsList();
-        String tableName = canalConnectRecord.getSchemaName() + "." + canalConnectRecord.getTableName();
 
         boolean isRowMode = canalSourceConfig.getSyncMode().isRow();
 
-        Map<String, EventColumn> keyColumns = new LinkedHashMap<String, EventColumn>();
-        Map<String, EventColumn> oldKeyColumns = new LinkedHashMap<String, EventColumn>();
-        Map<String, EventColumn> notKeyColumns = new LinkedHashMap<String, EventColumn>();
+        Map<String, EventColumn> keyColumns = new LinkedHashMap<>();
+        Map<String, EventColumn> oldKeyColumns = new LinkedHashMap<>();
+        Map<String, EventColumn> notKeyColumns = new LinkedHashMap<>();
 
         if (eventType.isInsert()) {
             for (Column column : afterColumns) {
@@ -195,7 +237,7 @@ public class EntryParser {
                     keyColumns.put(column.getName(), copyEventColumn(column, true));
                 } else {
                     if (isRowMode && entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE) {
-                        notKeyColumns.put(column.getName(), copyEventColumn(column, isRowMode));
+                        notKeyColumns.put(column.getName(), copyEventColumn(column, true));
                     }
                 }
             }
@@ -233,14 +275,26 @@ public class EntryParser {
             }
             canalConnectRecord.setColumns(columns);
         } else {
-            throw new RuntimeException("this row data has no pks , entry: " + entry.toString() + " and rowData: "
+            throw new RuntimeException("this row data has no pks , entry: " + entry + " and rowData: "
                 + rowData);
         }
 
         return canalConnectRecord;
     }
 
-    private void checkUpdateKeyColumns(Map<String, EventColumn> oldKeyColumns, Map<String, EventColumn> keyColumns) {
+    public static String replaceGtidRange(String gtid, String currentGtid, String serverUUID) {
+        String[] gtidRangeArray = gtid.split(",");
+        for (int i = 0; i < gtidRangeArray.length; i++) {
+            String gtidRange = gtidRangeArray[i];
+            if (gtidRange.startsWith(serverUUID)) {
+                gtidRangeArray[i] = gtidRange.replaceFirst("\\d+$", currentGtid.split(":")[1]);
+            }
+        }
+        return String.join(",", gtidRangeArray);
+    }
+
+    private static void checkUpdateKeyColumns(Map<String, EventColumn> oldKeyColumns,
+        Map<String, EventColumn> keyColumns) {
         if (oldKeyColumns.isEmpty()) {
             return;
         }
@@ -262,7 +316,7 @@ public class EntryParser {
         }
     }
 
-    private EventColumn copyEventColumn(Column column, boolean isUpdate) {
+    private static EventColumn copyEventColumn(Column column, boolean isUpdate) {
         EventColumn eventColumn = new EventColumn();
         eventColumn.setIndex(column.getIndex());
         eventColumn.setKey(column.getIsKey());

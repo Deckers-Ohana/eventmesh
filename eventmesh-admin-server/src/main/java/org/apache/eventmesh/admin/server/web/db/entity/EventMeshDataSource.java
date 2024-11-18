@@ -27,24 +27,27 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * event_mesh_data_source
+ * TableName event_mesh_data_source
  */
 @TableName(value = "event_mesh_data_source")
 @Data
 public class EventMeshDataSource implements Serializable {
-
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer dataType;
+    private String dataType;
 
     private String description;
 
     private String configuration;
 
-    private Integer createUid;
+    private String configurationClass;
 
-    private Integer updateUid;
+    private String region;
+
+    private String createUid;
+
+    private String updateUid;
 
     private Date createTime;
 

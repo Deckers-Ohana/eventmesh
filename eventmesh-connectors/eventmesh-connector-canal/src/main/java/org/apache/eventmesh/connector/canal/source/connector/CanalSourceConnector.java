@@ -19,49 +19,14 @@ package org.apache.eventmesh.connector.canal.source.connector;
 
 import org.apache.eventmesh.common.config.connector.Config;
 import org.apache.eventmesh.common.config.connector.rdb.canal.CanalSourceConfig;
-import org.apache.eventmesh.common.remote.offset.RecordPosition;
-import org.apache.eventmesh.common.remote.offset.canal.CanalRecordOffset;
-import org.apache.eventmesh.common.remote.offset.canal.CanalRecordPartition;
-import org.apache.eventmesh.common.utils.JsonUtils;
-import org.apache.eventmesh.connector.canal.CanalConnectRecord;
-import org.apache.eventmesh.connector.canal.source.EntryParser;
+import org.apache.eventmesh.common.remote.job.JobType;
 import org.apache.eventmesh.openconnect.api.ConnectorCreateService;
 import org.apache.eventmesh.openconnect.api.connector.ConnectorContext;
 import org.apache.eventmesh.openconnect.api.connector.SourceConnectorContext;
 import org.apache.eventmesh.openconnect.api.source.Source;
 import org.apache.eventmesh.openconnect.offsetmgmt.api.data.ConnectRecord;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-
-
-import com.alibaba.otter.canal.instance.core.CanalInstance;
-import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
-import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
-import com.alibaba.otter.canal.instance.manager.model.Canal;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.ClusterMode;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.HAMode;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.IndexMode;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.MetaMode;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.RunMode;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.SourcingType;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter.StorageMode;
-import com.alibaba.otter.canal.parse.CanalEventParser;
-import com.alibaba.otter.canal.parse.ha.CanalHAController;
-import com.alibaba.otter.canal.parse.inbound.mysql.MysqlEventParser;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
-import com.alibaba.otter.canal.protocol.ClientIdentity;
-import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,15 +35,7 @@ public class CanalSourceConnector implements Source, ConnectorCreateService<Sour
 
     private CanalSourceConfig sourceConfig;
 
-    private CanalServerWithEmbedded canalServer;
-
-    private ClientIdentity clientIdentity;
-
-    private String filter = null;
-
-    private volatile boolean running = false;
-
-    private static final int maxEmptyTimes = 10;
+    private Source source;
 
     @Override
     public Class<? extends Config> configClass() {
@@ -94,216 +51,48 @@ public class CanalSourceConnector implements Source, ConnectorCreateService<Sour
     @Override
     public void init(ConnectorContext connectorContext) throws Exception {
         SourceConnectorContext sourceConnectorContext = (SourceConnectorContext) connectorContext;
-        this.sourceConfig = (CanalSourceConfig) sourceConnectorContext.getSourceConfig();
-
-        canalServer = CanalServerWithEmbedded.instance();
-
-        canalServer.setCanalInstanceGenerator(new CanalInstanceGenerator() {
-            @Override
-            public CanalInstance generate(String destination) {
-                Canal canal = buildCanal(sourceConfig);
-
-                CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter) {
-
-                    protected CanalHAController initHaController() {
-                        return super.initHaController();
-                    }
-
-                    protected void startEventParserInternal(CanalEventParser parser, boolean isGroup) {
-                        super.startEventParserInternal(parser, isGroup);
-
-                        if (eventParser instanceof MysqlEventParser) {
-                            // set eventParser support type
-                            ((MysqlEventParser) eventParser).setSupportBinlogFormats("ROW");
-                            ((MysqlEventParser) eventParser).setSupportBinlogImages("FULL");
-                            MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
-                            mysqlEventParser.setParallel(false);
-
-                            CanalHAController haController = mysqlEventParser.getHaController();
-                            if (!haController.isStart()) {
-                                haController.start();
-                            }
-                        }
-                    }
-                };
-                return instance;
-            }
-        });
-    }
-
-    private Canal buildCanal(CanalSourceConfig sourceConfig) {
-        long slaveId = 10000;
-        if (sourceConfig.getSlaveId() != null) {
-            slaveId = sourceConfig.getSlaveId();
+        if (sourceConnectorContext.getJobType().equals(JobType.FULL)) {
+            this.source = new CanalSourceFullConnector();
+        } else if (sourceConnectorContext.getJobType().equals(JobType.INCREASE)) {
+            this.source = new CanalSourceIncrementConnector();
+        } else if (sourceConnectorContext.getJobType().equals(JobType.CHECK)) {
+            this.source = new CanalSourceCheckConnector();
+        } else {
+            throw new RuntimeException("unsupported job type " + sourceConnectorContext.getJobType());
         }
-
-        Canal canal = new Canal();
-        canal.setId(sourceConfig.getCanalInstanceId());
-        canal.setName(sourceConfig.getDestination());
-        canal.setDesc(sourceConfig.getDesc());
-
-        CanalParameter parameter = new CanalParameter();
-
-        parameter.setRunMode(RunMode.EMBEDDED);
-        parameter.setClusterMode(ClusterMode.STANDALONE);
-        parameter.setMetaMode(MetaMode.MEMORY);
-        parameter.setHaMode(HAMode.HEARTBEAT);
-        parameter.setIndexMode(IndexMode.MEMORY);
-        parameter.setStorageMode(StorageMode.MEMORY);
-        parameter.setMemoryStorageBufferSize(32 * 1024);
-
-        parameter.setSourcingType(SourcingType.MYSQL);
-        parameter.setDbAddresses(Collections.singletonList(new InetSocketAddress(sourceConfig.getSourceConnectorConfig().getDbAddress(),
-            sourceConfig.getSourceConnectorConfig().getDbPort())));
-        parameter.setDbUsername(sourceConfig.getSourceConnectorConfig().getUserName());
-        parameter.setDbPassword(sourceConfig.getSourceConnectorConfig().getPassWord());
-
-        // check positions
-        // example: Arrays.asList("{\"journalName\":\"mysql-bin.000001\",\"position\":6163L,\"timestamp\":1322803601000L}",
-        //         "{\"journalName\":\"mysql-bin.000001\",\"position\":6163L,\"timestamp\":1322803601000L}")
-        if (sourceConfig.getRecordPositions() != null && !sourceConfig.getRecordPositions().isEmpty()) {
-            List<RecordPosition> recordPositions = sourceConfig.getRecordPositions();
-            List<String> positions = new ArrayList<>();
-            recordPositions.forEach(recordPosition -> {
-                Map<String, Object> recordPositionMap = new HashMap<>();
-                CanalRecordPartition canalRecordPartition = (CanalRecordPartition) (recordPosition.getRecordPartition());
-                CanalRecordOffset canalRecordOffset = (CanalRecordOffset) (recordPosition.getRecordOffset());
-                recordPositionMap.put("journalName", canalRecordPartition.getJournalName());
-                recordPositionMap.put("timestamp", canalRecordPartition.getTimeStamp());
-                recordPositionMap.put("position", canalRecordOffset.getOffset());
-                positions.add(JsonUtils.toJSONString(recordPositionMap));
-            });
-            parameter.setPositions(positions);
-        }
-
-        parameter.setSlaveId(slaveId);
-
-        parameter.setDefaultConnectionTimeoutInSeconds(30);
-        parameter.setConnectionCharset("UTF-8");
-        parameter.setConnectionCharsetNumber((byte) 33);
-        parameter.setReceiveBufferSize(8 * 1024);
-        parameter.setSendBufferSize(8 * 1024);
-
-        // heartbeat detect
-        parameter.setDetectingEnable(false);
-
-        parameter.setDdlIsolation(sourceConfig.isDdlSync());
-        parameter.setFilterTableError(sourceConfig.isFilterTableError());
-        parameter.setMemoryStorageRawEntry(false);
-
-        canal.setCanalParameter(parameter);
-        return canal;
+        this.source.init(sourceConnectorContext);
     }
 
 
     @Override
     public void start() throws Exception {
-        if (running) {
-            return;
-        }
-        canalServer.start();
-
-        canalServer.start(sourceConfig.getDestination());
-        this.clientIdentity = new ClientIdentity(sourceConfig.getDestination(), sourceConfig.getClientId(), filter);
-        canalServer.subscribe(clientIdentity);
-
-        running = true;
+        this.source.start();
     }
 
 
     @Override
     public void commit(ConnectRecord record) {
-        long batchId = Long.parseLong(record.getExtension("messageId"));
-        canalServer.ack(clientIdentity, batchId);
+        this.source.commit(record);
     }
 
     @Override
     public String name() {
-        return this.sourceConfig.getSourceConnectorConfig().getConnectorName();
+        return this.source.name();
     }
 
     @Override
-    public void stop() {
-        if (!running) {
-            return;
-        }
-        running = false;
-        canalServer.stop(sourceConfig.getDestination());
-        canalServer.stop();
+    public void onException(ConnectRecord record) {
+        this.source.onException(record);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        this.source.stop();
     }
 
     @Override
     public List<ConnectRecord> poll() {
-        int emptyTimes = 0;
-        com.alibaba.otter.canal.protocol.Message message = null;
-        if (sourceConfig.getBatchTimeout() < 0) {
-            while (running) {
-                message = canalServer.getWithoutAck(clientIdentity, sourceConfig.getBatchSize());
-                if (message == null || message.getId() == -1L) { // empty
-                    applyWait(emptyTimes++);
-                } else {
-                    break;
-                }
-            }
-        } else { // perform with timeout
-            while (running) {
-                message =
-                    canalServer.getWithoutAck(clientIdentity, sourceConfig.getBatchSize(), sourceConfig.getBatchTimeout(), TimeUnit.MILLISECONDS);
-                if (message == null || message.getId() == -1L) { // empty
-                    continue;
-                }
-                break;
-            }
-        }
-
-        List<Entry> entries;
-        assert message != null;
-        if (message.isRaw()) {
-            entries = new ArrayList<>(message.getRawEntries().size());
-            for (ByteString entry : message.getRawEntries()) {
-                try {
-                    entries.add(CanalEntry.Entry.parseFrom(entry));
-                } catch (InvalidProtocolBufferException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } else {
-            entries = message.getEntries();
-        }
-
-        EntryParser entryParser = new EntryParser();
-
-        List<ConnectRecord> result = new ArrayList<>();
-
-        List<CanalConnectRecord> connectRecordList = entryParser.parse(sourceConfig, entries);
-
-        if (connectRecordList != null && !connectRecordList.isEmpty()) {
-            CanalConnectRecord lastRecord = connectRecordList.get(connectRecordList.size() - 1);
-
-            CanalRecordPartition canalRecordPartition = new CanalRecordPartition();
-            canalRecordPartition.setJournalName(lastRecord.getJournalName());
-            canalRecordPartition.setTimeStamp(lastRecord.getExecuteTime());
-
-            CanalRecordOffset canalRecordOffset = new CanalRecordOffset();
-            canalRecordOffset.setOffset(lastRecord.getBinLogOffset());
-
-            ConnectRecord connectRecord = new ConnectRecord(canalRecordPartition, canalRecordOffset, System.currentTimeMillis());
-            connectRecord.addExtension("messageId", String.valueOf(message.getId()));
-            connectRecord.setData(connectRecordList);
-            result.add(connectRecord);
-        }
-
-        return result;
-    }
-
-    // Handle the situation of no data and avoid empty loop death
-    private void applyWait(int emptyTimes) {
-        int newEmptyTimes = Math.min(emptyTimes, maxEmptyTimes);
-        if (emptyTimes <= 3) {
-            Thread.yield();
-        } else {
-            LockSupport.parkNanos(1000 * 1000L * newEmptyTimes);
-        }
+        return this.source.poll();
     }
 
     @Override

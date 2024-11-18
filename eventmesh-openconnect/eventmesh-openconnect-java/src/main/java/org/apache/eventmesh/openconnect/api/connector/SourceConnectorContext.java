@@ -18,7 +18,12 @@
 package org.apache.eventmesh.openconnect.api.connector;
 
 import org.apache.eventmesh.common.config.connector.SourceConfig;
+import org.apache.eventmesh.common.remote.job.JobType;
+import org.apache.eventmesh.common.remote.offset.RecordPosition;
 import org.apache.eventmesh.openconnect.offsetmgmt.api.storage.OffsetStorageReader;
+
+import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -31,5 +36,12 @@ public class SourceConnectorContext implements ConnectorContext {
     public OffsetStorageReader offsetStorageReader;
 
     public SourceConfig sourceConfig;
+
+    public Map<String, Object> runtimeConfig;
+
+    public JobType jobType;
+
+    // initial record position
+    public List<RecordPosition> recordPositionList;
 
 }
