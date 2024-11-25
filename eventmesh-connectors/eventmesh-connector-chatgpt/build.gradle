@@ -22,7 +22,7 @@ dependencies {
     implementation 'io.cloudevents:cloudevents-http-vertx:3.0.0'
     implementation 'io.vertx:vertx-web:4.5.8'
 
-    testImplementation "org.apache.httpcomponents.client5:httpclient5:5.3"
+    testImplementation "org.apache.httpcomponents.client5:httpclient5:5.4"
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
