@@ -28,6 +28,7 @@ import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
 import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEvent;
 import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEventWriter;
+import org.apache.eventmesh.storage.rabbitmq.common.EventMeshConstants;
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
 import org.apache.eventmesh.storage.rabbitmq.utils.ByteArrayUtils;
 
@@ -114,9 +115,15 @@ public class RabbitmqProducer implements Producer {
             RabbitmqCloudEventWriter writer = new RabbitmqCloudEventWriter();
             RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(cloudEvent);
             byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
-            if (data != null) {
-                rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), cloudEvent.getSubject(), data);
 
+            if (data != null) {
+                if(cloudEvent.getExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP)!=null){
+                    //send to dead letter queue ， because already executed , need to check again
+                    String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
+                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), consumerGroup+"-DEAD-LETTER."+cloudEvent.getSubject(), data);
+                } else{
+                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), cloudEvent.getSubject(), data);
+                }
                 SendResult sendResult = new SendResult();
                 sendResult.setTopic(cloudEvent.getSubject());
                 sendResult.setMessageId(cloudEvent.getId());

@@ -77,17 +77,17 @@ public class HandleMsgContext implements HandleMessageContext {
     private Map<String, String> props;
 
     public HandleMsgContext(final String msgRandomNo,
-        final String consumerGroup,
-        final EventMeshConsumer eventMeshConsumer,
-        final String topic,
-        final CloudEvent event,
-        final SubscriptionItem subscriptionItem,
-        final AbstractContext context,
-        final ConsumerGroupConf consumerGroupConfig,
-        final EventMeshHTTPServer eventMeshHTTPServer,
-        final String bizSeqNo,
-        final String uniqueId,
-        final ConsumerGroupTopicConf consumeTopicConfig) {
+                            final String consumerGroup,
+                            final EventMeshConsumer eventMeshConsumer,
+                            final String topic,
+                            final CloudEvent event,
+                            final SubscriptionItem subscriptionItem,
+                            final AbstractContext context,
+                            final ConsumerGroupConf consumerGroupConfig,
+                            final EventMeshHTTPServer eventMeshHTTPServer,
+                            final String bizSeqNo,
+                            final String uniqueId,
+                            final ConsumerGroupTopicConf consumeTopicConfig) {
         this.msgRandomNo = msgRandomNo;
         this.consumerGroup = consumerGroup;
         this.eventMeshConsumer = eventMeshConsumer;
@@ -210,9 +210,9 @@ public class HandleMsgContext implements HandleMessageContext {
 
     public void finish() {
         if (Objects.nonNull(eventMeshConsumer) && Objects.nonNull(context) && Objects.nonNull(event)) {
-            MESSAGE_LOGGER.info("messageAcked|group={}|topic={}|bizSeq={}|uniqId={}|msgRandomNo={}|queueId={}|queueOffset={}",
+            MESSAGE_LOGGER.info("messageAcked|group={}|topic={}|bizSeq={}|uniqId={}|msgRandomNo={}|queueId={}|queueOffset={}|data={}",
                 consumerGroup, topic, bizSeqNo, uniqueId, msgRandomNo, event.getExtension(Constants.PROPERTY_MESSAGE_QUEUE_ID),
-                event.getExtension(Constants.PROPERTY_MESSAGE_QUEUE_OFFSET));
+                event.getExtension(Constants.PROPERTY_MESSAGE_QUEUE_OFFSET), event.getData());
             eventMeshConsumer.updateOffset(topic, subscriptionItem.getMode(), Collections.singletonList(event), context);
         }
     }

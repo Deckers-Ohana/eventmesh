@@ -56,6 +56,7 @@ public class EventMeshConstants {
     public static final String RSP_IDC = "rsp0idc";
     public static final String RSP_GROUP = "rsp0group";
     public static final String RSP_URL = "rsp0url";
+    public static final String RSP_RETRY = "rspRetry";
 
     public static final String REQ_SYS = "req0sys";
     public static final String REQ_IP = "req0ip";

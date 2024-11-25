@@ -18,6 +18,7 @@
 package org.apache.eventmesh.runtime.core.protocol.http.push;
 
 import org.apache.eventmesh.common.ThreadPoolFactory;
+import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.EventMeshConsumer;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.HandleMsgContext;
 import org.apache.eventmesh.runtime.util.EventMeshUtil;
@@ -34,6 +35,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
 import io.opentelemetry.api.trace.Span;
 
 import com.google.common.collect.Maps;
@@ -49,7 +52,7 @@ public class HTTPMessageHandler implements MessageHandler {
     private static final ScheduledExecutorService SCHEDULER =
         ThreadPoolFactory.createSingleScheduledExecutor("eventMesh-pushMsgTimeout");
 
-    private static final Integer CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD = 10000;
+    private static final Integer CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD = 5000;
 
     protected static final Map<String, Set<AbstractHTTPPushRequest>> waitingRequests = Maps.newConcurrentMap();
 
@@ -77,6 +80,14 @@ public class HTTPMessageHandler implements MessageHandler {
             log.warn("waitingRequests is too many, so reject, this message will be send back to MQ, "
                 + "consumerGroup:{}, threshold:{}",
                 handleMsgContext.getConsumerGroup(), CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD);
+            CloudEvent event = CloudEventBuilder.from(handleMsgContext.getEvent())
+                .withExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP,
+                    String.valueOf(System.currentTimeMillis()))
+                .withExtension(EventMeshConstants.RSP_GROUP, handleMsgContext.getConsumerGroup())
+                .withExtension(EventMeshConstants.RSP_RETRY, "true")
+                .build();
+            // send to dead letter
+            handleMsgContext.setEvent(event);
             return false;
         }
 
