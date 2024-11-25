@@ -17,6 +17,7 @@
 
 package org.apache.eventmesh.http.demo.sub.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import static org.apache.eventmesh.common.Constants.CLOUD_EVENTS_PROTOCOL_NAME;
 
 import org.apache.eventmesh.common.protocol.http.common.ProtocolKey;
@@ -29,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

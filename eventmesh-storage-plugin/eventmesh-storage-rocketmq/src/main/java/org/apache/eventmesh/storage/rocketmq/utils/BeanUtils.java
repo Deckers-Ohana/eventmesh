@@ -18,8 +18,8 @@
 package org.apache.eventmesh.storage.rocketmq.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rocketmq.client.log.ClientLogger;
 import org.apache.rocketmq.logging.InternalLogger;
+import org.apache.rocketmq.logging.InternalLoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 public final class BeanUtils {
 
-    private static final InternalLogger LOG = ClientLogger.getLog();
+    private static final InternalLogger LOG = InternalLoggerFactory.getLogger(BeanUtils.class);
 
     /**
      * Maps primitive {@code Class}es to their corresponding wrapper {@code Class}.
