@@ -322,7 +322,12 @@ public class EventMeshConsumer {
             return;
         }
 
-        final SendMessageContext sendMessageBackContext = new SendMessageContext(bizSeqNo, event, sendMessageBack,
+        final SendMessageContext sendMessageBackContext = new SendMessageContext(bizSeqNo, CloudEventBuilder.from(event)
+            .withExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP,
+                String.valueOf(System.currentTimeMillis()))
+            .withExtension(EventMeshConstants.RSP_GROUP, consumerGroupConf.getConsumerGroup())
+            .withExtension(EventMeshConstants.RSP_RETRY, "true")
+            .build(), sendMessageBack,
             eventMeshHTTPServer);
 
         sendMessageBack.send(sendMessageBackContext, new SendCallback() {

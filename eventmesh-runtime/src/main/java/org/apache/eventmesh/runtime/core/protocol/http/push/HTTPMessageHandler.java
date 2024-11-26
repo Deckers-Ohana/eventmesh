@@ -80,14 +80,6 @@ public class HTTPMessageHandler implements MessageHandler {
             log.warn("waitingRequests is too many, so reject, this message will be send back to MQ, "
                 + "consumerGroup:{}, threshold:{}",
                 handleMsgContext.getConsumerGroup(), CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD);
-            CloudEvent event = CloudEventBuilder.from(handleMsgContext.getEvent())
-                .withExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP,
-                    String.valueOf(System.currentTimeMillis()))
-                .withExtension(EventMeshConstants.RSP_GROUP, handleMsgContext.getConsumerGroup())
-                .withExtension(EventMeshConstants.RSP_RETRY, "true")
-                .build();
-            // send to dead letter
-            handleMsgContext.setEvent(event);
             return false;
         }
 
