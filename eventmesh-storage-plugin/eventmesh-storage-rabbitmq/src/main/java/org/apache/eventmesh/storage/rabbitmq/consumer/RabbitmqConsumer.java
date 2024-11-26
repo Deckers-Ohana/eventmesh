@@ -146,7 +146,7 @@ public class RabbitmqConsumer implements Consumer {
         //绑定死信队列
         rabbitmqClient.binding(channel, configurationHolder.getExchangeType(), configurationHolder.getExchangeName() + "-DEAD-LETTER",
              consumerGroup + "-DEAD-LETTER.#",
-            isBroadcast ? consumerGroup : configurationHolder.getQueueName() + "-DEAD-LETTER");
+            (isBroadcast ? consumerGroup : configurationHolder.getQueueName()) + "-DEAD-LETTER");
         executor.execute(rabbitmqConsumerHandler);
     }
 

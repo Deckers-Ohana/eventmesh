@@ -73,28 +73,28 @@ public class EventMeshHTTPConfiguration extends CommonConfiguration {
     private int eventMeshServerPullMetaStorageInterval = 30000;
 
     @ConfigField(field = "async.accumulation.threshold")
-    private int eventMeshServerAsyncAccumulationThreshold = 1000;
+    private int eventMeshServerAsyncAccumulationThreshold = 3000;
 
     @ConfigField(field = "retry.blockQ.size")
     private int eventMeshServerRetryBlockQSize = 10000;
 
     @ConfigField(field = "batchmsg.blockQ.size")
-    private int eventMeshServerBatchBlockQSize = 1000;
+    private int eventMeshServerBatchBlockQSize = 3000;
 
     @ConfigField(field = "sendmsg.blockQ.size")
-    private int eventMeshServerSendMsgBlockQSize = 1000;
+    private int eventMeshServerSendMsgBlockQSize = 3000;
 
     @ConfigField(field = "")
-    private int eventMeshServerRemoteMsgBlockQSize = 1000;
+    private int eventMeshServerRemoteMsgBlockQSize = 3000;
 
     @ConfigField(field = "pushmsg.blockQ.size")
-    private int eventMeshServerPushMsgBlockQSize = 1000;
+    private int eventMeshServerPushMsgBlockQSize = 3000;
 
     @ConfigField(field = "clientM.blockQ.size")
-    private int eventMeshServerClientManageBlockQSize = 1000;
+    private int eventMeshServerClientManageBlockQSize = 3000;
 
     @ConfigField(field = "busy.check.interval")
-    private int eventMeshServerBusyCheckInterval = 1000;
+    private int eventMeshServerBusyCheckInterval = 3000;
 
     @ConfigField(field = "consumer.enabled")
     private boolean eventMeshServerConsumerEnabled = false;
@@ -118,7 +118,7 @@ public class EventMeshHTTPConfiguration extends CommonConfiguration {
     private int eventMeshBatchMsgRequestNumPerSecond = 20000;
 
     @ConfigField(field = "maxEventSize")
-    private int eventMeshEventSize = 1000;
+    private int eventMeshEventSize = 3000;
 
     @ConfigField(field = "maxEventBatchSize")
     private int eventMeshEventBatchSize = 10;
