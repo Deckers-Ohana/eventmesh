@@ -120,7 +120,7 @@ public class RabbitmqProducer implements Producer {
                 if(cloudEvent.getExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP)!=null){
                     //send to dead letter queue ， because already executed , need to check again
                     String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
-                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), consumerGroup+"-DEAD-LETTER."+cloudEvent.getSubject(), data);
+                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName()+"-DEAD-LETTER", consumerGroup+"-DEAD-LETTER."+cloudEvent.getSubject(), data);
                 } else{
                     rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), cloudEvent.getSubject(), data);
                 }
