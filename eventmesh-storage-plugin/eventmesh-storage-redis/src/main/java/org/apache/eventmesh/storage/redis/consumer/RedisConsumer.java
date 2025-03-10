@@ -17,7 +17,6 @@
 
 package org.apache.eventmesh.storage.redis.consumer;
 
-
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.EventMeshAction;

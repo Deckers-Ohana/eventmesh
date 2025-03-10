@@ -16,6 +16,18 @@
  */
 
 dependencies {
+    api project(":eventmesh-spi")
+    implementation project(":eventmesh-common")
+
+    implementation 'io.opentelemetry:opentelemetry-api'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.mockito:mockito-core"
     implementation project(":eventmesh-protocol-plugin:eventmesh-protocol-api")
     implementation "io.cloudevents:cloudevents-core"
     implementation "io.openmessaging:openmessaging-api"
@@ -24,3 +36,4 @@ dependencies {
     testImplementation "io.cloudevents:cloudevents-core"
     testImplementation "io.openmessaging:openmessaging-api"
 }
+

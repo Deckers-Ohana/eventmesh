@@ -37,20 +37,20 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
+import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-import jakarta.annotation.PreDestroy;
-
 @Slf4j
 @Component
 public class SubService implements InitializingBean {
 
-    private transient EventMeshGrpcConsumer eventMeshGrpcConsumer;
+    private EventMeshGrpcConsumer eventMeshGrpcConsumer;
 
-    private transient Properties properties;
+    private Properties properties;
 
     private final SubscriptionItem subscriptionItem = new SubscriptionItem();
 

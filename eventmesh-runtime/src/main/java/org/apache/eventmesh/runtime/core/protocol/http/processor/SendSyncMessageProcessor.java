@@ -281,6 +281,8 @@ public class SendSyncMessageProcessor extends AbstractHttpRequestProcessor {
             log.error("message|eventMesh2mq|REQ|SYNC|send2MQCost={}ms|topic={}|eventId={}|bizSeqNo={}|uniqueId={}",
                 endTime - startTime, topic, event.getId(), bizNo, uniqueId, ex);
         }
+
+        return;
     }
 
     @Override

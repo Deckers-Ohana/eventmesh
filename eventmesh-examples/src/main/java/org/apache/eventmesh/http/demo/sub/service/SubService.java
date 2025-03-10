@@ -40,14 +40,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
+import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-
-import jakarta.annotation.PreDestroy;
 
 @Slf4j
 @Component

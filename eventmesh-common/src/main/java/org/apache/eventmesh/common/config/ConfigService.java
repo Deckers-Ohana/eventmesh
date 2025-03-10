@@ -105,8 +105,7 @@ public class ConfigService {
         }
     }
 
-    public void populateConfigForObject(Object object) throws IllegalAccessException, NoSuchFieldException,
-        IOException {
+    public void populateConfigForObject(Object object) throws IllegalAccessException, NoSuchFieldException, IOException {
         Class<?> clazz = object.getClass();
         Config[] configArray = clazz.getAnnotationsByType(Config.class);
         if (configArray.length == 0) {
@@ -148,8 +147,7 @@ public class ConfigService {
             }
             filePath = fileURL.getPath();
         } else {
-            filePath = path.startsWith(FILE_PATH_PREFIX) ? path.substring(
-                FILE_PATH_PREFIX.length()) : this.configPath + path;
+            filePath = path.startsWith(FILE_PATH_PREFIX) ? path.substring(FILE_PATH_PREFIX.length()) : this.configPath + path;
         }
         filePath = normalizeFilePath(filePath);
         if (filePath.contains(".jar")) {

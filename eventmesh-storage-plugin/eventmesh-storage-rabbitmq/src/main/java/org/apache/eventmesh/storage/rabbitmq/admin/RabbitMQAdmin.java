@@ -71,9 +71,4 @@ public class RabbitMQAdmin extends AbstractAdmin {
     @Override
     public void shutdown() {
     }
-
-    @Override
-    public List<CloudEvent> getEvent(String topicName, int offset, int length) throws Exception {
-        return new ArrayList<>();
-    }
 }

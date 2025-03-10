@@ -26,10 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.common.TopicConfig;
+import org.apache.rocketmq.common.admin.TopicOffset;
+import org.apache.rocketmq.common.admin.TopicStatsTable;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.RPCHook;
-import org.apache.rocketmq.remoting.protocol.admin.TopicOffset;
-import org.apache.rocketmq.remoting.protocol.admin.TopicStatsTable;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.apache.rocketmq.tools.command.CommandUtil;
 
@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,7 +76,7 @@ public class RocketMQAdmin extends AbstractAdmin {
             for (String topic : topicList) {
                 long messageCount = 0;
                 TopicStatsTable topicStats = adminExt.examineTopicStats(topic);
-                Map<MessageQueue, TopicOffset> offsetTable = topicStats.getOffsetTable();
+                HashMap<MessageQueue, TopicOffset> offsetTable = topicStats.getOffsetTable();
                 for (TopicOffset topicOffset : offsetTable.values()) {
                     messageCount += topicOffset.getMaxOffset() - topicOffset.getMinOffset();
                 }

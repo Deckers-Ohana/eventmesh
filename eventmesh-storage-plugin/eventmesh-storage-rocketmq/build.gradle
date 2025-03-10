@@ -23,7 +23,7 @@ List rocketmq = [
         "org.apache.rocketmq:rocketmq-namesrv:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-tools:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-remoting:$rocketmq_version",
-        "org.apache.rocketmq:rocketmq-logging:5.0.0",
+        "org.apache.rocketmq:rocketmq-logging:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-srvutil:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-filter:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-acl:$rocketmq_version",
@@ -38,11 +38,9 @@ dependencies {
      * The exclusions can be removed after this issue is fixed:
      * https://github.com/apache/rocketmq/issues/5347
      */
-    implementation("com.google.protobuf:protobuf-java:3.25.5")
     rocketmq.each {
         implementation(it) {
             exclude group: 'ch.qos.logback', module: 'logback-classic'
-            exclude group: 'com.google.protobuf', module:'protobuf-java'
         }
     }
 

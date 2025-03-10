@@ -16,17 +16,18 @@
  */
 
 plugins {
-    id 'com.gradle.develocity' version '3.18.1'
+    id 'com.gradle.develocity' version '3.18.2'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '2.0.2'
 }
 
 def isCiServer = System.getenv().containsKey("CI")
 
 develocity {
-    server = "https://ge.apache.org"
+    server = "https://develocity.apache.org"
+    projectId = "eventmesh"
     buildScan {
         uploadInBackground = !isCiServer
-        publishing.onlyIf { false }
+        publishing.onlyIf { it.isAuthenticated() }
         obfuscation {
             ipAddresses { addresses -> addresses.collect { address -> "0.0.0.0"} }
         }
@@ -103,7 +104,6 @@ include 'eventmesh-protocol-plugin:eventmesh-protocol-openmessage'
 include 'eventmesh-protocol-plugin:eventmesh-protocol-cloudevents'
 include 'eventmesh-protocol-plugin:eventmesh-protocol-meshmessage'
 include 'eventmesh-protocol-plugin:eventmesh-protocol-http'
-include 'eventmesh-protocol-plugin:eventmesh-protocol-webhook'
 include 'eventmesh-protocol-plugin:eventmesh-protocol-grpc'
 include 'eventmesh-protocol-plugin:eventmesh-protocol-grpcmessage'
 
@@ -116,11 +116,6 @@ include 'eventmesh-trace-plugin:eventmesh-trace-api'
 include 'eventmesh-trace-plugin:eventmesh-trace-zipkin'
 include 'eventmesh-trace-plugin:eventmesh-trace-pinpoint'
 include 'eventmesh-trace-plugin:eventmesh-trace-jaeger'
-
-include 'eventmesh-webhook'
-include 'eventmesh-webhook:eventmesh-webhook-api'
-include 'eventmesh-webhook:eventmesh-webhook-admin'
-include 'eventmesh-webhook:eventmesh-webhook-receive'
 
 include 'eventmesh-retry'
 include 'eventmesh-retry:eventmesh-retry-api'
@@ -135,4 +130,3 @@ include 'eventmesh-function'
 include 'eventmesh-function:eventmesh-function-api'
 include 'eventmesh-function:eventmesh-function-filter'
 include 'eventmesh-function:eventmesh-function-transformer'
-

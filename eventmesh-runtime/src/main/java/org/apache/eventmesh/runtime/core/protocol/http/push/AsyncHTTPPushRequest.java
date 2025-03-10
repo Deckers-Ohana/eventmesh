@@ -86,7 +86,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
     private final Map<String, Set<AbstractHTTPPushRequest>> waitingRequests;
 
     public AsyncHTTPPushRequest(HandleMsgContext handleMsgContext,
-                                Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
+        Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
         super(handleMsgContext);
         this.waitingRequests = waitingRequests;
     }
@@ -363,6 +363,10 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                 return ClientRetCode.get(retCode);
             }
 
+            return ClientRetCode.FAIL;
+        } catch (NumberFormatException e) {
+            MESSAGE_LOGGER.warn("url:{}, bizSeqno:{}, uniqueId:{}, httpResponse:{}",
+                currPushUrl, handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId(), content);
             return ClientRetCode.FAIL;
         } catch (Exception e) {
             MESSAGE_LOGGER.warn("url:{}, bizSeqno:{}, uniqueId:{}, httpResponse:{}",

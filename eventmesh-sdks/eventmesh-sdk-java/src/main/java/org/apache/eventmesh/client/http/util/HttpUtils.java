@@ -51,7 +51,6 @@ import com.google.common.base.Preconditions;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 public final class HttpUtils {
 
@@ -82,7 +81,6 @@ public final class HttpUtils {
         Preconditions.checkState(requestParam != null, "requestParam can't be null");
         Preconditions.checkState(responseHandler != null, "responseHandler can't be null");
         Preconditions.checkState(requestParam.getHttpMethod().equals(HttpMethod.POST), "invalid requestParam httpMethod");
-
 
         final HttpPost httpPost = new HttpPost(uri);
 

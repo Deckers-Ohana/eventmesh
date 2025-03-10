@@ -95,9 +95,15 @@ public class SendAsyncRemoteEventProcessor implements AsyncHttpProcessor {
         final String source = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
 
         final String env = eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshEnv();
-        final String meshGroup = env + '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIDC()
-            + '-' + eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshCluster() + '-'
-            + eventMeshHTTPServer.getEventMeshHttpConfiguration().getSysID();
+        final String meshGroup = new StringBuilder()
+            .append(env)
+            .append('-')
+            .append(eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIDC())
+            .append('-')
+            .append(eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshCluster())
+            .append('-')
+            .append(eventMeshHTTPServer.getEventMeshHttpConfiguration().getSysID())
+            .toString();
         requestHeaderMap.put(ProtocolKey.ClientInstanceKey.IP.getKey(), source);
         requestHeaderMap.put(ProtocolKey.ClientInstanceKey.ENV.getKey(),
             eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshEnv());

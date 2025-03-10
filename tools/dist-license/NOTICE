@@ -284,18 +284,6 @@ The Apache Software Foundation (http://www.apache.org/).
 
 =======================================================================
 
-commons-io-2.17.0 NOTICE
-
-=======================================================================
-
-Apache Commons IO
-Copyright 2002-2024 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (https://www.apache.org/).
-
-=======================================================================
-
 rocketmq-acl-4.9.5 NOTICE
 
 =======================================================================
@@ -332,6 +320,24 @@ spring-context-5.3.31 NOTICE
 
 Spring Framework 5.3.31
 Copyright (c) 2002-2023 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
+spring-expression-5.3.15 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.15
+Copyright (c) 2002-2022 Pivotal, Inc.
 
 This product is licensed to you under the Apache License, Version 2.0
 (the "License"). You may not use this product except in compliance with
@@ -554,6 +560,24 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
+
+=======================================================================
+
+spring-core-5.3.20 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.20
+Copyright (c) 2002-2022 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
 
 =======================================================================
 
@@ -1044,6 +1068,19 @@ permitted.
 
 =======================================================================
 
+log4j-slf4j2-impl-2.24.1 NOTICE
+
+=======================================================================
+
+SLF4J 2 Provider for Log4j API
+Copyright 1999-2024 The Apache Software Foundation
+
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+=======================================================================
+
 spring-core-5.3.31 NOTICE
 
 =======================================================================
@@ -1424,6 +1461,24 @@ permitted.
 
 =======================================================================
 
+spring-aop-5.3.9 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
 spring-boot-starter-web-2.7.18 NOTICE
 
 =======================================================================
@@ -1515,36 +1570,6 @@ The licenses for these third party components are included in LICENSE.txt
 
 =======================================================================
 
-kafka-clients-3.8.1 NOTICE
-
-=======================================================================
-
-Apache Kafka
-Copyright 2024 The Apache Software Foundation.
-
-This product includes software developed at
-The Apache Software Foundation (https://www.apache.org/).
-
-This distribution has a binary dependency on jersey, which is available under the CDDL
-License. The source code of jersey can be found at https://github.com/jersey/jersey/.
-
-This distribution has a binary test dependency on jqwik, which is available under
-the Eclipse Public License 2.0. The source code can be found at
-https://github.com/jlink/jqwik.
-
-The streams-scala (streams/streams-scala) module was donated by Lightbend and the original code was copyrighted by them:
-Copyright (C) 2018 Lightbend Inc. <https://www.lightbend.com>
-Copyright (C) 2017-2018 Alexis Seigneurin.
-
-This project contains the following code copied from Apache Hadoop:
-clients/src/main/java/org/apache/kafka/common/utils/PureJavaCrc32C.java
-Some portions of this file Copyright (c) 2004-2006 Intel Corporation and licensed under the BSD license.
-
-This project contains the following code copied from Apache Hive:
-streams/src/main/java/org/apache/kafka/streams/state/internals/Murmur3.java
-
-=======================================================================
-
 spring-boot-2.5.9 NOTICE
 
 =======================================================================
@@ -1617,21 +1642,6 @@ This product may include a number of subcomponents with separate
 copyright notices and license terms. Your use of the source code for
 these subcomponents is subject to the terms and conditions of the
 subcomponent's license, as noted in the license.txt file.
-
-=======================================================================
-
-httpcore-4.4.9 NOTICE
-
-=======================================================================
-
-
-Apache HttpCore
-Copyright 2005-2018 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
 
 =======================================================================
 
@@ -1828,6 +1838,24 @@ from the source code management (SCM) system project uses.
 
 =======================================================================
 
+spring-beans-5.3.20 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.20
+Copyright (c) 2002-2022 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
 crt-core-2.29.5 NOTICE
 
 =======================================================================
@@ -1885,21 +1913,6 @@ as per accompanying LICENSE file.
 A list of contributors may be found from CREDITS file, which is included
 in some artifacts (usually source distributions); but is always available
 from the source code management (SCM) system project uses.
-
-=======================================================================
-
-httpclient-4.5.5 NOTICE
-
-=======================================================================
-
-
-Apache HttpClient
-Copyright 1999-2018 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
 
 =======================================================================
 
@@ -2154,6 +2167,24 @@ spring-aop-5.3.31 NOTICE
 
 Spring Framework 5.3.31
 Copyright (c) 2002-2023 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
+spring-jcl-5.3.20 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.20
+Copyright (c) 2002-2022 Pivotal, Inc.
 
 This product is licensed to you under the Apache License, Version 2.0
 (the "License"). You may not use this product except in compliance with
@@ -2809,21 +2840,6 @@ The Apache Software Foundation (http://www.apache.org/).
 
 =======================================================================
 
-httpclient5-5.4 NOTICE
-
-=======================================================================
-
-
-Apache HttpClient
-Copyright 1999-2021 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
-
-=======================================================================
-
 pravega-shared-controller-api-0.11.0 NOTICE
 
 =======================================================================
@@ -3036,6 +3052,36 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
+
+=======================================================================
+
+kafka-clients-3.9.0 NOTICE
+
+=======================================================================
+
+Apache Kafka
+Copyright 2024 The Apache Software Foundation.
+
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
+
+This distribution has a binary dependency on jersey, which is available under the CDDL
+License. The source code of jersey can be found at https://github.com/jersey/jersey/.
+
+This distribution has a binary test dependency on jqwik, which is available under
+the Eclipse Public License 2.0. The source code can be found at
+https://github.com/jlink/jqwik.
+
+The streams-scala (streams/streams-scala) module was donated by Lightbend and the original code was copyrighted by them:
+Copyright (C) 2018 Lightbend Inc. <https://www.lightbend.com>
+Copyright (C) 2017-2018 Alexis Seigneurin.
+
+This project contains the following code copied from Apache Hadoop:
+clients/src/main/java/org/apache/kafka/common/utils/PureJavaCrc32C.java
+Some portions of this file Copyright (c) 2004-2006 Intel Corporation and licensed under the BSD license.
+
+This project contains the following code copied from Apache Hive:
+streams/src/main/java/org/apache/kafka/streams/state/internals/Murmur3.java
 
 =======================================================================
 
@@ -3671,22 +3717,6 @@ Copyright (c) 2012-2023 VMware, Inc.
 This product is licensed to you under the Apache License, Version 2.0
 (the "License"). You may not use this product except in compliance with
 the License.
-=======================================================================
-
-commons-codec-1.9 NOTICE
-
-=======================================================================
-
-Apache Commons Codec
-Copyright 2002-2013 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-src/test/org/apache/commons/codec/language/DoubleMetaphoneTest.java
-contains test data from http://aspell.net/test/orig/batch0.tab.
-Copyright (C) 2002 Kevin Atkinson (kevina@gnu.org)
-
 =======================================================================
 
 spring-beans-5.3.31 NOTICE
@@ -4461,6 +4491,48 @@ from the source code management (SCM) system project uses.
 
 =======================================================================
 
+spring-beans-5.3.9 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
+commons-codec-1.11 NOTICE
+
+=======================================================================
+
+Apache Commons Codec
+Copyright 2002-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+src/test/org/apache/commons/codec/language/DoubleMetaphoneTest.java
+contains test data from http://aspell.net/test/orig/batch0.tab.
+Copyright (C) 2002 Kevin Atkinson (kevina@gnu.org)
+
+===============================================================================
+
+The content of package org.apache.commons.codec.language.bm has been translated
+from the original php source code available at http://stevemorse.org/phoneticinfo.htm
+with permission from the original authors.
+Original source copyright:
+Copyright (c) 2008 Alexander Beider & Stephen P. Morse.
+
+=======================================================================
+
 pravega-common-0.11.0 NOTICE
 
 =======================================================================
@@ -4486,30 +4558,6 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
-
-=======================================================================
-
-commons-codec-1.10 NOTICE
-
-=======================================================================
-
-Apache Commons Codec
-Copyright 2002-2014 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-src/test/org/apache/commons/codec/language/DoubleMetaphoneTest.java
-contains test data from http://aspell.net/test/orig/batch0.tab.
-Copyright (C) 2002 Kevin Atkinson (kevina@gnu.org)
-
-===============================================================================
-
-The content of package org.apache.commons.codec.language.bm has been translated
-from the original php source code available at http://stevemorse.org/phoneticinfo.htm
-with permission from the original authors.
-Original source copyright:
-Copyright (c) 2008 Alexander Beider & Stephen P. Morse.
 
 =======================================================================
 
@@ -4779,21 +4827,6 @@ The licenses for these third party components are included in LICENSE.txt
 
 =======================================================================
 
-httpcore5-h2-5.3 NOTICE
-
-=======================================================================
-
-
-Apache HttpComponents Core HTTP/2
-Copyright 2005-2021 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
-
-=======================================================================
-
 spring-messaging-5.3.20 NOTICE
 
 =======================================================================
@@ -5033,19 +5066,6 @@ The Apache Software Foundation (http://www.apache.org/).
 
 =======================================================================
 
-log4j-to-slf4j-2.24.1 NOTICE
-
-=======================================================================
-
-Log4j API to SLF4J Adapter
-Copyright 1999-2024 The Apache Software Foundation
-
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-=======================================================================
-
 spring-jdbc-5.3.31 NOTICE
 
 =======================================================================
@@ -5162,6 +5182,24 @@ Spring Framework
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+=======================================================================
+
+spring-expression-5.3.9 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
 
 =======================================================================
 
@@ -5322,6 +5360,69 @@ The licenses for these third party components are included in LICENSE.txt
 
 =======================================================================
 
+spring-aop-5.3.15 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.15
+Copyright (c) 2002-2022 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
+jakarta.annotation-api-1.3.5 NOTICE
+
+=======================================================================
+
+# Notices for Jakarta Annotations
+
+This content is produced and maintained by the Jakarta Annotations project.
+
+ * Project home: https://projects.eclipse.org/projects/ee4j.ca
+
+## Trademarks
+
+Jakarta Annotations is a trademark of the Eclipse Foundation.
+
+## Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v. 2.0 which is available at
+http://www.eclipse.org/legal/epl-2.0. This Source Code may also be made
+available under the following Secondary Licenses when the conditions for such
+availability set forth in the Eclipse Public License v. 2.0 are satisfied: GNU
+General Public License, version 2 with the GNU Classpath Exception which is
+available at https://www.gnu.org/software/classpath/license.html.
+
+SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+## Source Code
+
+The project maintains the following source code repositories:
+
+ * https://github.com/eclipse-ee4j/common-annotations-api
+
+## Third-party Content
+
+## Cryptography
+
+Content may contain encryption software. The country in which you are currently
+may have restrictions on the import, possession, and use, and/or re-export to
+another country, of encryption software. BEFORE using any encryption software,
+please check the country's laws, regulations and policies concerning the import,
+possession, or use, and re-export of encryption software, to see if this is
+permitted.
+
+=======================================================================
+
 audience-annotations-0.12.0 NOTICE
 
 =======================================================================
@@ -5334,6 +5435,18 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
+
+=======================================================================
+
+commons-io-2.18.0 NOTICE
+
+=======================================================================
+
+Apache Commons IO
+Copyright 2002-2024 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
 
 =======================================================================
 
@@ -5708,21 +5821,6 @@ permitted.
 
 =======================================================================
 
-httpcore5-5.3 NOTICE
-
-=======================================================================
-
-
-Apache HttpComponents Core HTTP/1.1
-Copyright 2005-2021 The Apache Software Foundation
-
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
-
-=======================================================================
-
 log4j-api-2.24.1 NOTICE
 
 =======================================================================
@@ -6020,18 +6118,21 @@ The Apache Software Foundation (http://www.apache.org/).
 
 =======================================================================
 
-httpclient-4.5.13 NOTICE
+spring-context-5.3.9 NOTICE
 
 =======================================================================
 
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
 
-Apache HttpClient
-Copyright 1999-2020 The Apache Software Foundation
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
 
-This product includes software developed at
-The Apache Software Foundation (http://www.apache.org/).
-
-
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
 
 =======================================================================
 
@@ -6157,6 +6258,24 @@ modified April 2001  by Iris Van den Broeke, Daniel Deville.
 Permission to use, copy, modify and distribute UnixCrypt
 for non-commercial or commercial purposes and without fee is
 granted provided that the copyright notice appears in all copies.
+
+=======================================================================
+
+spring-core-5.3.9 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
 
 =======================================================================
 
@@ -6839,6 +6958,24 @@ granted provided that the copyright notice appears in all copies.
 
 =======================================================================
 
+spring-jcl-5.3.9 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.9
+Copyright (c) 2002-2021 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
+
+=======================================================================
+
 mybatis-3.5.16 NOTICE
 
 =======================================================================
@@ -6917,6 +7054,21 @@ Refactored SqlBuilder class (SQL, AbstractSQL)
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+=======================================================================
+
+httpclient-4.5.14 NOTICE
+
+=======================================================================
+
+
+Apache HttpClient
+Copyright 1999-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
 
 =======================================================================
 
@@ -7189,6 +7341,24 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
+
+=======================================================================
+
+spring-context-5.3.15 NOTICE
+
+=======================================================================
+
+Spring Framework 5.3.15
+Copyright (c) 2002-2022 Pivotal, Inc.
+
+This product is licensed to you under the Apache License, Version 2.0
+(the "License"). You may not use this product except in compliance with
+the License.
+
+This product may include a number of subcomponents with separate
+copyright notices and license terms. Your use of the source code for
+these subcomponents is subject to the terms and conditions of the
+subcomponent's license, as noted in the license.txt file.
 
 =======================================================================
 

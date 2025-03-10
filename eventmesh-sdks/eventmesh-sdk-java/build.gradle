@@ -65,6 +65,6 @@ dependencies {
 
     testImplementation "org.assertj:assertj-core"
 
-    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.mockito:mockito-inline"
     testImplementation "org.mockito:mockito-junit-jupiter"
 }

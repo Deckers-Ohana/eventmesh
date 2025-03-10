@@ -201,7 +201,8 @@ public class HttpEventWrapper implements ProtocolTransportObject {
                 case UNIQUEID:
                     break;
                 default:
-                    sysHeaderMap.put(clientInstanceKey.getKey(), headerMap.getOrDefault(clientInstanceKey.getKey(), clientInstanceKey.getValue()));
+                    sysHeaderMap.put(clientInstanceKey.getKey(),
+                        headerMap.getOrDefault(clientInstanceKey.getKey(), clientInstanceKey.getValue()));
             }
         }
     }

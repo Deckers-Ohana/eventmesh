@@ -27,9 +27,5 @@ import org.apache.eventmesh.spi.EventMeshSPI;
 @EventMeshSPI(isSingleton = false, eventMeshExtensionType = EventMeshExtensionType.RETRY)
 public interface RetryStrategy {
 
-    /**
-     * retry
-     * @param configuration config
-     */
     void retry(RetryConfiguration configuration);
 }

@@ -33,7 +33,6 @@ import org.apache.eventmesh.runtime.core.consumer.ClientInfo;
 import org.apache.eventmesh.runtime.core.consumer.SubscriptionManager;
 import org.apache.eventmesh.runtime.core.protocol.http.processor.inf.AbstractEventProcessor;
 import org.apache.eventmesh.runtime.util.RemotingHelper;
-import org.apache.eventmesh.runtime.util.WebhookUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,27 +130,18 @@ public class LocalSubscribeEventProcessor extends AbstractEventProcessor {
         }
 
         // validate URL
-        // try {
-        //     if (!IPUtils.isValidDomainOrIp(url, eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIpv4BlackList(),
-        //         eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIpv6BlackList())) {
-        //         log.error("subscriber url {} is not valid", url);
-        //
-        //         handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
-        //             responseBodyMap, null);
-        //         return;
-        //     }
-        // } catch (Exception e) {
-        //     log.error("subscriber url {} is not valid", url, e);
-        //
-        //     handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
-        //         responseBodyMap, null);
-        //     return;
-        // }
+        try {
+            if (!IPUtils.isValidDomainOrIp(url, eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIpv4BlackList(),
+                eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshIpv6BlackList())) {
+                log.error("subscriber url {} is not valid", url);
 
-        // obtain webhook delivery agreement for Abuse Protection
-        if (!WebhookUtil.obtainDeliveryAgreement(eventMeshHTTPServer.getHttpClientPool().getClient(),
-            url, eventMeshHTTPServer.getEventMeshHttpConfiguration().getEventMeshWebhookOrigin())) {
-            log.error("subscriber url {} is not allowed by the target system", url);
+                handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
+                    responseBodyMap, null);
+                return;
+            }
+        } catch (Exception e) {
+            log.error("subscriber url {} is not valid", url, e);
+
             handlerSpecific.sendErrorResponse(EventMeshRetCode.EVENTMESH_PROTOCOL_BODY_ERR, responseHeaderMap,
                 responseBodyMap, null);
             return;

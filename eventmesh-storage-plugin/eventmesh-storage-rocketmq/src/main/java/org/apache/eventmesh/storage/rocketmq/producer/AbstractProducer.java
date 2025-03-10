@@ -28,17 +28,20 @@ import org.apache.eventmesh.storage.rocketmq.utils.OMSUtil;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl;
+import org.apache.rocketmq.client.log.ClientLogger;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.protocol.ResponseCode;
+import org.apache.rocketmq.logging.InternalLogger;
 import org.apache.rocketmq.remoting.exception.RemotingConnectException;
 import org.apache.rocketmq.remoting.exception.RemotingTimeoutException;
 import org.apache.rocketmq.remoting.protocol.LanguageCode;
-import org.apache.rocketmq.remoting.protocol.ResponseCode;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractProducer {
 
+    static final InternalLogger log = ClientLogger.getLog();
     final Properties properties;
     final DefaultMQProducer rocketmqProducer;
     protected final AtomicBoolean started = new AtomicBoolean(false);

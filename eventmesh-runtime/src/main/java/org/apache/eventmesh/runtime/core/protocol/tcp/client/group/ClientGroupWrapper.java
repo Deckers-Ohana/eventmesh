@@ -95,10 +95,10 @@ public class ClientGroupWrapper {
     private final ReadWriteLock groupLock = new ReentrantReadWriteLock();
 
     @Getter
-    private final Set<Session> groupConsumerSessions = new HashSet<>();
+    private final Set<Session> groupConsumerSessions = new HashSet<Session>();
 
     @Getter
-    private final Set<Session> groupProducerSessions = new HashSet<>();
+    private final Set<Session> groupProducerSessions = new HashSet<Session>();
 
     @Getter
     private final AtomicBoolean started4Persistent = new AtomicBoolean(Boolean.FALSE);
@@ -120,7 +120,7 @@ public class ClientGroupWrapper {
     private MQConsumerWrapper broadCastMsgConsumer;
 
     private final ConcurrentHashMap<String, Map<String, Session>> topic2sessionInGroupMapping =
-        new ConcurrentHashMap<>();
+        new ConcurrentHashMap<String, Map<String, Session>>();
 
     private final ConcurrentHashMap<String, SubscriptionItem> subscriptions = new ConcurrentHashMap<>();
 
@@ -382,8 +382,7 @@ public class ClientGroupWrapper {
             }
             r = groupConsumerSessions.remove(session);
             if (r) {
-                log.info("removeGroupConsumerSession success, group:{} client:{}", group,
-                    session.getClient());
+                log.info("removeGroupConsumerSession success, group:{} client:{}", group, session.getClient());
             }
         } catch (Exception e) {
             if (e instanceof InterruptedException) {

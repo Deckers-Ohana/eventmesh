@@ -15,10 +15,30 @@
  * limitations under the License.
  */
 
+<<<<<<<< HEAD:eventmesh-admin-server/src/main/java/org/apache/eventmesh/admin/server/web/service/position/PositionHandler.java
+package org.apache.eventmesh.admin.server.web.service.position;
+
+import org.apache.eventmesh.common.remote.datasource.DataSourceType;
+
+public abstract class PositionHandler implements IReportPositionHandler, IFetchPositionHandler {
+
+    protected abstract DataSourceType getSourceType();
+========
 package org.apache.eventmesh.admin.server.web.pojo;
+
+import org.apache.eventmesh.admin.server.web.db.entity.EventMeshJobInfo;
+
+import lombok.Data;
 
 /**
  * Description:
  */
+@Data
 public class TaskDetail {
+
+    private EventMeshJobInfo fullTask;
+
+    private EventMeshJobInfo increaseTask;
+
+>>>>>>>> master:eventmesh-admin-server/src/main/java/org/apache/eventmesh/admin/server/web/pojo/TaskDetail.java
 }

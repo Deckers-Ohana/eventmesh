@@ -88,5 +88,7 @@ public class RabbitmqProducerTest extends RabbitmqServer {
                 }
             });
         }
+
+        Assertions.assertTrue(downLatch.await(5, TimeUnit.MINUTES));
     }
 }

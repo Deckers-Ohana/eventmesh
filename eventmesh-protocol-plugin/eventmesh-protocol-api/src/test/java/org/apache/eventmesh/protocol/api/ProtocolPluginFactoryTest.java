@@ -37,6 +37,7 @@ public class ProtocolPluginFactoryTest {
 
     private static final String PROTOCOL_ADAPTER_MAP = "PROTOCOL_ADAPTOR_MAP";
 
+    @Test
     public void testGetProtocolAdaptor() throws IllegalAccessException, NoSuchFieldException {
         Map<String, ProtocolAdaptor<ProtocolTransportObject>> mockProtocolAdaptorMap =
             new ConcurrentHashMap<>(16);

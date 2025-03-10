@@ -71,7 +71,6 @@ public class HTTPClientPool {
     private static final int SOCKET_TIMEOUT = 30000;
 
     private transient PoolingHttpClientConnectionManager connectionManager;
-    //for spring framework
 
     public HTTPClientPool(final int core) {
         this.core = core <= 0 ? 1 : core;
@@ -103,13 +102,11 @@ public class HTTPClientPool {
     }
 
     // @SuppressWarnings("deprecation")
-    public CloseableHttpClient getHttpClient(final int maxTotal, final int idleTimeInSeconds,
-                                             final SSLContext sslContext) {
+    public CloseableHttpClient getHttpClient(final int maxTotal, final int idleTimeInSeconds, final SSLContext sslContext) {
 
         SSLContext innerSSLContext = sslContext;
         try {
-            innerSSLContext = innerSSLContext == null ? SSLContexts.custom().loadTrustMaterial(new TheTrustStrategy())
-                    .build() : innerSSLContext;
+            innerSSLContext = innerSSLContext == null ? SSLContexts.custom().loadTrustMaterial(new TheTrustStrategy()).build() : innerSSLContext;
 
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
             log.error("Get sslContext error", e);

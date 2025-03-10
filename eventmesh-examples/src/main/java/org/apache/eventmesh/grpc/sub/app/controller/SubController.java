@@ -17,14 +17,13 @@
 
 package org.apache.eventmesh.grpc.sub.app.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.grpc.sub.app.service.SubService;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

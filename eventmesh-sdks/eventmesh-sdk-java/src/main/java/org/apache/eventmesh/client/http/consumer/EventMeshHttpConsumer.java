@@ -169,6 +169,7 @@ public class EventMeshHttpConsumer extends AbstractHttpClient implements AutoClo
         Objects.requireNonNull(unSubscribeUrl, "unSubscribeUrl cannot be null");
 
         final RequestParam unSubscribeParam = buildCommonRequestParam()
+            .addHeader(ProtocolKey.REQUEST_CODE, RequestCode.UNSUBSCRIBE.getRequestCode())
             .addBody(UnSubscribeRequestBody.TOPIC, JsonUtils.toJSONString(topicList))
             .addBody(UnSubscribeRequestBody.URL, unSubscribeUrl);
 

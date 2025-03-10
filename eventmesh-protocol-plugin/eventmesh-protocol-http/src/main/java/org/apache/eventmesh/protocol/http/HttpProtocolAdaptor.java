@@ -26,7 +26,6 @@ import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.protocol.ProtocolTransportObject;
 import org.apache.eventmesh.common.protocol.http.HttpEventWrapper;
 import org.apache.eventmesh.common.protocol.http.common.RequestURI;
-import org.apache.eventmesh.common.protocol.tcp.Package;
 import org.apache.eventmesh.common.utils.JsonUtils;
 import org.apache.eventmesh.protocol.api.ProtocolAdaptor;
 import org.apache.eventmesh.protocol.api.exception.ProtocolHandleException;
@@ -41,12 +40,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.cloudevents.CloudEvent;
-import io.cloudevents.core.format.EventFormat;
-import io.cloudevents.core.provider.EventFormatProvider;
-
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Preconditions;
 
 /**
  * CloudEvents protocol adaptor, used to transform CloudEvents message to CloudEvents message.
@@ -88,58 +83,40 @@ public class HttpProtocolAdaptor<T extends ProtocolTransportObject>
 
     @Override
     public ProtocolTransportObject fromCloudEvent(CloudEvent cloudEvent) throws ProtocolHandleException {
-        String protocolDesc =
-            cloudEvent.getExtension(Constants.PROTOCOL_DESC) != null ? cloudEvent.getExtension(Constants.PROTOCOL_DESC).toString() : "http";
-        switch (protocolDesc) {
-            case "http":
-                HttpEventWrapper httpEventWrapper = new HttpEventWrapper();
-                Map<String, Object> sysHeaderMap = new HashMap<>();
-                // ce attributes
-                Set<String> attributeNames = cloudEvent.getAttributeNames();
-                // ce extensions
-                Set<String> extensionNames = cloudEvent.getExtensionNames();
-                for (String attributeName : attributeNames) {
-                    sysHeaderMap.put(attributeName, cloudEvent.getAttribute(attributeName));
-                }
-                for (String extensionName : extensionNames) {
-                    sysHeaderMap.put(extensionName, cloudEvent.getExtension(extensionName));
-                }
-                httpEventWrapper.setSysHeaderMap(sysHeaderMap);
-                // ce data
-                if (null != cloudEvent.getData()) {
-                    Map<String, Object> dataContentMap = JsonUtils.parseTypeReferenceObject(
-                        new String(Objects.requireNonNull(cloudEvent.getData()).toBytes(), Constants.DEFAULT_CHARSET),
-                        new TypeReference<Map<String, Object>>() {
-                        });
-                    String requestHeader = JsonUtils.toJSONString(
-                        Objects.requireNonNull(dataContentMap, "Headers must not be null").get(CONSTANTS_KEY_HEADERS));
-                    byte[] requestBody = Objects.requireNonNull(
-                        JsonUtils.toJSONString(dataContentMap.get(CONSTANTS_KEY_BODY)), "Body must not be null").getBytes(StandardCharsets.UTF_8);
-                    Map<String, Object> requestHeaderMap = JsonUtils.parseTypeReferenceObject(requestHeader,
-                        new TypeReference<Map<String, Object>>() {
-                        });
-                    String requestURI = dataContentMap.get(CONSTANTS_KEY_PATH).toString();
-                    String httpMethod = dataContentMap.get(CONSTANTS_KEY_METHOD).toString();
-
-                    httpEventWrapper.setHeaderMap(requestHeaderMap);
-                    httpEventWrapper.setBody(requestBody);
-                    httpEventWrapper.setRequestURI(requestURI);
-                    httpEventWrapper.setHttpMethod(httpMethod);
-                }
-                return httpEventWrapper;
-            case "tcp":
-                Package pkg = new Package();
-                String dataContentType = cloudEvent.getDataContentType();
-                Preconditions.checkNotNull(dataContentType, "DateContentType cannot be null");
-                EventFormat eventFormat = EventFormatProvider.getInstance().resolveFormat(dataContentType);
-                Preconditions.checkNotNull(eventFormat,
-                    String.format("DateContentType:%s is not supported", dataContentType));
-                pkg.setBody(eventFormat.serialize(cloudEvent));
-                return pkg;
-            default:
-                throw new ProtocolHandleException(String.format("Unsupported protocolDesc: %s", protocolDesc));
+        HttpEventWrapper httpEventWrapper = new HttpEventWrapper();
+        Map<String, Object> sysHeaderMap = new HashMap<>();
+        // ce attributes
+        Set<String> attributeNames = cloudEvent.getAttributeNames();
+        // ce extensions
+        Set<String> extensionNames = cloudEvent.getExtensionNames();
+        for (String attributeName : attributeNames) {
+            sysHeaderMap.put(attributeName, cloudEvent.getAttribute(attributeName));
         }
+        for (String extensionName : extensionNames) {
+            sysHeaderMap.put(extensionName, cloudEvent.getExtension(extensionName));
+        }
+        httpEventWrapper.setSysHeaderMap(sysHeaderMap);
+        // ce data
+        if (cloudEvent.getData() != null) {
+            Map<String, Object> dataContentMap = JsonUtils.parseTypeReferenceObject(
+                new String(Objects.requireNonNull(cloudEvent.getData()).toBytes(), Constants.DEFAULT_CHARSET),
+                new TypeReference<Map<String, Object>>() {
+                });
+            String requestHeader = JsonUtils.toJSONString(
+                Objects.requireNonNull(dataContentMap, "Headers must not be null").get(CONSTANTS_KEY_HEADERS));
+            byte[] requestBody = Objects.requireNonNull(
+                JsonUtils.toJSONString(dataContentMap.get(CONSTANTS_KEY_BODY)), "Body must not be null").getBytes(StandardCharsets.UTF_8);
+            Map<String, Object> requestHeaderMap = JsonUtils.parseTypeReferenceObject(requestHeader, new TypeReference<Map<String, Object>>() {
+            });
+            String requestURI = dataContentMap.get(CONSTANTS_KEY_PATH).toString();
+            String httpMethod = dataContentMap.get(CONSTANTS_KEY_METHOD).toString();
 
+            httpEventWrapper.setHeaderMap(requestHeaderMap);
+            httpEventWrapper.setBody(requestBody);
+            httpEventWrapper.setRequestURI(requestURI);
+            httpEventWrapper.setHttpMethod(httpMethod);
+        }
+        return httpEventWrapper;
 
     }
 

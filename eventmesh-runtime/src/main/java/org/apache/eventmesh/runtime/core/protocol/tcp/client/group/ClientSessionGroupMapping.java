@@ -68,12 +68,13 @@ public class ClientSessionGroupMapping {
      * key: subsystem eg . 5109 or 5109-1A0
      */
     private final ConcurrentHashMap<String, ClientGroupWrapper> clientGroupMap =
-        new ConcurrentHashMap<>();
+        new ConcurrentHashMap<String, ClientGroupWrapper>();
 
     /**
      * key: subsystem eg . 5109 or 5109-1A0
      */
-    private final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> lockMap =
+        new ConcurrentHashMap<String, Object>();
 
     private EventMeshTCPServer eventMeshTCPServer;
 
@@ -315,7 +316,7 @@ public class ClientSessionGroupMapping {
         // key: seq
         ConcurrentHashMap<String, DownStreamMsgContext> unAckMsg = session.getPusher().getUnAckMsg();
         ClientGroupWrapper clientGroupWrapper = Objects.requireNonNull(session.getClientGroupWrapper().get());
-        if (!unAckMsg.isEmpty() && !clientGroupWrapper.getGroupConsumerSessions().isEmpty()) {
+        if (unAckMsg.size() > 0 && !clientGroupWrapper.getGroupConsumerSessions().isEmpty()) {
             for (Map.Entry<String, DownStreamMsgContext> entry : unAckMsg.entrySet()) {
                 DownStreamMsgContext downStreamMsgContext = entry.getValue();
                 if (SubscriptionMode.BROADCASTING == downStreamMsgContext.getSubscriptionItem().getMode()) {

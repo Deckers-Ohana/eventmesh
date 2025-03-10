@@ -16,20 +16,21 @@
  */
 
 dependencies {
-    implementation project(":eventmesh-common")
-    implementation project(":eventmesh-sdks:eventmesh-sdk-java")
-    implementation project(":eventmesh-openconnect:eventmesh-openconnect-java")
+  implementation project(":eventmesh-common")
+  implementation project(":eventmesh-sdks:eventmesh-sdk-java")
+  implementation project(":eventmesh-openconnect:eventmesh-openconnect-java")
 
-    implementation 'com.alibaba.fastjson2:fastjson2'
-    implementation 'com.google.guava:guava'
-    implementation 'com.squareup.okhttp3:okhttp'
+  implementation 'com.alibaba.fastjson2:fastjson2'
+  implementation 'com.google.guava:guava'
+  implementation 'com.squareup.okhttp3:okhttp'
 
-    implementation "io.netty:netty-all"
+  implementation "io.netty:netty-all"
 
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation "org.mockito:mockito-core"
-    testImplementation "org.mockito:mockito-junit-jupiter"
+  testImplementation "org.mockito:mockito-core"
+  testImplementation "org.mockito:mockito-junit-jupiter"
+  testImplementation "org.mockito:mockito-inline"
 }

@@ -16,25 +16,25 @@
  */
 
 dependencies {
-    implementation project(":eventmesh-trace-plugin:eventmesh-trace-api")
-    implementation project(":eventmesh-common")
-    implementation 'org.slf4j:slf4j-api'
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'com.google.guava:guava'
+  implementation project(":eventmesh-trace-plugin:eventmesh-trace-api")
+  implementation project(":eventmesh-common")
+  implementation 'org.slf4j:slf4j-api'
+  implementation 'org.apache.commons:commons-lang3'
+  implementation 'com.google.guava:guava'
 
-    implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
-    implementation 'io.opentelemetry:opentelemetry-semconv'
+  implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
+  implementation 'io.opentelemetry:opentelemetry-semconv'
 
-    // grpc
-    implementation "io.grpc:grpc-protobuf"
-    implementation "io.grpc:grpc-stub"
-    implementation "io.grpc:grpc-netty"
-    implementation "io.grpc:grpc-netty-shaded"
+  // grpc
+  implementation "io.grpc:grpc-protobuf"
+  implementation "io.grpc:grpc-stub"
+  implementation "io.grpc:grpc-netty"
+  implementation "io.grpc:grpc-netty-shaded"
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
 
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-    testImplementation "org.mockito:mockito-core"
+  testCompileOnly 'org.projectlombok:lombok'
+  testAnnotationProcessor 'org.projectlombok:lombok'
+  testImplementation "org.mockito:mockito-inline"
 }

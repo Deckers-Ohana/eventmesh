@@ -25,7 +25,6 @@ dependencies {
     api project(":eventmesh-openconnect:eventmesh-openconnect-java")
     implementation "org.locationtech.jts:jts-core"
     implementation project(":eventmesh-common")
-    implementation("com.google.protobuf:protobuf-java:3.25.5")
     implementation canal
     implementation "com.alibaba:druid"
     compileOnly 'com.mysql:mysql-connector-j'

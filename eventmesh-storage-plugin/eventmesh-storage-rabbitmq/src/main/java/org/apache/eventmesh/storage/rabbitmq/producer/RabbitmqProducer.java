@@ -78,7 +78,6 @@ public class RabbitmqProducer implements Producer {
         }
     }
 
-
     @Override
     public void shutdown() {
         if (started) {

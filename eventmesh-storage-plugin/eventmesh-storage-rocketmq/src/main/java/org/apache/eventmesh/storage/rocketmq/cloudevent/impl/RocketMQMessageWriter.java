@@ -20,7 +20,6 @@ package org.apache.eventmesh.storage.rocketmq.cloudevent.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.common.message.Message;
 
-
 import javax.annotation.Nonnull;
 
 import io.cloudevents.CloudEventData;

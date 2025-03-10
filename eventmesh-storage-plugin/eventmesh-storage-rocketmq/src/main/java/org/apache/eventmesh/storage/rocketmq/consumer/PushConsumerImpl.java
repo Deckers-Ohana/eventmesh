@@ -41,8 +41,8 @@ import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyServic
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageService;
 import org.apache.rocketmq.common.message.MessageConst;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.protocol.LanguageCode;
-import org.apache.rocketmq.remoting.protocol.heartbeat.MessageModel;
 
 import java.util.ArrayList;
 import java.util.List;

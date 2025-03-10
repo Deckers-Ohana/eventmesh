@@ -17,8 +17,6 @@
 
 package org.apache.eventmesh.runtime.core.protocol.tcp.client.session.push;
 
-import static org.apache.eventmesh.common.Constants.CLOUD_EVENTS_PROTOCOL_NAME;
-
 import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.protocol.ProtocolTransportObject;
 import org.apache.eventmesh.common.protocol.SubscriptionMode;
@@ -107,7 +105,7 @@ public class SessionPusher {
         try {
             pkg = (Package) protocolAdaptor.fromCloudEvent(downStreamMsgContext.event);
             pkg.setHeader(new Header(cmd, OPStatus.SUCCESS.getCode(), null, downStreamMsgContext.seq));
-            pkg.getHeader().putProperty(Constants.PROTOCOL_TYPE, "http".equalsIgnoreCase(protocolType) ? CLOUD_EVENTS_PROTOCOL_NAME : protocolType);
+            pkg.getHeader().putProperty(Constants.PROTOCOL_TYPE, protocolType);
             MESSAGE_LOGGER.info("pkg|mq2eventMesh|cmd={}|mqMsg={}|user={}", cmd, pkg, session.getClient());
         } catch (Exception e) {
             pkg.setHeader(new Header(cmd, OPStatus.FAIL.getCode(), Arrays.toString(e.getStackTrace()), downStreamMsgContext.seq));

@@ -18,7 +18,6 @@
 package org.apache.eventmesh.runtime.core.protocol.http.push;
 
 import org.apache.eventmesh.common.ThreadPoolFactory;
-import org.apache.eventmesh.runtime.constants.EventMeshConstants;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.EventMeshConsumer;
 import org.apache.eventmesh.runtime.core.protocol.http.consumer.HandleMsgContext;
 import org.apache.eventmesh.runtime.util.EventMeshUtil;
@@ -35,8 +34,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import io.cloudevents.CloudEvent;
-import io.cloudevents.core.builder.CloudEventBuilder;
 import io.opentelemetry.api.trace.Span;
 
 import com.google.common.collect.Maps;
@@ -52,7 +49,7 @@ public class HTTPMessageHandler implements MessageHandler {
     private static final ScheduledExecutorService SCHEDULER =
         ThreadPoolFactory.createSingleScheduledExecutor("eventMesh-pushMsgTimeout");
 
-    private static final Integer CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD = 5000;
+    private static final Integer CONSUMER_GROUP_WAITING_REQUEST_THRESHOLD = 10000;
 
     protected static final Map<String, Set<AbstractHTTPPushRequest>> waitingRequests = Maps.newConcurrentMap();
 

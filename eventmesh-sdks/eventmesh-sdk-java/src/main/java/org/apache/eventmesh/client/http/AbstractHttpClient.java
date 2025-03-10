@@ -68,7 +68,7 @@ public abstract class AbstractHttpClient implements AutoCloseable {
 
         this.eventMeshHttpClientConfig = eventMeshHttpClientConfig;
         this.eventMeshServerSelector = HttpLoadBalanceUtils.createEventMeshServerLoadBalanceSelector(
-                eventMeshHttpClientConfig);
+            eventMeshHttpClientConfig);
         this.httpClient = setHttpClient();
     }
 

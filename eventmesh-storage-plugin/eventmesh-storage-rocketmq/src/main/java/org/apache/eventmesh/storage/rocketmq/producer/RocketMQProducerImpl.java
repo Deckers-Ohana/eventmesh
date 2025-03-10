@@ -104,7 +104,7 @@ public class RocketMQProducerImpl implements Producer {
             .getDefaultMQProducerImpl()
             .getmQClientFactory()
             .getMQClientAPIImpl()
-            .getTopicRouteInfoFromNameServer(topic, EventMeshConstants.DEFAULT_TIMEOUT_IN_MILLISECONDS);
+            .getDefaultTopicRouteInfoFromNameServer(topic, EventMeshConstants.DEFAULT_TIMEOUT_IN_MILLISECONDS);
     }
 
     @Override

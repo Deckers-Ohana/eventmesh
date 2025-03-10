@@ -24,8 +24,7 @@ import org.apache.eventmesh.common.Constants;
 import org.apache.eventmesh.common.config.Config;
 import org.apache.eventmesh.storage.rocketmq.config.ClientConfiguration;
 
-
-import org.apache.rocketmq.remoting.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 
 import java.util.List;
 import java.util.Properties;

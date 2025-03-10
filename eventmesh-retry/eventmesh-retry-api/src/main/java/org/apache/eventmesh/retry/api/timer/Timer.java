@@ -30,9 +30,7 @@ public interface Timer {
     /**
      * Schedules the specified {@link TimerTask} for one-time execution after
      * the specified delay.
-     * @param task task
-     * @param delay time
-     * @param unit timeunit
+     *
      * @return a handle which is associated with the specified task
      * @throws IllegalStateException      if this timer has been {@linkplain #stop() stopped} already
      * @throws RejectedExecutionException if the pending timeouts are too many and creating new timeout
