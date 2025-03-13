@@ -99,7 +99,7 @@ public final class QueryOperationsResponse extends
                 operations_ = java.util.Collections.unmodifiableList(operations_);
             }
             this.unknownFields = unknownFields.build();
-            makeExtensionsImmutable();
+            // makeExtensionsImmutable();
         }
     }
 

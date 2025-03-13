@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-def grpcVersion = '1.68.1'
+def grpcVersion = '1.71.0'
 
 dependencies {
     api(project(":eventmesh-common")) {
@@ -65,6 +65,6 @@ dependencies {
 
     testImplementation "org.assertj:assertj-core"
 
-    testImplementation "org.mockito:mockito-inline"
+    testImplementation "org.mockito:mockito-core"
     testImplementation "org.mockito:mockito-junit-jupiter"
 }

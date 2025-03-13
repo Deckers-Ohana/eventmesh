@@ -23,7 +23,7 @@ List rocketmq = [
         "org.apache.rocketmq:rocketmq-namesrv:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-tools:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-remoting:$rocketmq_version",
-        "org.apache.rocketmq:rocketmq-logging:$rocketmq_version",
+        "org.apache.rocketmq:rocketmq-logging:5.0.0",
         "org.apache.rocketmq:rocketmq-srvutil:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-filter:$rocketmq_version",
         "org.apache.rocketmq:rocketmq-acl:$rocketmq_version",

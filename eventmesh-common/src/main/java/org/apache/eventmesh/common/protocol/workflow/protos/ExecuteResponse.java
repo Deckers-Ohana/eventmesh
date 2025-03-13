@@ -95,7 +95,7 @@ public final class ExecuteResponse extends com.google.protobuf.GeneratedMessageV
                     e).setUnfinishedMessage(this);
         } finally {
             this.unknownFields = unknownFields.build();
-            makeExtensionsImmutable();
+            // makeExtensionsImmutable();
         }
     }
 

@@ -19,6 +19,7 @@ package org.apache.eventmesh.storage.rocketmq.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.log.ClientLogger;
+import org.apache.rocketmq.logging.InternalLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

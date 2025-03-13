@@ -99,7 +99,7 @@ public final class QueryOperationsRequest extends
                 e).setUnfinishedMessage(this);
         } finally {
             this.unknownFields = unknownFields.build();
-            makeExtensionsImmutable();
+            // makeExtensionsImmutable();
         }
     }
 

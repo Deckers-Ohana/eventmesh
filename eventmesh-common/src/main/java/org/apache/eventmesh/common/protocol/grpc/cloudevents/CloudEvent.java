@@ -150,7 +150,7 @@ private static final long serialVersionUID = 0L;
           e).setUnfinishedMessage(this);
     } finally {
       this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
+      // makeExtensionsImmutable();
     }
   }
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -393,7 +393,7 @@ private static final long serialVersionUID = 0L;
             e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
+        // makeExtensionsImmutable();
       }
     }
     public static final com.google.protobuf.Descriptors.Descriptor

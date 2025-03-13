@@ -124,7 +124,7 @@ public final class Operation extends
                     e).setUnfinishedMessage(this);
         } finally {
             this.unknownFields = unknownFields.build();
-            makeExtensionsImmutable();
+            // makeExtensionsImmutable();
         }
     }
 

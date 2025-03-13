@@ -87,7 +87,7 @@ public final class RegistryResponse extends
                     e).setUnfinishedMessage(this);
         } finally {
             this.unknownFields = unknownFields.build();
-            makeExtensionsImmutable();
+            // makeExtensionsImmutable();
         }
     }
 

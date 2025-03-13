@@ -97,7 +97,7 @@ private static final long serialVersionUID = 0L;
         events_ = java.util.Collections.unmodifiableList(events_);
       }
       this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
+      // makeExtensionsImmutable();
     }
   }
   public static final com.google.protobuf.Descriptors.Descriptor
