@@ -37,12 +37,12 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-import javax.annotation.PreDestroy;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.PreDestroy;
 
 @Slf4j
 @Component

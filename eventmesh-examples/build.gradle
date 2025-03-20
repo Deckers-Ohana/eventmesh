@@ -31,6 +31,8 @@ dependencies {
     implementation "io.openmessaging:openmessaging-api"
     implementation 'com.alibaba.nacos:nacos-client'
 
+    implementation "org.apache.httpcomponents.client5:httpclient5"
+
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-netty:${grpcVersion}"

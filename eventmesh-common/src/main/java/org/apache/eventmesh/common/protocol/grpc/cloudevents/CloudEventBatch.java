@@ -24,12 +24,12 @@ package org.apache.eventmesh.common.protocol.grpc.cloudevents;
  * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEventBatch}
  */
 public final class CloudEventBatch extends
-    com.google.protobuf.GeneratedMessageV3 implements
+    com.google.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.apache.eventmesh.cloudevents.v1.CloudEventBatch)
     CloudEventBatchOrBuilder {
 private static final long serialVersionUID = 0L;
   // Use CloudEventBatch.newBuilder() to construct.
-  private CloudEventBatch(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  private CloudEventBatch(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
     super(builder);
   }
   private CloudEventBatch() {
@@ -254,39 +254,39 @@ private static final long serialVersionUID = 0L;
   }
   public static CloudEventBatch parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
   public static CloudEventBatch parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
   public static CloudEventBatch parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input);
   }
   public static CloudEventBatch parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static CloudEventBatch parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
   public static CloudEventBatch parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
@@ -314,7 +314,7 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEventBatch}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.apache.eventmesh.cloudevents.v1.CloudEventBatch)
       CloudEventBatchOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -341,7 +341,7 @@ private static final long serialVersionUID = 0L;
       maybeForceBuilderInitialization();
     }
     private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
+      if (com.google.protobuf.GeneratedMessage
               .alwaysUseFieldBuilders) {
         getEventsFieldBuilder();
       }
@@ -458,7 +458,7 @@ private static final long serialVersionUID = 0L;
             events_ = other.events_;
             bitField0_ = (bitField0_ & ~0x00000001);
             eventsBuilder_ =
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                  getEventsFieldBuilder() : null;
           } else {
             eventsBuilder_.addAllMessages(other.events_);

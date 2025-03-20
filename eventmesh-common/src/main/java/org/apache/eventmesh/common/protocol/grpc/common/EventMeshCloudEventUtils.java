@@ -193,6 +193,7 @@ public abstract class EventMeshCloudEventUtils {
     public static String getSubject(CloudEvent cloudEvent, String defaultValue) {
         return getValue(cloudEvent, defaultValue, ProtocolKey.SUBJECT);
     }
+
     public static String getEventId(CloudEvent cloudEvent) {
         return getEventId(cloudEvent, "null");
     }
@@ -200,7 +201,6 @@ public abstract class EventMeshCloudEventUtils {
     public static String getEventId(CloudEvent cloudEvent, String defaultValue) {
         return getValue(cloudEvent, defaultValue, ProtocolKey.ID);
     }
-
 
     public static String getDataContentType(CloudEvent cloudEvent) {
         return getDataContentType(cloudEvent, null);

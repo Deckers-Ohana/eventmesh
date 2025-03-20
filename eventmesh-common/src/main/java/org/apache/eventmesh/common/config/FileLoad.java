@@ -71,7 +71,7 @@ public interface FileLoad {
             final Properties properties = new Properties();
             if (StringUtils.isNotBlank(configInfo.getResourceUrl())) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    Objects.requireNonNull(getClass().getResourceAsStream(configInfo.getResourceUrl())),Constants.DEFAULT_CHARSET))) {
+                    Objects.requireNonNull(getClass().getResourceAsStream(configInfo.getResourceUrl())), Constants.DEFAULT_CHARSET))) {
                     properties.load(reader);
                 }
             } else {

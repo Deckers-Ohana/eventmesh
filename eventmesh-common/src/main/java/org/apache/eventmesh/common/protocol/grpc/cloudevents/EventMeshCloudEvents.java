@@ -34,22 +34,22 @@ public final class EventMeshCloudEvents {
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_descriptor;
   static final
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_AttributesEntry_descriptor;
   static final
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_AttributesEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_CloudEventAttributeValue_descriptor;
   static final
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_CloudEventAttributeValue_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEventBatch_descriptor;
   static final
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEventBatch_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
@@ -93,25 +93,25 @@ public final class EventMeshCloudEvents {
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_descriptor,
         new String[] { "Id", "Source", "SpecVersion", "Type", "Attributes", "BinaryData", "TextData", "ProtoData", "Data", });
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_AttributesEntry_descriptor =
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_descriptor.getNestedTypes().get(0);
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_AttributesEntry_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_AttributesEntry_descriptor,
         new String[] { "Key", "Value", });
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_CloudEventAttributeValue_descriptor =
       internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_descriptor.getNestedTypes().get(1);
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_CloudEventAttributeValue_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_apache_eventmesh_cloudevents_v1_CloudEvent_CloudEventAttributeValue_descriptor,
         new String[] { "CeBoolean", "CeInteger", "CeString", "CeBytes", "CeUri", "CeUriRef", "CeTimestamp", "Attr", });
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEventBatch_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_apache_eventmesh_cloudevents_v1_CloudEventBatch_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_apache_eventmesh_cloudevents_v1_CloudEventBatch_descriptor,
         new String[] { "Events", });
     com.google.protobuf.AnyProto.getDescriptor();

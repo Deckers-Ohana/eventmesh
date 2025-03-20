@@ -24,12 +24,12 @@ package org.apache.eventmesh.common.protocol.grpc.cloudevents;
  * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEvent}
  */
 public final class CloudEvent extends
-    com.google.protobuf.GeneratedMessageV3 implements
+    com.google.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.apache.eventmesh.cloudevents.v1.CloudEvent)
     CloudEventOrBuilder {
 private static final long serialVersionUID = 0L;
   // Use CloudEvent.newBuilder() to construct.
-  private CloudEvent(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  private CloudEvent(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
     super(builder);
   }
   private CloudEvent() {
@@ -287,12 +287,12 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEvent.CloudEventAttributeValue}
    */
   public static final class CloudEventAttributeValue extends
-      com.google.protobuf.GeneratedMessageV3 implements
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:org.apache.eventmesh.cloudevents.v1.CloudEvent.CloudEventAttributeValue)
       CloudEventAttributeValueOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use CloudEventAttributeValue.newBuilder() to construct.
-    private CloudEventAttributeValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private CloudEventAttributeValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
     }
     private CloudEventAttributeValue() {
@@ -733,17 +733,17 @@ private static final long serialVersionUID = 0L;
             2, (int)((Integer) attr_));
       }
       if (attrCase_ == 3) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, attr_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 3, attr_);
       }
       if (attrCase_ == 4) {
         output.writeBytes(
             4, (com.google.protobuf.ByteString) attr_);
       }
       if (attrCase_ == 5) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, attr_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 5, attr_);
       }
       if (attrCase_ == 6) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, attr_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 6, attr_);
       }
       if (attrCase_ == 7) {
         output.writeMessage(7, (com.google.protobuf.Timestamp) attr_);
@@ -768,7 +768,7 @@ private static final long serialVersionUID = 0L;
               2, (int)((Integer) attr_));
       }
       if (attrCase_ == 3) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, attr_);
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(3, attr_);
       }
       if (attrCase_ == 4) {
         size += com.google.protobuf.CodedOutputStream
@@ -776,10 +776,10 @@ private static final long serialVersionUID = 0L;
               4, (com.google.protobuf.ByteString) attr_);
       }
       if (attrCase_ == 5) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, attr_);
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, attr_);
       }
       if (attrCase_ == 6) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, attr_);
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(6, attr_);
       }
       if (attrCase_ == 7) {
         size += com.google.protobuf.CodedOutputStream
@@ -916,39 +916,39 @@ private static final long serialVersionUID = 0L;
     }
     public static CloudEventAttributeValue parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
     public static CloudEventAttributeValue parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static CloudEventAttributeValue parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
     public static CloudEventAttributeValue parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static CloudEventAttributeValue parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
     public static CloudEventAttributeValue parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
+      return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
@@ -976,7 +976,7 @@ private static final long serialVersionUID = 0L;
      * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEvent.CloudEventAttributeValue}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.apache.eventmesh.cloudevents.v1.CloudEvent.CloudEventAttributeValue)
         CloudEventAttributeValueOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1003,7 +1003,7 @@ private static final long serialVersionUID = 0L;
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
+        if (com.google.protobuf.GeneratedMessage
                 .alwaysUseFieldBuilders) {
         }
       }
@@ -2232,19 +2232,19 @@ private static final long serialVersionUID = 0L;
   @Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(id_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 1, id_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(source_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, source_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(source_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 2, source_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(specVersion_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, specVersion_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(specVersion_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 3, specVersion_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, type_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 4, type_);
     }
-    com.google.protobuf.GeneratedMessageV3
+    com.google.protobuf.GeneratedMessage
       .serializeStringMapTo(
         output,
         internalGetAttributes(),
@@ -2255,7 +2255,7 @@ private static final long serialVersionUID = 0L;
           6, (com.google.protobuf.ByteString) data_);
     }
     if (dataCase_ == 7) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, data_);
+      com.google.protobuf.GeneratedMessage.writeString(output, 7, data_);
     }
     if (dataCase_ == 8) {
       output.writeMessage(8, (com.google.protobuf.Any) data_);
@@ -2269,17 +2269,17 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(id_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(1, id_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(source_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, source_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(source_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(2, source_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(specVersion_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, specVersion_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(specVersion_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(3, specVersion_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, type_);
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(type_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(4, type_);
     }
     for (java.util.Map.Entry<String, CloudEventAttributeValue> entry
          : internalGetAttributes().getMap().entrySet()) {
@@ -2297,7 +2297,7 @@ private static final long serialVersionUID = 0L;
             6, (com.google.protobuf.ByteString) data_);
     }
     if (dataCase_ == 7) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, data_);
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(7, data_);
     }
     if (dataCase_ == 8) {
       size += com.google.protobuf.CodedOutputStream
@@ -2423,39 +2423,39 @@ private static final long serialVersionUID = 0L;
   }
   public static CloudEvent parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
   public static CloudEvent parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
   public static CloudEvent parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input);
   }
   public static CloudEvent parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static CloudEvent parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input);
   }
   public static CloudEvent parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
+    return com.google.protobuf.GeneratedMessage
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
@@ -2483,7 +2483,7 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code org.apache.eventmesh.cloudevents.v1.CloudEvent}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.apache.eventmesh.cloudevents.v1.CloudEvent)
       CloudEventOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -2532,7 +2532,7 @@ private static final long serialVersionUID = 0L;
       maybeForceBuilderInitialization();
     }
     private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
+      if (com.google.protobuf.GeneratedMessage
               .alwaysUseFieldBuilders) {
       }
     }
