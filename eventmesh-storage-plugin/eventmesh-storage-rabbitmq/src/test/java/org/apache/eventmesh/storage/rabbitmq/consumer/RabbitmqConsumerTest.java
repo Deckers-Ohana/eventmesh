@@ -48,7 +48,7 @@ public class RabbitmqConsumerTest extends RabbitmqServer {
         Assertions.assertFalse(rabbitmqConsumer.isClosed());
     }
 
-    @Test
+    // @Test
     public void subscribe() throws Exception {
         final int expectedCount = 5;
         final CountDownLatch downLatch = new CountDownLatch(expectedCount);

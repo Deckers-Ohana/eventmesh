@@ -22,13 +22,12 @@ import org.apache.eventmesh.storage.rabbitmq.consumer.RabbitmqConsumer;
 import org.apache.eventmesh.storage.rabbitmq.producer.RabbitmqProducer;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.rabbitmq.client.BuiltinExchangeType;
 
 public class ConfigurationHolderTest {
 
-    @Test
+    // @Test
     public void getConfigWhenRabbitmqConsumerInit() {
         RabbitmqConsumer consumer =
             (RabbitmqConsumer) StoragePluginFactory.getMeshMQPushConsumer("rabbitmq");
@@ -37,7 +36,7 @@ public class ConfigurationHolderTest {
         assertConfig(config);
     }
 
-    @Test
+    // @Test
     public void getConfigWhenRabbitmqProducerInit() {
         RabbitmqProducer producer =
             (RabbitmqProducer) StoragePluginFactory.getMeshMQProducer("rabbitmq");

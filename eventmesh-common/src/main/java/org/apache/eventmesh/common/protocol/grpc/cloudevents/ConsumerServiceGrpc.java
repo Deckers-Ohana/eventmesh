@@ -48,15 +48,15 @@ public final class ConsumerServiceGrpc {
         if ((getSubscribeMethod = ConsumerServiceGrpc.getSubscribeMethod) == null) {
           ConsumerServiceGrpc.getSubscribeMethod = getSubscribeMethod =
               io.grpc.MethodDescriptor.<CloudEvent, CloudEvent>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "subscribe"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("subscribe"))
-              .build();
+                  .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                  .setFullMethodName(generateFullMethodName(SERVICE_NAME, "subscribe"))
+                  .setSampledToLocalTracing(true)
+                  .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("subscribe"))
+                  .build();
         }
       }
     }
@@ -79,15 +79,15 @@ public final class ConsumerServiceGrpc {
         if ((getSubscribeStreamMethod = ConsumerServiceGrpc.getSubscribeStreamMethod) == null) {
           ConsumerServiceGrpc.getSubscribeStreamMethod = getSubscribeStreamMethod =
               io.grpc.MethodDescriptor.<CloudEvent, CloudEvent>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "subscribeStream"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("subscribeStream"))
-              .build();
+                  .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+                  .setFullMethodName(generateFullMethodName(SERVICE_NAME, "subscribeStream"))
+                  .setSampledToLocalTracing(true)
+                  .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("subscribeStream"))
+                  .build();
         }
       }
     }
@@ -110,15 +110,15 @@ public final class ConsumerServiceGrpc {
         if ((getUnsubscribeMethod = ConsumerServiceGrpc.getUnsubscribeMethod) == null) {
           ConsumerServiceGrpc.getUnsubscribeMethod = getUnsubscribeMethod =
               io.grpc.MethodDescriptor.<CloudEvent, CloudEvent>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "unsubscribe"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  CloudEvent.getDefaultInstance()))
-              .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("unsubscribe"))
-              .build();
+                  .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                  .setFullMethodName(generateFullMethodName(SERVICE_NAME, "unsubscribe"))
+                  .setSampledToLocalTracing(true)
+                  .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                      CloudEvent.getDefaultInstance()))
+                  .setSchemaDescriptor(new ConsumerServiceMethodDescriptorSupplier("unsubscribe"))
+                  .build();
         }
       }
     }
@@ -130,12 +130,12 @@ public final class ConsumerServiceGrpc {
    */
   public static ConsumerServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceStub>() {
-        @Override
-        public ConsumerServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new ConsumerServiceStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceStub>() {
+          @Override
+          public ConsumerServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new ConsumerServiceStub(channel, callOptions);
+          }
+        };
     return ConsumerServiceStub.newStub(factory, channel);
   }
 
@@ -145,12 +145,12 @@ public final class ConsumerServiceGrpc {
   public static ConsumerServiceBlockingStub newBlockingStub(
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceBlockingStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceBlockingStub>() {
-        @Override
-        public ConsumerServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new ConsumerServiceBlockingStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceBlockingStub>() {
+          @Override
+          public ConsumerServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new ConsumerServiceBlockingStub(channel, callOptions);
+          }
+        };
     return ConsumerServiceBlockingStub.newStub(factory, channel);
   }
 
@@ -160,12 +160,12 @@ public final class ConsumerServiceGrpc {
   public static ConsumerServiceFutureStub newFutureStub(
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceFutureStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceFutureStub>() {
-        @Override
-        public ConsumerServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new ConsumerServiceFutureStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<ConsumerServiceFutureStub>() {
+          @Override
+          public ConsumerServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new ConsumerServiceFutureStub(channel, callOptions);
+          }
+        };
     return ConsumerServiceFutureStub.newStub(factory, channel);
   }
 
@@ -179,7 +179,7 @@ public final class ConsumerServiceGrpc {
      * </pre>
      */
     public void subscribe(CloudEvent request,
-        io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
+                          io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSubscribeMethod(), responseObserver);
     }
 
@@ -196,33 +196,33 @@ public final class ConsumerServiceGrpc {
     /**
      */
     public void unsubscribe(CloudEvent request,
-        io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
+                            io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUnsubscribeMethod(), responseObserver);
     }
 
     @Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getSubscribeMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                CloudEvent,
-                CloudEvent>(
-                  this, METHODID_SUBSCRIBE)))
+              getSubscribeMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      CloudEvent,
+                      CloudEvent>(
+                      this, METHODID_SUBSCRIBE)))
           .addMethod(
-            getSubscribeStreamMethod(),
-            io.grpc.stub.ServerCalls.asyncBidiStreamingCall(
-              new MethodHandlers<
-                CloudEvent,
-                CloudEvent>(
-                  this, METHODID_SUBSCRIBE_STREAM)))
+              getSubscribeStreamMethod(),
+              io.grpc.stub.ServerCalls.asyncBidiStreamingCall(
+                  new MethodHandlers<
+                      CloudEvent,
+                      CloudEvent>(
+                      this, METHODID_SUBSCRIBE_STREAM)))
           .addMethod(
-            getUnsubscribeMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                CloudEvent,
-                CloudEvent>(
-                  this, METHODID_UNSUBSCRIBE)))
+              getUnsubscribeMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      CloudEvent,
+                      CloudEvent>(
+                      this, METHODID_UNSUBSCRIBE)))
           .build();
     }
   }
@@ -247,7 +247,7 @@ public final class ConsumerServiceGrpc {
      * </pre>
      */
     public void subscribe(CloudEvent request,
-        io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
+                          io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSubscribeMethod(), getCallOptions()), request, responseObserver);
     }
@@ -266,7 +266,7 @@ public final class ConsumerServiceGrpc {
     /**
      */
     public void unsubscribe(CloudEvent request,
-        io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
+                            io.grpc.stub.StreamObserver<CloudEvent> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUnsubscribeMethod(), getCallOptions()), request, responseObserver);
     }

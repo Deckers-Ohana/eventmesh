@@ -74,6 +74,8 @@ dependencies {
 
     testImplementation "com.lmax:disruptor"
 
+    testImplementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    testImplementation "io.grpc:grpc-stub:${grpcVersion}"
     testImplementation "com.fasterxml.jackson.core:jackson-databind"
     testImplementation "com.fasterxml.jackson.core:jackson-core"
     testImplementation "com.fasterxml.jackson.core:jackson-annotations"

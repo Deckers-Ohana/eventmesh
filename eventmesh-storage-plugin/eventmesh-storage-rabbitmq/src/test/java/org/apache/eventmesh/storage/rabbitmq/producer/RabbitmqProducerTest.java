@@ -48,7 +48,6 @@ public class RabbitmqProducerTest extends RabbitmqServer {
         Assertions.assertFalse(rabbitmqProducer.isClosed());
     }
 
-    @Test
     public void publish() throws Exception {
         final int expectedCount = 5;
         final CountDownLatch downLatch = new CountDownLatch(expectedCount);

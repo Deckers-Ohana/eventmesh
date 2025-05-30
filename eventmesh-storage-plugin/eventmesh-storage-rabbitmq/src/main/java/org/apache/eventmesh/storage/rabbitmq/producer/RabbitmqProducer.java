@@ -104,8 +104,8 @@ public class RabbitmqProducer implements Producer {
 
     private Connection getConnection() throws Exception {
         return rabbitmqClient.getConnection(configurationHolder.getHost(), configurationHolder.getUsername(),
-                configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(),
-                configurationHolder.isSsl());
+            configurationHolder.getPasswd(), configurationHolder.getPort(), configurationHolder.getVirtualHost(),
+            configurationHolder.isSsl());
     }
 
     @Override
@@ -116,11 +116,12 @@ public class RabbitmqProducer implements Producer {
             byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
 
             if (data != null) {
-                if(cloudEvent.getExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP)!=null){
-                    //send to dead letter queue ， because already executed , need to check again
+                if (cloudEvent.getExtension(EventMeshConstants.RSP_RETRY) != null) {
+                    //send to dead letter queue,  because already executed , need to check again
                     String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
-                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName()+"-DEAD-LETTER", consumerGroup+"-DEAD-LETTER."+cloudEvent.getSubject(), data);
-                } else{
+                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName() + "-DEAD-LETTER",
+                        consumerGroup + "-DEAD-LETTER." + cloudEvent.getSubject(), data);
+                } else {
                     rabbitmqClient.publish(channel, configurationHolder.getExchangeName(), cloudEvent.getSubject(), data);
                 }
                 SendResult sendResult = new SendResult();
@@ -131,11 +132,11 @@ public class RabbitmqProducer implements Producer {
         } catch (Exception ex) {
             log.error("[RabbitmqProducer] publish happen exception.", ex);
             sendCallback.onException(
-                    OnExceptionContext.builder()
-                            .topic(cloudEvent.getSubject())
-                            .messageId(cloudEvent.getId())
-                            .exception(new StorageRuntimeException(ex))
-                            .build());
+                OnExceptionContext.builder()
+                    .topic(cloudEvent.getSubject())
+                    .messageId(cloudEvent.getId())
+                    .exception(new StorageRuntimeException(ex))
+                    .build());
         }
     }
 
@@ -146,7 +147,7 @@ public class RabbitmqProducer implements Producer {
             if (optionalBytes.isPresent()) {
                 byte[] data = optionalBytes.get();
                 rabbitmqClient.publish(channel, configurationHolder.getExchangeName(),
-                        configurationHolder.getRoutingKey(), data);
+                    configurationHolder.getRoutingKey(), data);
             }
         } catch (Exception ex) {
             log.error("[RabbitmqProducer] sendOneway happen exception.", ex);

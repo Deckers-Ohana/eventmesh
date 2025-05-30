@@ -138,6 +138,7 @@ public class EventMeshConsumer {
                 EventMeshAsyncConsumeContext eventMeshAsyncConsumeContext = (EventMeshAsyncConsumeContext) context;
 
                 if (currentTopicConfig == null) {
+                    log.warn("event missing topic config :{}", event.getData());
                     try {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                         log.warn("no ConsumerGroupTopicConf found, sendMessageBack success, consumerGroup:{}, topic:{}, bizSeqNo={}, uniqueId={}",
@@ -166,6 +167,7 @@ public class EventMeshConsumer {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                     } catch (Exception e) {
                         // ignore
+                        log.error("event data :{}", event.getData());
                         log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, e);
                     }
                     eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
@@ -222,12 +224,14 @@ public class EventMeshConsumer {
                 if (currentTopicConfig == null) {
                     log.error("no topicConfig found, consumerGroup:{} topic:{}",
                         consumerGroupConf.getConsumerGroup(), topic);
+                    log.warn("event missing topic config :{}", event.getData());
                     try {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                         eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
                         return;
                     } catch (Exception ex) {
                         // ignore
+                        log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, ex);
                     }
                 }
 
@@ -249,6 +253,8 @@ public class EventMeshConsumer {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                     } catch (Exception e) {
                         // ignore
+                        log.error("event data :{}", event.getData());
+                        log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, e);
                     }
                     eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
                 }
@@ -299,7 +305,7 @@ public class EventMeshConsumer {
     }
 
     public void updateOffset(String topic, SubscriptionMode subscriptionMode, List<CloudEvent> events,
-        AbstractContext context) {
+                             AbstractContext context) {
         if (SubscriptionMode.BROADCASTING == subscriptionMode) {
             broadcastMqConsumer.updateOffset(events, context);
         } else {
@@ -328,7 +334,6 @@ public class EventMeshConsumer {
                 consumerGroupConf.getConsumerGroup(), bizSeqNo, uniqueId);
             return;
         }
-
         final SendMessageContext sendMessageBackContext = new SendMessageContext(bizSeqNo, CloudEventBuilder.from(event)
             .withExtension(EventMeshConstants.REQ_EVENTMESH2C_TIMESTAMP,
                 String.valueOf(System.currentTimeMillis()))
@@ -341,6 +346,7 @@ public class EventMeshConsumer {
 
             @Override
             public void onSuccess(SendResult sendResult) {
+
             }
 
             @Override
