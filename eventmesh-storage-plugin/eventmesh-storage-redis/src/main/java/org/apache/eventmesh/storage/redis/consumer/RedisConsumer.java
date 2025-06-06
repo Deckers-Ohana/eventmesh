@@ -29,9 +29,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.redisson.Redisson;
+import org.redisson.api.RTopic;
 import org.redisson.api.listener.MessageListener;
 
 import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
 
 import com.google.common.base.Preconditions;
 
@@ -45,6 +47,8 @@ public class RedisConsumer implements Consumer {
     private EventMeshMessageListener messageListener;
 
     private volatile boolean started = false;
+
+    public static final String RSP_RETRY = "rsp0retry";
 
     @Override
     public boolean isStarted() {
@@ -80,6 +84,18 @@ public class RedisConsumer implements Consumer {
 
     @Override
     public void updateOffset(List<CloudEvent> cloudEvents, AbstractContext context) {
+        for (CloudEvent cloudEvent : cloudEvents) {
+            log.warn("Redis consumer does not support updateOffset operation, cloudEvent: {}", cloudEvent);
+            if (cloudEvent.getExtension(RSP_RETRY) == null) {
+                RTopic topic = redisson.getTopic(cloudEvent.getSubject(), CloudEventCodec.getInstance());
+                topic.publish(CloudEventBuilder.from(cloudEvent)
+                    .withExtension(RSP_RETRY, "true")
+                    .build());
+            } else {
+                log.error("Redis consumer already retry, cloudEvent data: {}",
+                    cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "null");
+            }
+        }
 
     }
 
