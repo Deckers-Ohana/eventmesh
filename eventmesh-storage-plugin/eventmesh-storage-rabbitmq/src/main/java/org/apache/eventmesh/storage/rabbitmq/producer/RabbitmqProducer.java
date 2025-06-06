@@ -17,6 +17,8 @@
 
 package org.apache.eventmesh.storage.rabbitmq.producer;
 
+import static org.apache.eventmesh.storage.rabbitmq.common.EventMeshConstants.RSP_RETRY;
+
 import org.apache.eventmesh.api.RequestReplyCallback;
 import org.apache.eventmesh.api.SendCallback;
 import org.apache.eventmesh.api.SendResult;
@@ -37,6 +39,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -111,12 +114,15 @@ public class RabbitmqProducer implements Producer {
     @Override
     public void publish(CloudEvent cloudEvent, SendCallback sendCallback) throws Exception {
         try {
+            boolean isRetry = cloudEvent.getExtension(EventMeshConstants.RSP_RETRY) != null && "true".equals(cloudEvent.getExtension(RSP_RETRY));
             RabbitmqCloudEventWriter writer = new RabbitmqCloudEventWriter();
-            RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(cloudEvent);
+            RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(CloudEventBuilder.from(cloudEvent)
+                .withExtension(RSP_RETRY, "false")
+                .build());
             byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
 
             if (data != null) {
-                if (cloudEvent.getExtension(EventMeshConstants.RSP_RETRY) != null) {
+                if (isRetry) {
                     //send to dead letter queue,  because already executed , need to check again
                     String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
                     rabbitmqClient.publish(channel, configurationHolder.getExchangeName() + "-DEAD-LETTER",

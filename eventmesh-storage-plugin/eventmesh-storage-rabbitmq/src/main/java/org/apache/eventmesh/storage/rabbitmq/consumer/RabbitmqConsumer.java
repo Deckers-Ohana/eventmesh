@@ -20,6 +20,7 @@ package org.apache.eventmesh.storage.rabbitmq.consumer;
 import static org.apache.eventmesh.common.Constants.CONSUMER_GROUP;
 import static org.apache.eventmesh.common.Constants.INSTANCE_NAME;
 import static org.apache.eventmesh.common.Constants.IS_BROADCAST;
+import static org.apache.eventmesh.storage.rabbitmq.common.EventMeshConstants.RSP_RETRY;
 
 import org.apache.eventmesh.api.AbstractContext;
 import org.apache.eventmesh.api.EventListener;
@@ -40,6 +41,7 @@ import java.util.Properties;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -141,19 +143,23 @@ public class RabbitmqConsumer implements Consumer {
     public void updateOffset(List<CloudEvent> cloudEvents, AbstractContext context) {
         //print the cloudEvents to the console using JSON format
         for (CloudEvent cloudEvent : cloudEvents) {
-            log.error("[RabbitmqConsumer] updateOffset,uniqueId:{}, data: {}",
-                cloudEvent.getExtension(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey()),
-                cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "");
-            RabbitmqCloudEventWriter writer = new RabbitmqCloudEventWriter();
-            RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(cloudEvent);
-            try {
-                byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
-                //sent to dead letter queue, because already executed, need to check again
-                String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
-                rabbitmqClient.publish(channel, configurationHolder.getExchangeName() + "-DEAD-LETTER",
-                    consumerGroup + "-DEAD-LETTER." + cloudEvent.getSubject(), data);
-            } catch (Exception e) {
-                //ignore the exception, just log it
+            if (cloudEvent.getExtension(RSP_RETRY) != null && "true".equals(cloudEvent.getExtension(RSP_RETRY))) {
+                log.error("[RabbitmqConsumer] updateOffset,uniqueId:{}, data: {}",
+                    cloudEvent.getExtension(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey()),
+                    cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "");
+                RabbitmqCloudEventWriter writer = new RabbitmqCloudEventWriter();
+                RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(CloudEventBuilder.from(cloudEvent)
+                    .withExtension(RSP_RETRY, "false")
+                    .build());
+                try {
+                    byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
+                    //sent to dead letter queue, because already executed, need to check again
+                    String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
+                    rabbitmqClient.publish(channel, configurationHolder.getExchangeName() + "-DEAD-LETTER",
+                        consumerGroup + "-DEAD-LETTER." + cloudEvent.getSubject(), data);
+                } catch (Exception e) {
+                    //ignore the exception, just log it
+                }
             }
         }
     }

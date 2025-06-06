@@ -86,7 +86,7 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
     private final Map<String, Set<AbstractHTTPPushRequest>> waitingRequests;
 
     public AsyncHTTPPushRequest(HandleMsgContext handleMsgContext,
-        Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
+                                Map<String, Set<AbstractHTTPPushRequest>> waitingRequests) {
         super(handleMsgContext);
         this.waitingRequests = waitingRequests;
     }
@@ -272,6 +272,11 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
                         currPushUrl, handleMsgContext.getTopic(), handleMsgContext.getBizSeqNo(), handleMsgContext.getUniqueId(), cost);
 
                     if (isComplete()) {
+                        handleMsgContext.setEvent(
+                            CloudEventBuilder.from(handleMsgContext.getEvent())
+                                .withExtension(EventMeshConstants.RSP_RETRY,
+                                    !(retryTimes < EventMeshConstants.DEFAULT_PUSH_RETRY_TIMES) ? "true" : "false")
+                                .build());
                         handleMsgContext.finish();
                     }
                 }
@@ -295,6 +300,10 @@ public class AsyncHTTPPushRequest extends AbstractHTTPPushRequest {
             removeWaitingMap(this);
             delayRetry();
             if (isComplete()) {
+                handleMsgContext.setEvent(
+                    CloudEventBuilder.from(handleMsgContext.getEvent())
+                        .withExtension(EventMeshConstants.RSP_RETRY, !(retryTimes < EventMeshConstants.DEFAULT_PUSH_RETRY_TIMES) ? "true" : "false")
+                        .build());
                 handleMsgContext.finish();
             }
         }

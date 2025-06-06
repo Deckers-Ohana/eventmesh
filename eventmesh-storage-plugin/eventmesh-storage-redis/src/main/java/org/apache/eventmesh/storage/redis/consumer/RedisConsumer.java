@@ -22,6 +22,7 @@ import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.EventMeshAction;
 import org.apache.eventmesh.api.EventMeshAsyncConsumeContext;
 import org.apache.eventmesh.api.consumer.Consumer;
+import org.apache.eventmesh.common.protocol.http.common.ProtocolKey;
 import org.apache.eventmesh.storage.redis.client.RedissonClient;
 import org.apache.eventmesh.storage.redis.cloudevent.CloudEventCodec;
 
@@ -49,6 +50,7 @@ public class RedisConsumer implements Consumer {
     private volatile boolean started = false;
 
     public static final String RSP_RETRY = "rsp0retry";
+    public static final String RSP_RETRY_TIMES = "rsp0retrytimes";
 
     @Override
     public boolean isStarted() {
@@ -85,18 +87,16 @@ public class RedisConsumer implements Consumer {
     @Override
     public void updateOffset(List<CloudEvent> cloudEvents, AbstractContext context) {
         for (CloudEvent cloudEvent : cloudEvents) {
-            log.warn("Redis consumer does not support updateOffset operation, cloudEvent: {}", cloudEvent);
-            if (cloudEvent.getExtension(RSP_RETRY) == null) {
+            if (cloudEvent.getExtension(RSP_RETRY) != null && "true".equals(cloudEvent.getExtension(RSP_RETRY))) {
                 RTopic topic = redisson.getTopic(cloudEvent.getSubject(), CloudEventCodec.getInstance());
                 topic.publish(CloudEventBuilder.from(cloudEvent)
-                    .withExtension(RSP_RETRY, "true")
+                    .withExtension(RSP_RETRY, "false")
                     .build());
-            } else {
-                log.error("Redis consumer already retry, cloudEvent data: {}",
+                log.error("Redis consumer already retry, uniqueId: {}, cloudEvent data: {}", cloudEvent.getExtension(
+                        ProtocolKey.ClientInstanceKey.UNIQUEID.getKey()),
                     cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "null");
             }
         }
-
     }
 
     @Override
