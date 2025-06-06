@@ -26,6 +26,7 @@ import org.apache.eventmesh.api.EventListener;
 import org.apache.eventmesh.api.consumer.Consumer;
 import org.apache.eventmesh.common.ThreadPoolFactory;
 import org.apache.eventmesh.common.config.ConfigService;
+import org.apache.eventmesh.common.protocol.http.common.ProtocolKey;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
@@ -135,7 +136,12 @@ public class RabbitmqConsumer implements Consumer {
 
     @Override
     public void updateOffset(List<CloudEvent> cloudEvents, AbstractContext context) {
-
+        //print the cloudEvents to console using json format
+        for (CloudEvent cloudEvent : cloudEvents) {
+            log.error("[RabbitmqConsumer] updateOffset,uniqueId:{}, data: {}",
+                cloudEvent.getExtension(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey()),
+                cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "");
+        }
     }
 
     @Override

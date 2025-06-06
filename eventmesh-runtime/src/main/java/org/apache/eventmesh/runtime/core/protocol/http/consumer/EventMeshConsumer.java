@@ -138,12 +138,12 @@ public class EventMeshConsumer {
                 EventMeshAsyncConsumeContext eventMeshAsyncConsumeContext = (EventMeshAsyncConsumeContext) context;
 
                 if (currentTopicConfig == null) {
-                    log.warn("event missing topic config :{}", event.getData());
                     try {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                         log.warn("no ConsumerGroupTopicConf found, sendMessageBack success, consumerGroup:{}, topic:{}, bizSeqNo={}, uniqueId={}",
                             consumerGroupConf.getConsumerGroup(), topic, bizSeqNo, uniqueId);
                     } catch (Exception ex) {
+                        log.warn("event send back error data :{}", event.getData() != null ? new String(event.getData().toBytes()) : event.getData());
                         log.warn("sendMessageBack fail, consumerGroup:{}, topic:{}, bizSeqNo={}, uniqueId={}",
                             consumerGroupConf.getConsumerGroup(), topic, bizSeqNo, uniqueId, ex);
                     }
@@ -167,7 +167,7 @@ public class EventMeshConsumer {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                     } catch (Exception e) {
                         // ignore
-                        log.error("event data :{}", event.getData());
+                        log.warn("event send back error data :{}", event.getData() != null ? new String(event.getData().toBytes()) : event.getData());
                         log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, e);
                     }
                     eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
@@ -224,13 +224,13 @@ public class EventMeshConsumer {
                 if (currentTopicConfig == null) {
                     log.error("no topicConfig found, consumerGroup:{} topic:{}",
                         consumerGroupConf.getConsumerGroup(), topic);
-                    log.warn("event missing topic config :{}", event.getData());
                     try {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                         eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
                         return;
                     } catch (Exception ex) {
                         // ignore
+                        log.warn("event send back error data :{}", event.getData() != null ? new String(event.getData().toBytes()) : event.getData());
                         log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, ex);
                     }
                 }
@@ -253,7 +253,7 @@ public class EventMeshConsumer {
                         sendMessageBack(event, uniqueId, bizSeqNo);
                     } catch (Exception e) {
                         // ignore
-                        log.error("event data :{}", event.getData());
+                        log.warn("event send back error data :{}", event.getData() != null ? new String(event.getData().toBytes()) : event.getData());
                         log.warn("sendMessageBack fail,topic:{}, bizSeqNo={}, uniqueId={}", topic, bizSeqNo, uniqueId, e);
                     }
                     eventMeshAsyncConsumeContext.commit(EventMeshAction.CommitMessage);
@@ -326,7 +326,6 @@ public class EventMeshConsumer {
     }
 
     public void sendMessageBack(final CloudEvent event, final String uniqueId, String bizSeqNo) throws Exception {
-
         EventMeshProducer sendMessageBack = eventMeshHTTPServer.getProducerManager().getEventMeshProducer(consumerGroupConf.getConsumerGroup());
 
         if (sendMessageBack == null) {
@@ -351,8 +350,8 @@ public class EventMeshConsumer {
 
             @Override
             public void onException(OnExceptionContext context) {
-                log.warn("consumer:{} consume fail, sendMessageBack, bizSeqno:{}, uniqueId:{}",
-                    consumerGroupConf.getConsumerGroup(), bizSeqNo, uniqueId);
+                log.warn("consumer:{} consume fail, sendMessageBack, bizSeqno:{}, uniqueId:{}, event:{}",
+                    consumerGroupConf.getConsumerGroup(), bizSeqNo, uniqueId, event);
             }
         });
     }
