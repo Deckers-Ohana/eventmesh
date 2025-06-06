@@ -209,7 +209,7 @@ public class HandleMsgContext implements HandleMessageContext {
     }
 
     public void finish() {
-        if (Objects.nonNull(eventMeshConsumer) && Objects.nonNull(context) && Objects.nonNull(event)) {
+        if (Objects.nonNull(eventMeshConsumer) && Objects.nonNull(event)) {
             MESSAGE_LOGGER.info("messageAcked|group={}|topic={}|bizSeq={}|uniqId={}|msgRandomNo={}|queueId={}|queueOffset={}|data={}",
                 consumerGroup, topic, bizSeqNo, uniqueId, msgRandomNo, event.getExtension(Constants.PROPERTY_MESSAGE_QUEUE_ID),
                 event.getExtension(Constants.PROPERTY_MESSAGE_QUEUE_OFFSET), event.getData());

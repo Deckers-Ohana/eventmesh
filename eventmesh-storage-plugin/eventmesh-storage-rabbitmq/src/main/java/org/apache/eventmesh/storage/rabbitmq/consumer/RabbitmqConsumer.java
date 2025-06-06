@@ -29,6 +29,9 @@ import org.apache.eventmesh.common.config.ConfigService;
 import org.apache.eventmesh.common.protocol.http.common.ProtocolKey;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqClient;
 import org.apache.eventmesh.storage.rabbitmq.client.RabbitmqConnectionFactory;
+import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEvent;
+import org.apache.eventmesh.storage.rabbitmq.cloudevent.RabbitmqCloudEventWriter;
+import org.apache.eventmesh.storage.rabbitmq.common.EventMeshConstants;
 import org.apache.eventmesh.storage.rabbitmq.config.ConfigurationHolder;
 
 import java.io.IOException;
@@ -136,11 +139,22 @@ public class RabbitmqConsumer implements Consumer {
 
     @Override
     public void updateOffset(List<CloudEvent> cloudEvents, AbstractContext context) {
-        //print the cloudEvents to console using json format
+        //print the cloudEvents to the console using JSON format
         for (CloudEvent cloudEvent : cloudEvents) {
             log.error("[RabbitmqConsumer] updateOffset,uniqueId:{}, data: {}",
                 cloudEvent.getExtension(ProtocolKey.ClientInstanceKey.UNIQUEID.getKey()),
                 cloudEvent.getData() != null ? new String(cloudEvent.getData().toBytes()) : "");
+            RabbitmqCloudEventWriter writer = new RabbitmqCloudEventWriter();
+            RabbitmqCloudEvent rabbitmqCloudEvent = writer.writeBinary(cloudEvent);
+            try {
+                byte[] data = RabbitmqCloudEvent.toByteArray(rabbitmqCloudEvent);
+                //sent to dead letter queue, because already executed, need to check again
+                String consumerGroup = String.valueOf(cloudEvent.getExtension(EventMeshConstants.RSP_GROUP));
+                rabbitmqClient.publish(channel, configurationHolder.getExchangeName() + "-DEAD-LETTER",
+                    consumerGroup + "-DEAD-LETTER." + cloudEvent.getSubject(), data);
+            } catch (Exception e) {
+                //ignore the exception, just log it
+            }
         }
     }
 
